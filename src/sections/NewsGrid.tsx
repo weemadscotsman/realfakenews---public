@@ -89,6 +89,8 @@ const categories = [
   { key: 'science', label: 'Science' },
   { key: 'entertainment', label: 'Entertainment' },
   { key: 'sports', label: 'Sports' },
+  { key: 'opinion', label: 'Opinion' },
+  { key: 'sponsored', label: 'Sponsored' },
 ];
 
 const NewsGrid = () => {
@@ -189,7 +191,7 @@ const NewsGrid = () => {
         ) : (
           <div className="space-y-12">
             {categories.map((category) => (
-              <div key={category.key}>
+              <div key={category.key} id={category.key}>
                 <div className="flex items-center justify-between mb-4 border-b border-gray-200 pb-2">
                   <h3 className="text-xl font-bold uppercase tracking-wider text-gray-800">
                     {category.label}

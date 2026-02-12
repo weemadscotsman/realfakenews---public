@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { generateStoryArc } from '@/lib/openai-enhanced';
@@ -54,6 +55,7 @@ const StoryArcs = () => {
 
       toast.success('Your story arc has been published! +50 XP');
     } catch (error) {
+      console.error('Generation failed:', error);
       toast.error('Failed to generate story. Try again!');
     } finally {
       setLoading(false);
@@ -121,27 +123,29 @@ const StoryArcs = () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {userArcs.map((arc) => (
-                <div key={arc.id} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
-                    <span className="bg-red-600 text-white px-2 py-0.5 rounded">
-                      {arc.category}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} />
-                      {formatDate(arc.published_at)}
-                    </span>
+                <Link key={arc.id} to={`/article/${encodeURIComponent(arc.headline)}`}>
+                  <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-red-600 transition-colors cursor-pointer group h-full">
+                    <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                      <span className="bg-red-600 text-white px-2 py-0.5 rounded">
+                        {arc.category}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        {formatDate(arc.published_at)}
+                      </span>
+                    </div>
+                    <h4 className="text-xl font-bold mb-3 group-hover:text-red-500 transition-colors">{arc.headline}</h4>
+                    <div className="text-gray-300 text-sm whitespace-pre-line line-clamp-4 mb-4">
+                      {arc.content}
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Eye size={14} />
+                        {arc.read_count} reads
+                      </span>
+                    </div>
                   </div>
-                  <h4 className="text-xl font-bold mb-3">{arc.headline}</h4>
-                  <div className="text-gray-300 text-sm whitespace-pre-line line-clamp-4 mb-4">
-                    {arc.content}
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Eye size={14} />
-                      {arc.read_count} reads
-                    </span>
-                  </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -158,27 +162,29 @@ const StoryArcs = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {publicArcs.map((arc) => (
-                <div key={arc.id} className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-colors">
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
-                    <span className="bg-gray-700 text-gray-300 px-2 py-0.5 rounded">
-                      {arc.category}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} />
-                      {formatDate(arc.published_at)}
-                    </span>
+                <Link key={arc.id} to={`/article/${encodeURIComponent(arc.headline)}`}>
+                  <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-500 transition-colors cursor-pointer group h-full">
+                    <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                      <span className="bg-gray-700 text-gray-300 px-2 py-0.5 rounded">
+                        {arc.category}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        {formatDate(arc.published_at)}
+                      </span>
+                    </div>
+                    <h4 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-red-400 transition-colors">{arc.headline}</h4>
+                    <div className="text-gray-400 text-sm whitespace-pre-line line-clamp-4 mb-4">
+                      {arc.content}
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Eye size={14} />
+                        {arc.read_count.toLocaleString()} reads
+                      </span>
+                    </div>
                   </div>
-                  <h4 className="text-lg font-bold mb-3 line-clamp-2">{arc.headline}</h4>
-                  <div className="text-gray-400 text-sm whitespace-pre-line line-clamp-4 mb-4">
-                    {arc.content}
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Eye size={14} />
-                      {arc.read_count.toLocaleString()} reads
-                    </span>
-                  </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

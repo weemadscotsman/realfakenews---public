@@ -161,20 +161,20 @@ const HeroSection: React.FC = () => {
             </h4>
             <div className="space-y-4">
               {sideStories.map((story, index) => (
-                <motion.article
-                  key={index}
-                  className="group cursor-pointer"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-                >
-                  <span className="text-xs text-red-600 font-medium uppercase">
-                    {story.category}
-                  </span>
-                  <h5 className="text-sm font-medium group-hover:text-red-600 transition-colors mt-1">
-                    {story.headline}
-                  </h5>
-                </motion.article>
+                <Link key={index} to={`/article/${encodeURIComponent(story.headline)}`} className="block group cursor-pointer">
+                  <motion.article
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
+                  >
+                    <span className="text-xs text-red-600 font-medium uppercase">
+                      {story.category}
+                    </span>
+                    <h5 className="text-sm font-medium group-hover:text-red-600 transition-colors mt-1">
+                      {story.headline}
+                    </h5>
+                  </motion.article>
+                </Link>
               ))}
             </div>
           </div>

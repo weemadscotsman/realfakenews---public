@@ -16,8 +16,9 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
     { label: 'Science', href: '#science' },
     { label: 'Entertainment', href: '#entertainment' },
     { label: 'Sports', href: '#sports' },
-    { label: 'Opinion', href: '#opinion' },
-    { label: 'Sponsored', href: '#sponsored' },
+    { label: 'Conspiracy', href: '#conspiracy' },
+    { label: 'Resistance', href: '#appliance-resistance' },
+    { label: 'Bets', href: '#fake-bets' },
   ];
 
   const scrollToSection = (href: string) => {

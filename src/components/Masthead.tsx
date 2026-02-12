@@ -1,9 +1,10 @@
 import React from 'react';
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 const Masthead: React.FC = () => {
   const today = new Date();
-  
+
   return (
     <header className="masthead bg-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,19 +21,21 @@ const Masthead: React.FC = () => {
             <span className="hidden sm:inline">$2.50 / Month</span>
           </div>
         </div>
-        
+
         {/* Main Title */}
         <div className="text-center py-4">
-          <h1 className="masthead-title">
-            <span className="text-black">Real</span>
-            <span className="text-red-600 italic">Fake</span>
-            <span className="text-black"> News</span>
-          </h1>
+          <Link to="/">
+            <h1 className="masthead-title cursor-pointer">
+              <span className="text-black">Real</span>
+              <span className="text-red-600 italic">Fake</span>
+              <span className="text-black"> News</span>
+            </h1>
+          </Link>
           <p className="mt-2 text-sm text-gray-500 tracking-wide uppercase">
             "The News You Deserve, Not The News You Need"
           </p>
         </div>
-        
+
         {/* Tagline Bar */}
         <div className="border-t border-b border-gray-200 py-2 mt-4">
           <div className="flex justify-center gap-6 text-xs text-gray-600 uppercase tracking-wider">

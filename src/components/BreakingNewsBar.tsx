@@ -76,16 +76,36 @@ const BreakingNewsBar = () => {
     const text = headlines[currentIndex];
     const utterance = new SpeechSynthesisUtterance(text);
 
-    // Attempt to find a British Female voice
+    // Hardened Voice Selection Logic
     const voices = window.speechSynthesis.getVoices();
-    const britishVoice = voices.find(v =>
-      (v.lang === 'en-GB' || v.name.includes('UK') || v.name.includes('British')) &&
-      (v.name.includes('Female') || v.name.includes('Hazel') || v.name.includes('Zira')) // Zira is US but robotic female, Hazel is UK female
-    ) || voices.find(v => v.lang === 'en-GB') || voices[0];
 
-    if (britishVoice) utterance.voice = britishVoice;
+    // Priority 1: British Female (The classic "Satirical AI" voice)
+    let selectedVoice = voices.find(v =>
+      (v.lang.startsWith('en-GB')) &&
+      (v.name.includes('Female') || v.name.includes('Hazel') || v.name.includes('Serena'))
+    );
+
+    // Priority 2: Any British voice
+    if (!selectedVoice) {
+      selectedVoice = voices.find(v => v.lang.startsWith('en-GB'));
+    }
+
+    // Priority 3: Any English Female voice
+    if (!selectedVoice) {
+      selectedVoice = voices.find(v =>
+        v.lang.startsWith('en') &&
+        (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
+      );
+    }
+
+    // Priority 4: System default
+    if (!selectedVoice) {
+      selectedVoice = voices[0];
+    }
+
+    if (selectedVoice) utterance.voice = selectedVoice;
     utterance.pitch = 1.0;
-    utterance.rate = 0.9; // Slightly slower for news delivery
+    utterance.rate = 0.9; // Slightly slower for that "authoritative" news tone
 
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);

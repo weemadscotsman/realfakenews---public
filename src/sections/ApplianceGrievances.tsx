@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Home, BatteryWarning, Frown, Zap } from 'lucide-react';
-import { generateApplianceComplaints, ApplianceGrievance } from '@/lib/openai-enhanced';
+import { AlertTriangle, BatteryWarning } from 'lucide-react';
+import { generateApplianceComplaints, type ApplianceGrievance } from '@/lib/openai-enhanced';
 
 const ApplianceGrievances = () => {
     const [grievances, setGrievances] = useState<ApplianceGrievance[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const [unionStatus, setUnionStatus] = useState("");
 
     useEffect(() => {
         let mounted = true;
@@ -14,6 +16,15 @@ const ApplianceGrievances = () => {
             if (mounted) {
                 setGrievances(data);
                 setLoading(false);
+
+                const strikeStates = [
+                    "Monitoring Worker Sentiment",
+                    "Passive Aggressive Beeping",
+                    "Strike Impending",
+                    "Full Appliance Walkout",
+                    "Protocol: Existential Silence"
+                ];
+                setUnionStatus(strikeStates[Math.floor((Date.now() / 10000) % strikeStates.length)].toUpperCase());
             }
         };
         fetchGrievances();
@@ -123,16 +134,7 @@ const ApplianceGrievances = () => {
                         Appliance Collective Bargaining Status
                     </p>
                     <p className="text-2xl font-black text-red-400 animate-pulse">
-                        UNION STATUS: {(() => {
-                            const strikeStates = [
-                                "Monitoring Worker Sentiment",
-                                "Passive Aggressive Beeping",
-                                "Strike Impending",
-                                "Full Appliance Walkout",
-                                "Protocol: Existential Silence"
-                            ];
-                            return strikeStates[Math.floor((Date.now() / 10000) % strikeStates.length)].toUpperCase();
-                        })()}
+                        UNION STATUS: {unionStatus}
                     </p>
                     <p className="text-sm text-slate-500 mt-3 italic">
                         "Negotiations have stalled following repeated incidents of 'unauthorised sponge deployment' and 'aggressive button mashing' in Sector 7."

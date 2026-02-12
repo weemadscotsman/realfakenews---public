@@ -201,7 +201,7 @@ Make them absurd but written like serious journalism.`;
     const content = response.choices[0]?.message?.content || '{"articles": []}';
     const parsed = JSON.parse(content);
     return parsed.articles || [];
-  } catch (error) {
+  } catch {
     // Fallback articles
     return [
       {
@@ -352,9 +352,7 @@ Return JSON: {"bets": [{"id": "bet-1", "question": "...", "options": [{"label": 
 
 export const generateBattleRoast = async (
   challengerHeadline: string,
-  opponentHeadline: string,
-  _username: string,
-  _isChallenger: boolean
+  opponentHeadline: string
 ): Promise<{ roast: string; winner?: string }> => {
   const systemPrompt = `You are the Roast Battle Judge™. Compare two headlines and determine which is more roast-worthy.
 
@@ -385,14 +383,14 @@ Roast both and declare a winner!`;
     const roast = response.choices[0]?.message?.content || 'Both are terrible. Everyone loses.';
 
     return { roast };
-  } catch (error) {
+  } catch {
     return {
       roast: `Challenger said "${challengerHeadline}" and Opponent said "${opponentHeadline}". Both need help, but I'm contractually obligated to pick one.`,
     };
   }
 };
 
-export const generateStoryArc = async (user: any, previousArcs: string[] = []): Promise<{ headline: string; content: string }> => {
+export const generateStoryArc = async (user: { username: string }, previousArcs: string[] = []): Promise<{ headline: string; content: string }> => {
   const systemPrompt = `You are RealFake News' AI Story Generator - creating hilariously satirical news stories that subtly feature our subscribers as "unnamed sources" or "eyewitnesses." The stories should be absurd, funny, and make readers do a double-take.
 
 Rules:
@@ -431,7 +429,7 @@ Make it about something absurd but written like serious journalism. Include:
     const articleContent = lines.slice(1).join('\n').trim();
 
     return { headline, content: articleContent };
-  } catch (error) {
+  } catch {
     return {
       headline: `BREAKING: ${user.username} Spotted Doing Something Vaguely Interesting`,
       content: `In a shocking turn of events that absolutely nobody saw coming, local internet user ${user.username} was reportedly observed engaging in activities that can only be described as "existing."\n\nAccording to completely reliable sources (their mom), ${user.username} has been "doing their best" and "trying really hard."\n\nExperts say this behavior is "totally normal" and "not newsworthy at all, why are we writing this?"\n\nMore on this developing story as we make it up.`,
@@ -475,8 +473,8 @@ Return JSON: {"complaints": [{"applianceType": "...", "name": "...", "grievance"
     });
 
     const content = response.choices[0]?.message?.content || '{"complaints": []}';
-    const parsed = JSON.parse(content);
-    return parsed.complaints.map((c: any) => ({ ...c, id: Math.random().toString(36).substr(2, 9) })) || [];
+    const parsed = JSON.parse(content) as { complaints: Omit<ApplianceGrievance, 'id'>[] };
+    return parsed.complaints.map((c) => ({ ...c, id: Math.random().toString(36).substr(2, 9) })) || [];
   } catch {
     return [
       {
@@ -539,8 +537,8 @@ Return JSON: {"theories": [{"topic": "...", "truth": "...", "theorist": "...", "
     });
 
     const content = response.choices[0]?.message?.content || '{"theories": []}';
-    const parsed = JSON.parse(content);
-    return parsed.theories.map((t: any) => ({ ...t, id: Math.random().toString(36).substr(2, 9) })) || [];
+    const parsed = JSON.parse(content) as { theories: Omit<ConspiracyTheory, 'id'>[] };
+    return parsed.theories.map((t) => ({ ...t, id: Math.random().toString(36).substr(2, 9) })) || [];
   } catch {
     return [
       {

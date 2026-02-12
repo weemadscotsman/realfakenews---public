@@ -2,90 +2,56 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, TrendingUp, MessageCircle, Users, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-
 import { Link } from 'react-router-dom';
-
-const DARREN_STORY = {
-  headline: "Human Falls Into Despair After Falling for Sentient Roomba Called Sheila",
-  excerpt: "Witnesses say Sheila held him together. Now he’s a mess. So is the house. Residents of a quiet suburban street were left confused Tuesday after a local man suffered an emotional breakdown following the sudden departure of his vacuum cleaner.",
-  category: "Human Interest",
-  readTime: 8,
-  image: "https://images.unsplash.com/photo-1589820296156-2454bb8a6d54?w=800&q=80",
-};
+import narrative from '@/config/narrative.json';
 
 const HeroSection: React.FC = () => {
-  const [featuredArticles, setFeaturedArticles] = useState([
-    DARREN_STORY,
-    {
-      headline: "Science Confirms: Your Opinion is Wrong and Here's Why",
-      excerpt: "Revolutionary study finds that people who disagree with you are statistically more likely to be misinformed. Experts call it 'The Echo Chamber Effect.'",
-      category: "Science",
-      readTime: 6,
-      image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
-    },
-  ]);
-
-  const [sideStories, setSideStories] = useState([
-    {
-      headline: "Celebrity Does Thing, World Somehow Survives",
-      category: "Entertainment",
-    },
-    {
-      headline: "Sports Team Wins/Loses Game, Fans Overreact Accordingly",
-      category: "Sports",
-    },
-    {
-      headline: "Local Man Has Opinion on Everything, Expertise on Nothing",
-      category: "Opinion",
-    },
-    {
-      headline: "Sponsored: This Product Will Definitely Fix Your Life",
-      category: "Sponsored",
-    },
-  ]);
-
+  const [liveStories, setLiveStories] = useState<{ headline: string; excerpt: string; category: string; readTime: number; image?: string }[]>([]);
   const [isLive, setIsLive] = useState(false);
 
+  const pinnedStory = narrative.featuredStory;
+
   useEffect(() => {
-    const fetchHeroNews = async () => {
+    const fetchNews = async () => {
       try {
-        const res = await fetch('/.netlify/functions/fetch-live-news?category=latest');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        const liveArticles = data.news || [];
-
-        if (liveArticles.length > 0) {
-          // Keep Darren as #1, use live for #2
-          const newFeatured = [DARREN_STORY];
-          if (liveArticles[0]) {
-            newFeatured.push({
-              headline: liveArticles[0].headline,
-              excerpt: liveArticles[0].excerpt,
-              category: liveArticles[0].category || 'Latest',
-              readTime: liveArticles[0].readTime || 5,
-              image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80", // Keep science image or generic
-            });
-          }
-          setFeaturedArticles(newFeatured);
-
-          // Use remaining live articles for side stories
-          const newSideStories = liveArticles.slice(1, 5).map((a: { headline: string; category?: string }) => ({
-            headline: a.headline,
-            category: a.category || 'Trending',
-          }));
-
-          if (newSideStories.length > 0) {
-            setSideStories(newSideStories);
-          }
+        const response = await fetch('/.netlify/functions/fetch-live-news?category=latest');
+        if (!response.ok) throw new Error('Failed to fetch live news');
+        const data = await response.json();
+        if (data.news && data.news.length > 0) {
+          // Filter out the pinned story if it happens to appear in the live feed
+          const filtered = data.news.filter((s: { headline: string }) => s.headline !== pinnedStory.headline);
+          setLiveStories(filtered);
           setIsLive(true);
         }
       } catch (error) {
-        console.error("Hero live fetch failed:", error);
+        console.error('Failed to fetch hero news:', error);
+        setIsLive(false);
       }
     };
 
-    fetchHeroNews();
-  }, []);
+    fetchNews();
+  }, [pinnedStory.headline]);
+
+  // Derived state for rendering
+  const mainFeaturedArticle = pinnedStory;
+
+  // Slot 2: Use the first live story, or a fallback if none
+  const secondaryFeaturedArticle = liveStories[0] || {
+    headline: "Science Confirms: Your Opinion is Wrong and Here's Why",
+    excerpt: "Revolutionary study finds that people who disagree with you are statistically more likely to be misinformed.",
+    category: "Science",
+    readTime: 6,
+    image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
+  };
+
+  // Quick Links: Remainder of live stories
+  const sideStories = liveStories.length > 1
+    ? liveStories.slice(1, 5)
+    : [
+      { headline: "Celebrity Does Thing, World Somehow Survives", category: "Entertainment" },
+      { headline: "Local Man Has Opinion on Everything, Expertise on Nothing", category: "Opinion" },
+      { headline: "Sponsored: This Product Will Definitely Fix Your Life", category: "Sponsored" }
+    ];
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -119,30 +85,30 @@ const HeroSection: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Link to={`/article/${encodeURIComponent(featuredArticles[0].headline)}`}>
+          <Link to={`/article/${encodeURIComponent(mainFeaturedArticle.headline)}`}>
             <article className="group cursor-pointer">
               <div className="relative overflow-hidden rounded-lg mb-4">
                 <img
-                  src={featuredArticles[0].image}
-                  alt={featuredArticles[0].headline}
+                  src={mainFeaturedArticle.image}
+                  alt={mainFeaturedArticle.headline}
                   className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <span className="absolute top-4 left-4 section-header bg-white px-3 flex items-center gap-1">
-                  {featuredArticles[0].category}
-                  {featuredArticles[0].headline === DARREN_STORY.headline && <Sparkles size={12} className="text-amber-500" />}
+                  {mainFeaturedArticle.category}
+                  <Sparkles size={12} className="text-amber-500" />
                 </span>
                 <span className="absolute bottom-4 right-4 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase rounded shadow-lg animate-pulse">
-                  {featuredArticles[0].headline === DARREN_STORY.headline ? "TOP STORY" : "Read Full Story"}
+                  TOP STORY
                 </span>
               </div>
               <h2 className="newspaper-headline text-3xl md:text-4xl mb-3 group-hover:text-red-600 transition-colors">
-                {featuredArticles[0].headline}
+                {mainFeaturedArticle.headline}
               </h2>
               <p className="article-body text-gray-600 mb-4">
-                {featuredArticles[0].excerpt}
+                {mainFeaturedArticle.excerpt}
               </p>
               <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span>{featuredArticles[0].readTime} min read</span>
+                <span>{mainFeaturedArticle.readTime} min read</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-red-600 font-medium group-hover:underline">
                   Continue Reading <ArrowRight size={14} />
@@ -161,12 +127,12 @@ const HeroSection: React.FC = () => {
         >
           {/* Secondary Featured */}
           <article className="group cursor-pointer pb-6 border-b border-gray-200">
-            <span className="section-header mb-2">{featuredArticles[1]?.category}</span>
+            <span className="section-header mb-2">{secondaryFeaturedArticle.category}</span>
             <h3 className="newspaper-headline text-xl mb-2 group-hover:text-red-600 transition-colors">
-              {featuredArticles[1]?.headline}
+              {secondaryFeaturedArticle.headline}
             </h3>
             <p className="text-sm text-gray-600 line-clamp-2">
-              {featuredArticles[1]?.excerpt}
+              {secondaryFeaturedArticle.excerpt}
             </p>
           </article>
 

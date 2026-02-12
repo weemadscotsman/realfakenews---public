@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Radio, AlertTriangle, EyeOff, Zap, Search } from 'lucide-react';
-import { generateConspiracyTheories, ConspiracyTheory } from '@/lib/openai-enhanced';
+import { generateConspiracyTheories, type ConspiracyTheory } from '@/lib/openai-enhanced';
 
 interface NewsItem {
     title: string;

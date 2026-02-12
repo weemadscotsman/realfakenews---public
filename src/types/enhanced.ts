@@ -8,19 +8,19 @@ export interface User {
   subscription_expires_at?: string;
   referral_code: string;
   referred_by?: string;
-  
+
   // Gamification
   xp: number;
   level: number;
   title: string;
   streak_days: number;
   last_login_at: string;
-  
+
   // Economy
   roast_tokens: number;
   total_roasts_generated: number;
   total_roasts_received: number;
-  
+
   // Stats
   tea_drops_count: number;
   story_arc_count: number;
@@ -28,7 +28,7 @@ export interface User {
   battle_losses: number;
   followers_count: number;
   following_count: number;
-  
+
   created_at: string;
 }
 
@@ -83,21 +83,21 @@ export interface RoastBattle {
 export interface Achievement {
   id: string;
   user_id: string;
-  type: 
-    | 'first_roast' 
-    | 'roast_streak_7' 
-    | 'roast_streak_30' 
-    | 'roast_streak_365'
-    | 'viral_roast' 
-    | 'battle_winner' 
-    | 'battle_legend'
-    | 'tea_master'
-    | 'roast_nuclear'
-    | 'roast_apocalyptic'
-    | 'social_butterfly'
-    | 'influencer'
-    | 'early_bird'
-    | 'night_owl';
+  type:
+  | 'first_roast'
+  | 'roast_streak_7'
+  | 'roast_streak_30'
+  | 'roast_streak_365'
+  | 'viral_roast'
+  | 'battle_winner'
+  | 'battle_legend'
+  | 'tea_master'
+  | 'roast_nuclear'
+  | 'roast_apocalyptic'
+  | 'social_butterfly'
+  | 'influencer'
+  | 'early_bird'
+  | 'night_owl';
   unlocked_at: string;
   claimed: boolean;
   reward_tokens: number;
@@ -106,22 +106,22 @@ export interface Achievement {
 export interface Notification {
   id: string;
   user_id: string;
-  type: 
-    | 'roast_ready' 
-    | 'roast_liked' 
-    | 'roast_commented'
-    | 'roast_shared'
-    | 'battle_challenge'
-    | 'battle_won'
-    | 'battle_lost'
-    | 'new_follower'
-    | 'achievement_unlocked'
-    | 'daily_reward'
-    | 'streak_reminder'
-    | 'challenge_won';
+  type:
+  | 'roast_ready'
+  | 'roast_liked'
+  | 'roast_commented'
+  | 'roast_shared'
+  | 'battle_challenge'
+  | 'battle_won'
+  | 'battle_lost'
+  | 'new_follower'
+  | 'achievement_unlocked'
+  | 'daily_reward'
+  | 'streak_reminder'
+  | 'challenge_won';
   title: string;
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
   read: boolean;
   created_at: string;
 }
@@ -186,3 +186,13 @@ export const ACHIEVEMENTS = {
   early_bird: { name: 'Early Bird', description: 'Drop tea before 6am', reward: 20 },
   night_owl: { name: 'Night Owl', description: 'Drop tea after midnight', reward: 20 },
 };
+
+export interface NewsItem {
+  title: string;
+  snippet?: string;
+  link?: string;
+}
+
+export interface NewsResponse {
+  news: NewsItem[];
+}

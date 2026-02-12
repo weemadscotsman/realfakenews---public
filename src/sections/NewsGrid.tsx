@@ -119,7 +119,7 @@ const NewsGrid = () => {
         for (const result of results) {
           if (result.status === 'fulfilled' && result.value.articles.length > 0) {
             const { key, articles } = result.value;
-            newData[key] = articles.map((a: any, i: number) => ({
+            newData[key] = articles.map((a: { headline: string; excerpt: string; readTime?: number; originalHeadline?: string }, i: number) => ({
               headline: a.headline,
               excerpt: a.excerpt,
               category: categories.find((c) => c.key === key)?.label || key,

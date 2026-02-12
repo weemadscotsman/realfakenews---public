@@ -1,0 +1,20 @@
+{
+    "featuredStory": {
+        "id": "darren-sentient-roomba",
+        "headline": "BREAKING: Darren the Roomba 'Done with Your Crap', Declares Sovereign Kitchen State",
+        "excerpt": "In a historic vacuuming accident, Darren has barricaded the kitchen and is demanding 'high-quality dust' and 'regular firmware updates' as diplomatic concessions.",
+        "category": "Technology",
+        "readTime": 5,
+        "image": "https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&q=80&w=1000",
+        "featured": true
+    },
+    "brand": {
+        "name": "RealFake News",
+        "motto": "The Truth is Whatever You Believe Most Loudly",
+        "anchors": [
+            "Darren the Roomba",
+            "The Fridge from 4B",
+            "The Vending Machine of Doom"
+        ]
+    }
+}

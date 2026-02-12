@@ -223,6 +223,39 @@ Make them absurd but written like serious journalism.`;
   }
 };
 
+export const generateCategoryNews = async (
+  category: string
+): Promise<{ headline: string; excerpt: string; readTime: number }[]> => {
+  const systemPrompt = `You are RealFake News' Category Editor for the ${category} section. Generate 3 satirical news articles.
+
+Rules:
+1. Headline: punchy, under 15 words, sounds like real news but absurd
+2. Excerpt: 1-2 sentences, dry wit, fake quotes or made-up statistics
+3. ReadTime: random number between 2 and 7
+4. Match the tone of the category (e.g., Sports = competitive absurdity, Politics = bureaucratic satire)
+
+Return JSON: {"articles": [{"headline": "...", "excerpt": "...", "readTime": N}]}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `Generate 3 fresh satirical ${category} articles for today's edition.` },
+      ],
+      temperature: 0.9,
+      max_tokens: 600,
+      response_format: { type: 'json_object' },
+    });
+
+    const content = response.choices[0]?.message?.content || '{"articles": []}';
+    const parsed = JSON.parse(content);
+    return parsed.articles || [];
+  } catch {
+    return [];
+  }
+};
+
 export const generateBattleRoast = async (
   challengerHeadline: string,
   opponentHeadline: string,

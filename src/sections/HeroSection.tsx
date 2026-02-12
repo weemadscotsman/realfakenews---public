@@ -3,6 +3,8 @@ import { ArrowRight, TrendingUp, MessageCircle, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
+import { Link } from 'react-router-dom';
+
 const HeroSection: React.FC = () => {
   const featuredArticles = [
     {
@@ -72,31 +74,36 @@ const HeroSection: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <article className="group cursor-pointer">
-            <div className="relative overflow-hidden rounded-lg mb-4">
-              <img
-                src={featuredArticles[0].image}
-                alt={featuredArticles[0].headline}
-                className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <span className="absolute top-4 left-4 section-header bg-white px-3">
-                {featuredArticles[0].category}
-              </span>
-            </div>
-            <h2 className="newspaper-headline text-3xl md:text-4xl mb-3 group-hover:text-red-600 transition-colors">
-              {featuredArticles[0].headline}
-            </h2>
-            <p className="article-body text-gray-600 mb-4">
-              {featuredArticles[0].excerpt}
-            </p>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>{featuredArticles[0].readTime} min read</span>
-              <span>•</span>
-              <span className="flex items-center gap-1 text-red-600 font-medium">
-                Read Full Story <ArrowRight size={14} />
-              </span>
-            </div>
-          </article>
+          <Link to={`/article/${encodeURIComponent(featuredArticles[0].headline)}`}>
+            <article className="group cursor-pointer">
+              <div className="relative overflow-hidden rounded-lg mb-4">
+                <img
+                  src={featuredArticles[0].image}
+                  alt={featuredArticles[0].headline}
+                  className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <span className="absolute top-4 left-4 section-header bg-white px-3">
+                  {featuredArticles[0].category}
+                </span>
+                <span className="absolute bottom-4 right-4 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase rounded shadow-lg animate-pulse">
+                  Read Full Story
+                </span>
+              </div>
+              <h2 className="newspaper-headline text-3xl md:text-4xl mb-3 group-hover:text-red-600 transition-colors">
+                {featuredArticles[0].headline}
+              </h2>
+              <p className="article-body text-gray-600 mb-4">
+                {featuredArticles[0].excerpt}
+              </p>
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <span>{featuredArticles[0].readTime} min read</span>
+                <span>•</span>
+                <span className="flex items-center gap-1 text-red-600 font-medium group-hover:underline">
+                  Continue Reading <ArrowRight size={14} />
+                </span>
+              </div>
+            </article>
+          </Link>
         </motion.div>
 
         {/* Side Column */}

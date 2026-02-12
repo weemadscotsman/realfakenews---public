@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AlertCircle, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateDailyNews } from '@/lib/openai-enhanced';
 
@@ -17,12 +18,14 @@ const FALLBACK_HEADLINES = [
 const TRENDING_TOPICS = [
   'technology', 'politics', 'celebrity gossip', 'social media',
   'AI takeover', 'crypto', 'climate', 'sports drama',
+  'human tragedy',
 ];
 
 const BreakingNewsBar = () => {
   const [headlines, setHeadlines] = useState<string[]>(FALLBACK_HEADLINES);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAiGenerated, setIsAiGenerated] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Fetch AI-generated headlines on mount
   useEffect(() => {
@@ -48,20 +51,59 @@ const BreakingNewsBar = () => {
     return () => { cancelled = true; };
   }, []);
 
-  // Rotate headlines every 5 seconds
+  // Rotate headlines every 8 seconds (slower for reading/listening)
   useEffect(() => {
+    if (isSpeaking) return; // Don't auto-rotate while speaking
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % headlines.length);
-    }, 5000);
+    }, 8000);
     return () => clearInterval(interval);
-  }, [headlines.length]);
+  }, [headlines.length, isSpeaking]); // Add isSpeaking dependency
+
+  const speakHeadline = () => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    setIsSpeaking(true);
+    const text = headlines[currentIndex];
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    // Attempt to find a British Female voice
+    const voices = window.speechSynthesis.getVoices();
+    const britishVoice = voices.find(v =>
+      (v.lang === 'en-GB' || v.name.includes('UK') || v.name.includes('British')) &&
+      (v.name.includes('Female') || v.name.includes('Hazel') || v.name.includes('Zira')) // Zira is US but robotic female, Hazel is UK female
+    ) || voices.find(v => v.lang === 'en-GB') || voices[0];
+
+    if (britishVoice) utterance.voice = britishVoice;
+    utterance.pitch = 1.0;
+    utterance.rate = 0.9; // Slightly slower for news delivery
+
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   return (
-    <div className="bg-black text-white py-2 overflow-hidden">
+    <div className="bg-black text-white py-2 overflow-hidden border-b border-red-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
+          <motion.button
+            onClick={speakHeadline}
+            className={`p-1 rounded hover:bg-white/10 transition-colors ${isSpeaking ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}
+            title="Read Aloud (British Narrator)"
+            whileTap={{ scale: 0.9 }}
+          >
+            {isSpeaking ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          </motion.button>
+
           <motion.span
-            className="breaking-pulse px-2 py-0.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
+            className="breaking-pulse px-2 py-0.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1 shrink-0 text-red-500"
             animate={{ opacity: [1, 0.6, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
@@ -70,26 +112,31 @@ const BreakingNewsBar = () => {
           </motion.span>
           <div className="overflow-hidden flex-1 relative h-5">
             <AnimatePresence mode="wait">
-              <motion.p
+              <motion.div
                 key={currentIndex}
-                className="text-sm truncate absolute inset-0"
+                className="absolute inset-0"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={{ duration: 0.4, ease: 'easeInOut' }}
               >
-                {headlines[currentIndex]}
-              </motion.p>
+                <Link
+                  to={`/article/${encodeURIComponent(headlines[currentIndex])}`}
+                  className="text-sm truncate hover:text-red-400 transition-colors block font-mono tracking-tight"
+                >
+                  {headlines[currentIndex]}
+                </Link>
+              </motion.div>
             </AnimatePresence>
           </div>
           {isAiGenerated && (
             <motion.span
-              className="text-[10px] text-gray-500 uppercase tracking-wider shrink-0 hidden sm:block"
+              className="text-[10px] text-gray-600 uppercase tracking-wider shrink-0 hidden sm:block"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
             >
-              AI Generated
+              AI Live
             </motion.span>
           )}
         </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, Clock, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { generateCategoryNews } from '@/lib/openai-enhanced';
+import { Link } from 'react-router-dom';
 
 interface Article {
   headline: string;
@@ -10,27 +10,29 @@ interface Article {
   readTime: number;
   image?: string;
   featured?: boolean;
+  originalHeadline?: string;
 }
 
-// Fallback content — used until AI generates fresh articles
+const CATEGORY_IMAGES: Record<string, string> = {
+  politics: 'https://images.unsplash.com/photo-1541872703-74c5963631df?w=600&q=80',
+  science: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600&q=80',
+  entertainment: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80',
+  sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&q=80',
+};
+
 const fallbackData: Record<string, Article[]> = {
   politics: [
     {
       headline: "Politician Promises to 'Think About' Doing Something, Eventually",
       excerpt: "In a groundbreaking display of almost-action, an elected official has announced they will 'seriously consider' addressing the issues they campaigned on.",
       category: "Politics", readTime: 5,
-      image: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&q=80",
+      image: "https://images.unsplash.com/photo-1541872703-74c5963631df?w=600&q=80",
       featured: true,
     },
     {
       headline: "New Law Requires Politicians to Tell Truth on Tuesdays",
-      excerpt: "Revolutionary legislation aims to combat misinformation by mandating honesty for one day per week.",
+      excerpt: "Revolutionary legislation aims to combat misinformation by mandating honesty for one day per week. Enforcement remains questionable.",
       category: "Politics", readTime: 3,
-    },
-    {
-      headline: "Opposition Party Outraged at Thing They Supported Last Year",
-      excerpt: "In a stunning display of consistency, political rivals have discovered principles they apparently misplaced 12 months ago.",
-      category: "Politics", readTime: 4,
     },
   ],
   science: [
@@ -65,11 +67,6 @@ const fallbackData: Record<string, Article[]> = {
       excerpt: "After 47 days in isolation, participant emerges with concerning lack of awareness about actual world events.",
       category: "Entertainment", readTime: 4,
     },
-    {
-      headline: "Streaming Service Launches New Show You'll Never Finish",
-      excerpt: "8-episode series joins growing collection of content you added to your list with genuine intentions.",
-      category: "Entertainment", readTime: 2,
-    },
   ],
   sports: [
     {
@@ -84,59 +81,7 @@ const fallbackData: Record<string, Article[]> = {
       excerpt: "Consistent pattern of credit allocation raises theological questions about divine interest in competitive sports.",
       category: "Sports", readTime: 3,
     },
-    {
-      headline: "Coach Yells at Players, Somehow Still Employed",
-      excerpt: "Despite decades of evidence suggesting calm instruction works better, traditional approach persists.",
-      category: "Sports", readTime: 5,
-    },
   ],
-  opinion: [
-    {
-      headline: "Opinion: My Uninformed Take is Definitely Correct",
-      excerpt: "After spending 20 minutes on Wikipedia and watching three YouTube videos, I am now qualified to speak authoritatively on complex geopolitical issues.",
-      category: "Opinion", readTime: 7,
-      image: "https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?w=600&q=80",
-      featured: true,
-    },
-    {
-      headline: "Column: Things Were Better When I Was Younger",
-      excerpt: "Nostalgia-filtered memories suggest past was objectively superior, despite all available data.",
-      category: "Opinion", readTime: 5,
-    },
-    {
-      headline: "Think Piece: Why This Thing Everyone Likes is Actually Bad",
-      excerpt: "Contrarian take designed to generate engagement arrives precisely on schedule.",
-      category: "Opinion", readTime: 6,
-    },
-  ],
-  sponsored: [
-    {
-      headline: "Sponsored: This Product Will Fix Everything Wrong With Your Life",
-      excerpt: "Revolutionary new item promises to solve problems you didn't know you had. Limited time offer: pay more for the illusion of exclusivity.",
-      category: "Sponsored", readTime: 2,
-      image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80",
-      featured: true,
-    },
-    {
-      headline: "Ad: Buy This Thing You Don't Need",
-      excerpt: "Our algorithm detected you have money. We want it. Here's something shiny.",
-      category: "Sponsored", readTime: 1,
-    },
-    {
-      headline: "Partnership: Influencer Genuinely Loves Product (They Were Paid To Love)",
-      excerpt: "Authentic enthusiasm indistinguishable from contractual obligation.",
-      category: "Sponsored", readTime: 2,
-    },
-  ],
-};
-
-const CATEGORY_IMAGES: Record<string, string> = {
-  politics: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&q=80",
-  science: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600&q=80",
-  entertainment: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80",
-  sports: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&q=80",
-  opinion: "https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?w=600&q=80",
-  sponsored: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80",
 };
 
 const categories = [
@@ -144,135 +89,171 @@ const categories = [
   { key: 'science', label: 'Science' },
   { key: 'entertainment', label: 'Entertainment' },
   { key: 'sports', label: 'Sports' },
-  { key: 'opinion', label: 'Opinion' },
-  { key: 'sponsored', label: 'Sponsored' },
 ];
 
 const NewsGrid = () => {
   const [newsData, setNewsData] = useState<Record<string, Article[]>>(fallbackData);
-  const [aiCategories, setAiCategories] = useState<Set<string>>(new Set());
+  const [isLive, setIsLive] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
-    const fetchAllCategories = async () => {
-      // Fetch AI articles for each category in parallel
-      const results = await Promise.allSettled(
-        categories.map(async ({ key, label }) => {
-          const articles = await generateCategoryNews(label);
-          return { key, articles };
-        })
-      );
+    const fetchLiveNews = async () => {
+      try {
+        const results = await Promise.allSettled(
+          categories.map(async ({ key }) => {
+            // Use Netlify Function for live news
+            const res = await fetch(`/.netlify/functions/fetch-live-news?category=${key}`);
+            if (!res.ok) throw new Error('Function failed');
+            const data = await res.json();
+            return { key, articles: data.news || [] };
+          })
+        );
 
-      if (cancelled) return;
+        if (cancelled) return;
 
-      const newData = { ...fallbackData };
-      const newAiSet = new Set<string>();
+        const newData = { ...fallbackData };
+        let hasLiveContent = false;
 
-      for (const result of results) {
-        if (result.status === 'fulfilled' && result.value.articles.length > 0) {
-          const { key, articles } = result.value;
-          newAiSet.add(key);
-          newData[key] = articles.map((a, i) => ({
-            headline: a.headline,
-            excerpt: a.excerpt,
-            category: categories.find((c) => c.key === key)?.label || key,
-            readTime: a.readTime || 3,
-            image: i === 0 ? CATEGORY_IMAGES[key] : undefined,
-            featured: i === 0,
-          }));
+        for (const result of results) {
+          if (result.status === 'fulfilled' && result.value.articles.length > 0) {
+            const { key, articles } = result.value;
+            newData[key] = articles.map((a: any, i: number) => ({
+              headline: a.headline,
+              excerpt: a.excerpt,
+              category: categories.find((c) => c.key === key)?.label || key,
+              readTime: a.readTime || 3,
+              image: i === 0 ? CATEGORY_IMAGES[key] : undefined,
+              featured: i === 0,
+              originalHeadline: a.originalHeadline,
+            }));
+            hasLiveContent = true;
+          }
         }
-      }
 
-      setNewsData(newData);
-      setAiCategories(newAiSet);
-      setLoading(false);
+        setNewsData(newData);
+        setIsLive(hasLiveContent);
+      } catch (e) {
+        console.error("Live news fetch failed, using fallback satire:", e);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchAllCategories();
+    fetchLiveNews();
     return () => { cancelled = true; };
   }, []);
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <motion.div
-        className="text-center mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="newspaper-headline text-4xl mb-4">Latest Fabrications</h2>
-        <p className="text-gray-600">
-          {loading ? 'AI editors are fabricating today\'s stories...' : 'Carefully curated nonsense for your consumption'}
-        </p>
-      </motion.div>
+    <section className="py-12 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-serif font-bold text-gray-900 border-l-4 border-red-600 pl-4">
+            Latest Fabrications
+          </h2>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            {isLive ? (
+              <span className="flex items-center gap-1 text-green-600 font-bold animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                LIVE WIRE
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <Clock size={16} />
+                Updated: Just now
+              </span>
+            )}
+          </div>
+        </div>
 
-      <div className="space-y-16">
-        {categories.map(({ key, label }, catIndex) => (
-          <motion.div
-            key={key}
-            id={key}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: catIndex * 0.1 }}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <h3 className="section-header text-lg">{label}</h3>
-                {aiCategories.has(key) && (
-                  <span className="inline-flex items-center gap-1 text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full font-medium">
-                    <Sparkles size={10} />
-                    AI Fresh
-                  </span>
-                )}
-              </div>
-              <button className="text-sm text-gray-500 hover:text-red-600 flex items-center gap-1 transition-colors">
-                View All <ArrowRight size={14} />
-              </button>
-            </div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-64 bg-gray-200 animate-pulse rounded-lg"></div>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {categories.map((category) => (
+              <div key={category.key}>
+                <div className="flex items-center justify-between mb-4 border-b border-gray-200 pb-2">
+                  <h3 className="text-xl font-bold uppercase tracking-wider text-gray-800">
+                    {category.label}
+                  </h3>
+                  <button className="text-red-600 text-sm font-bold hover:text-red-700 flex items-center gap-1">
+                    View All <ArrowRight size={16} />
+                  </button>
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {newsData[key].map((article, index) => (
-                <motion.article
-                  key={index}
-                  className={`article-card group cursor-pointer ${article.featured ? 'md:col-span-2 md:row-span-2' : ''
-                    }`}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: catIndex * 0.1 + index * 0.05 }}
-                  whileHover={{ y: -2 }}
+                <motion.div
+                  variants={container}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
-                  {article.image && (
-                    <div className="relative overflow-hidden rounded-lg mb-4">
-                      <img
-                        src={article.image}
-                        alt={article.headline}
-                        className={`w-full object-cover transition-transform duration-500 group-hover:scale-105 ${article.featured ? 'h-64 md:h-80' : 'h-48'
-                          }`}
-                      />
-                    </div>
-                  )}
-
-                  <h4 className={`article-title font-bold mb-2 group-hover:text-red-600 transition-colors ${article.featured ? 'text-2xl md:text-3xl' : 'text-lg'
-                    }`}>
-                    {article.headline}
-                  </h4>
-
-                  <p className={`text-gray-600 mb-3 ${article.featured ? 'line-clamp-3' : 'line-clamp-2 text-sm'
-                    }`}>
-                    {article.excerpt}
-                  </p>
-
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Clock size={14} />
-                    <span>{article.readTime} min read</span>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
-          </motion.div>
-        ))}
+                  {newsData[category.key]?.map((article, index) => (
+                    <motion.div
+                      key={index}
+                      variants={item}
+                      className={`group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100 flex flex-col ${article.featured ? 'md:col-span-2 lg:col-span-1 lg:row-span-2' : ''
+                        }`}
+                    >
+                      <Link to={`/article/${encodeURIComponent(article.headline)}`} className="flex-1 flex flex-col group">
+                        {article.image && (
+                          <div className="relative h-48 overflow-hidden">
+                            <img
+                              src={article.image}
+                              alt={article.headline}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
+                              BREAKING
+                            </div>
+                          </div>
+                        )}
+                        <div className="p-5 flex-1 flex flex-col">
+                          <h4 className={`font-serif font-bold text-gray-900 mb-2 group-hover:text-red-700 transition-colors ${article.featured ? 'text-2xl' : 'text-lg'
+                            }`}>
+                            {article.headline}
+                          </h4>
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
+                            {article.excerpt}
+                          </p>
+                          <div className="flex items-center justify-between text-xs text-gray-400 mt-auto">
+                            <span className="flex items-center gap-1">
+                              <Sparkles size={12} className="text-yellow-500" />
+                              {article.readTime} min read
+                            </span>
+                            {isLive && (
+                              <span className="bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">
+                                Fresh
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

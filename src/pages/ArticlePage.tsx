@@ -1,0 +1,172 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Share2, Printer, Flag, MessageSquare, Clock, User, Award } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import OpenAI from 'openai';
+
+interface ArticleState {
+    headline: string;
+    content: string;
+    category: string;
+    author: string;
+    date: string;
+    readTime: number;
+}
+
+const ArticlePage: React.FC = () => {
+    const { slug } = useParams<{ slug: string }>();
+    // Decode slug back to headline if needed, or use ID lookup if we had a DB
+    const initialHeadline = decodeURIComponent(slug || '').replace(/-/g, ' ');
+
+    const [article, setArticle] = useState<ArticleState | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const generateArticle = async () => {
+            // In a real app we'd fetch by ID. Here we generate satire based on the headline slug.
+            try {
+                const openai = new OpenAI({
+                    apiKey: import.meta.env.VITE_OPENAI_API_KEY, // Fallback for client-side demo if server func fails
+                    dangerouslyAllowBrowser: true,
+                });
+
+                const systemPrompt = `You are a journalist for RealFake News. Write a full satirical article based on this headline: "${initialHeadline}".
+        
+        Tone: The Onion / Daily Mash. 
+        Structure: 
+        - Lede (punchy opening)
+        - Body (3-4 paragraphs of escalating absurdity)
+        - Fake Expert Quotes
+        - Conclusion (melancholy or chaotic)
+        
+        Return JSON: { "headline": "...", "content": "HTML string with <p> tags...", "category": "...", "author": "Fake Name", "readTime": N }`;
+
+                const response = await openai.chat.completions.create({
+                    model: 'gpt-4o-mini',
+                    messages: [{ role: 'system', content: systemPrompt }],
+                    response_format: { type: 'json_object' },
+                });
+
+                const data = JSON.parse(response.choices[0].message.content || '{}');
+                setArticle({
+                    ...data,
+                    date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+                });
+            } catch (error) {
+                console.error("Failed to generate article:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        generateArticle();
+    }, [initialHeadline]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center text-center px-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mb-4"></div>
+                <h2 className="text-xl font-serif">Fabricating facts...</h2>
+                <p className="text-gray-500">Our AI journalists are currently hallucinating sources.</p>
+            </div>
+        );
+    }
+
+    if (!article) return <div className="pt-24 text-center">Article not found (or censored by the Deep State).</div>;
+
+    return (
+        <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+            <Link to="/" className="inline-flex items-center text-red-600 hover:text-red-700 mb-6 transition-colors font-medium">
+                <ArrowLeft size={16} className="mr-1" /> Back to Reality
+            </Link>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <div className="flex items-center gap-2 mb-4 text-sm">
+                    <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-wide text-xs">
+                        {article.category || 'Breaking'}
+                    </span>
+                    <span className="text-gray-500">•</span>
+                    <span className="text-gray-500">{article.date}</span>
+                </div>
+
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif leading-tight mb-6 text-gray-900 border-b-4 border-black pb-6">
+                    {article.headline}
+                </h1>
+
+                <div className="flex items-center justify-between mb-8 pb-8 border-b border-gray-200">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                            <User size={20} className="text-gray-500" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-sm text-gray-900">{article.author}</div>
+                            <div className="text-xs text-gray-500 flex items-center gap-1">
+                                <Award size={10} /> Certified Misinformant
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                            <Share2 size={18} />
+                        </button>
+                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                            <Printer size={18} />
+                        </button>
+                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                            <Flag size={18} />
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    className="prose prose-lg prose-red max-w-none mb-12 font-serif text-gray-800 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: article.content }}
+                />
+
+                {/* Fake Engagement Section */}
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-12">
+                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                        <MessageSquare size={18} />
+                        Reader Reactions (142)
+                    </h3>
+                    <div className="space-y-4">
+                        <div className="flex gap-3">
+                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs shrink-0">
+                                JD
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-bold text-sm">JohnDoe42</span>
+                                    <span className="text-xs text-gray-400">2 mins ago</span>
+                                </div>
+                                <p className="text-sm text-gray-600">This is obviously fake but also painfully true. I feel attacked.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs shrink-0">
+                                AB
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-bold text-sm">AngryBot_v2</span>
+                                    <span className="text-xs text-gray-400">5 mins ago</span>
+                                </div>
+                                <p className="text-sm text-gray-600">FAKE NEWS! The deep state roomba agenda is real!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <Button variant="outline" className="w-full mt-4">
+                        Load More Outrage
+                    </Button>
+                </div>
+            </motion.div>
+        </article>
+    );
+};
+
+export default ArticlePage;

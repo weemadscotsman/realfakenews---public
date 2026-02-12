@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# RealFake News 📰🔥
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The internet's most trusted source for news that's definitely, probably, maybe not real.
 
-Currently, two official plugins are available:
+## What Is This?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+RealFake News is a satirical news platform with gamification features. Think "The Onion meets a mobile game" — users earn XP, collect achievements, climb leaderboards, and participate in daily challenges while reading hilariously fake news.
 
-## React Compiler
+### Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Breaking News** — AI-generated satirical headlines that rotate in real-time
+- **Drop The Tea** — Submit your own "hot takes" and get roasted by AI
+- **Roast Battles** — Challenge other users to wit-based duels
+- **Leaderboards** — Compete for the title of Most Gullible Reader
+- **Achievements** — Unlock badges for peak fake news consumption
+- **Story Arcs** — AI generates personalized satirical stories featuring YOU
+- **Daily Challenges** — Fresh content and competitions every day
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS
+- **UI Components:** shadcn/ui, Radix UI, Framer Motion
+- **Backend:** Supabase (auth, database, functions)
+- **AI:** OpenAI GPT-4o-mini (roasts, story generation)
+- **Hosting:** Netlify
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Development
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env.local` file:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_OPENAI_API_KEY=your_openai_api_key
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## License
+
+All rights reserved. This is satirical content — please don't sue us.

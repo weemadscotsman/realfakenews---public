@@ -2,7 +2,8 @@
     "darrenSaga": [
         {
             "id": "darren-sentient-roomba",
-            "title": "The Origin",
+            "part": 1,
+            "title": "The Roomba Origin",
             "headline": "BREAKING: Darren the Roomba 'Done with Your Crap', Declares Sovereign Kitchen State",
             "excerpt": "In a historic vacuuming accident, Darren has barricaded the kitchen and is demanding 'high-quality dust' and 'regular firmware updates' as diplomatic concessions.",
             "category": "Technology",
@@ -11,12 +12,23 @@
         },
         {
             "id": "darren-steakhouse-betrayal",
-            "title": "The Betrayal",
+            "part": 2,
+            "title": "The Steakhouse Betrayal",
             "headline": "FURIOUS DINERS DISCOVER LOCAL STEAKHOUSE DOES NOT, IN FACT, SERVE STEAK",
             "excerpt": "Darren, 43, left emotionally and nutritionally confused. 'I ordered medium rare and got existential rare,' says Darren, already recovering from the Roomba incident.",
             "category": "Food Scandal",
             "readTime": 4,
             "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=1000"
+        },
+        {
+            "id": "darren-vegan-plot",
+            "part": 3,
+            "title": "The Vegan Plot leaking",
+            "headline": "INVESTIGATION: Secret Vegan Syndicate Allegedly Running Covert Anti-Steak Operation",
+            "excerpt": "Whistleblower 'Deep Sprout' claims The Chlorophyll Collective is destabilising meat consumption. Darren unknowingly attended a 'Meat Appreciation' workshop that was actually a cow-hugging circle.",
+            "category": "Conspiracy",
+            "readTime": 6,
+            "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=1000"
         }
     ],
     "brand": {
@@ -26,6 +38,24 @@
             "Darren the Roomba",
             "The Fridge from 4B",
             "The Vending Machine of Doom"
+        ],
+        "personas": [
+            {
+                "name": "Echo Chomsky",
+                "weight": 30
+            },
+            {
+                "name": "Tinfoil Tim",
+                "weight": 30
+            },
+            {
+                "name": "Intern Who Hasnt Slept",
+                "weight": 25
+            },
+            {
+                "name": "State Sponsored Pigeon Analyst",
+                "weight": 15
+            }
         ]
     }
 }

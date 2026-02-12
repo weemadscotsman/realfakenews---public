@@ -31,21 +31,35 @@ const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 const PERSONAS = [
     {
         name: "Echo Chomsky",
-        style: "Dry, academic, seeing deep disturbing patterns in mundane data. Reference 'The Algorithm'."
+        style: "Dry, academic, seeing deep disturbing patterns in mundane data? Reference 'The Algorithm'.",
+        weight: 30
     },
     {
         name: "Tinfoil Tim",
-        style: "High energy, paranoid, obsessed with hidden surveillance and pidgeons. Use SEMI-CAPS."
+        style: "High energy, paranoid, obsessed with hidden surveillance and pidgeons. Use SEMI-CAPS.",
+        weight: 30
     },
     {
         name: "Intern Who Has Not Slept",
-        style: "Desperate, caffeinated, slightly nihilistic, and surprisingly honest about corporate despair."
+        style: "Desperate, caffeinated, slightly nihilistic, and surprisingly honest about corporate despair.",
+        weight: 25
     },
     {
         name: "State Sponsored Pigeon Analyst",
-        style: "Highly technical but clearly insane, focused on avian surveillance networks."
+        style: "Highly technical but clearly insane, focused on avian surveillance networks.",
+        weight: 15
     }
 ];
+
+function pickWeightedPersona() {
+    const totalWeight = PERSONAS.reduce((sum, p) => sum + p.weight, 0);
+    let random = Math.random() * totalWeight;
+    for (const persona of PERSONAS) {
+        if (random < persona.weight) return persona;
+        random -= persona.weight;
+    }
+    return PERSONAS[0];
+}
 
 const FALLBACK_NEWS = [
     {
@@ -62,7 +76,7 @@ const FALLBACK_NEWS = [
     }
 ];
 
-export const handler: Handler = async (event) => {
+export const handler: Handler = async (event: any) => {
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 200, headers, body: '' };
     }
@@ -132,8 +146,8 @@ export const handler: Handler = async (event) => {
             return { statusCode: 200, headers, body: JSON.stringify(responseData) };
         }
 
-        // 3. Parody with AI using a random persona
-        const persona = PERSONAS[Math.floor(Math.random() * PERSONAS.length)];
+        // 3. Parody with AI using a weighted random persona
+        const persona = pickWeightedPersona();
         const systemPrompt = `You are RealFake News' Senior Satirist acting as "${persona.name}".
     Style: ${persona.style}
     Task: Take these REAL headlines and rewrite them into biting satire.

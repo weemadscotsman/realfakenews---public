@@ -6,12 +6,12 @@ import { Link } from 'react-router-dom';
 import narrative from '@/config/narrative.json';
 
 const HeroSection: React.FC = () => {
-  const [liveStories, setLiveStories] = useState<{ headline: string; excerpt: string; category: string; readTime: number; image?: string }[]>([]);
+  const [liveStories, setLiveStories] = useState<{ headline: string; excerpt: string; category: string; readTime: number; image?: string; id?: string }[]>([]);
   const [isLive, setIsLive] = useState(false);
 
   const saga = narrative.darrenSaga;
-  const pinnedStory = saga[0]; // The Origin remains #1
-  const latestSagaPart = saga[saga.length - 1]; // The latest betrayal
+  const pinnedOrigin = saga[0]; // Part 1: The Origin
+  const latestSagaPart = saga[saga.length - 1]; // Current Latest Part
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -20,7 +20,7 @@ const HeroSection: React.FC = () => {
         if (!response.ok) throw new Error('Failed to fetch live news');
         const data = await response.json();
         if (data.news && data.news.length > 0) {
-          // Filter out any headlines that match our saga stories
+          // Filter out any headlines that match our saga stories to avoid duplicates
           const sagaHeadlines = saga.map(s => s.headline);
           const filtered = data.news.filter((s: { headline: string }) => !sagaHeadlines.includes(s.headline));
           setLiveStories(filtered);
@@ -36,11 +36,12 @@ const HeroSection: React.FC = () => {
   }, [saga]);
 
   // Derived state for rendering
-  const mainFeaturedArticle = pinnedStory;
+  const mainFeaturedArticle = pinnedOrigin;
 
-  // Slot 2: Use the latest saga part if it's different from the origin, otherwise live story
-  const secondaryFeaturedArticle = (latestSagaPart.id !== pinnedStory.id
-    ? { ...latestSagaPart, isSaga: true }
+  // Slot 2: Use the latest saga part if it's different from the origin, otherwise show the next saga part or live story
+  // This helps "lead into it" as the user requested.
+  const secondaryFeaturedArticle = (latestSagaPart.id !== pinnedOrigin.id
+    ? { ...latestSagaPart, isSaga: true, sagaPart: latestSagaPart.part }
     : (liveStories[0] || {
       headline: "Science Confirms: Your Opinion is Wrong and Here's Why",
       excerpt: "Revolutionary study finds that people who disagree with you are statistically more likely to be misinformed.",
@@ -49,9 +50,10 @@ const HeroSection: React.FC = () => {
       image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
       id: 'fallback-science',
       isSaga: false
-    })) as { headline: string; excerpt: string; category: string; readTime: number; image?: string; id?: string; isSaga?: boolean };
+    })) as { headline: string; excerpt: string; category: string; readTime: number; image?: string; id?: string; isSaga?: boolean; sagaPart?: number };
 
   // Quick Links: Remainder of live stories
+  // If we have more than 2 parts in the saga, we could show Part 2 in the side links too
   const sideStories = liveStories.length > 0
     ? liveStories.slice(secondaryFeaturedArticle.id === latestSagaPart.id ? 0 : 1, 5)
     : [

@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, Printer, Flag, MessageSquare, User, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import OpenAI from 'openai';
 
 interface ArticleState {
     headline: string;
@@ -23,36 +22,12 @@ const ArticlePage: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const generateArticle = async () => {
-            // In a real app we'd fetch by ID. Here we generate satire based on the headline slug.
+        const fetchArticle = async () => {
             try {
-                const openai = new OpenAI({
-                    apiKey: import.meta.env.VITE_OPENAI_API_KEY, // Fallback for client-side demo if server func fails
-                    dangerouslyAllowBrowser: true,
-                });
-
-                const systemPrompt = `You are a journalist for RealFake News. Write a full satirical article based on this headline: "${initialHeadline}".
-        
-        Tone: The Onion / Daily Mash. 
-        Structure: 
-        - Lede (punchy opening)
-        - Body (3-4 paragraphs of escalating absurdity)
-        - Fake Expert Quotes
-        - Conclusion (melancholy or chaotic)
-        
-        Return JSON: { "headline": "...", "content": "HTML string with <p> tags...", "category": "...", "author": "Fake Name", "readTime": N }`;
-
-                const response = await openai.chat.completions.create({
-                    model: 'gpt-4o-mini',
-                    messages: [{ role: 'system', content: systemPrompt }],
-                    response_format: { type: 'json_object' },
-                });
-
-                const data = JSON.parse(response.choices[0].message.content || '{}');
-                setArticle({
-                    ...data,
-                    date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-                });
+                const response = await fetch(`/.netlify/functions/generate-article?headline=${encodeURIComponent(initialHeadline)}`);
+                if (!response.ok) throw new Error('Failed to fetch article');
+                const data = await response.json();
+                setArticle(data);
             } catch (error) {
                 console.error("Failed to generate article:", error);
             } finally {
@@ -60,7 +35,7 @@ const ArticlePage: React.FC = () => {
             }
         };
 
-        generateArticle();
+        fetchArticle();
     }, [initialHeadline]);
 
     if (loading) {
@@ -111,13 +86,13 @@ const ArticlePage: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" title="Share Article">
                             <Share2 size={18} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" title="Print Article">
                             <Printer size={18} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
+                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" title="Report Article">
                             <Flag size={18} />
                         </button>
                     </div>

@@ -256,6 +256,100 @@ Return JSON: {"articles": [{"headline": "...", "excerpt": "...", "readTime": N}]
   }
 };
 
+// ==================== REAL NEWS PARODY ENGINE ====================
+
+export interface ParodiedHeadline {
+  original: string;
+  parody: string;
+  excerpt: string;
+  absurdityLevel: number; // 1-10
+}
+
+export const parodyRealNews = async (
+  realHeadlines: string[]
+): Promise<ParodiedHeadline[]> => {
+  const systemPrompt = `You are RealFake News' Reality Distortion Engine. Given REAL news headlines, create satirical parody versions.
+
+Rules:
+1. Each parody must clearly reference the real headline but twist it into absurdity
+2. The humor should come from exaggeration, not misinformation
+3. Include a brief satirical excerpt (1-2 sentences)
+4. Rate the absurdity level 1-10 (10 = maximum chaos)
+5. Keep the parody headline under 20 words
+
+Return JSON: {"parodies": [{"original": "...", "parody": "...", "excerpt": "...", "absurdityLevel": N}]}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `Parody these real headlines:\n${realHeadlines.map((h, i) => `${i + 1}. ${h}`).join('\n')}` },
+      ],
+      temperature: 0.95,
+      max_tokens: 1000,
+      response_format: { type: 'json_object' },
+    });
+
+    const content = response.choices[0]?.message?.content || '{"parodies": []}';
+    const parsed = JSON.parse(content);
+    return parsed.parodies || [];
+  } catch {
+    return [];
+  }
+};
+
+// ==================== FAKE BETTING ENGINE ====================
+
+export interface FakeBet {
+  id: string;
+  question: string;
+  options: { label: string; odds: string; percentage: number }[];
+  category: string;
+  closesIn: string;
+  totalPool: string;
+}
+
+export const generateFakeBets = async (
+  realHeadlines?: string[]
+): Promise<FakeBet[]> => {
+  const context = realHeadlines?.length
+    ? `Based on these real trending stories, create satirical prediction markets:\n${realHeadlines.join('\n')}`
+    : 'Generate satirical prediction markets about current absurd trends in politics, tech, celebrity culture, and internet drama.';
+
+  const systemPrompt = `You are RealFake News' Prediction Market Generator. Create hilariously fake betting markets.
+
+Rules:
+1. Each bet must have a funny question and 2-4 absurd answer options
+2. Include fake odds for each option (like "3:1" or "100:1")
+3. Include a fake percentage of bettors for each option (must sum to ~100)
+4. Categories: Politics, Tech, Celebrity, Sports, Internet, Science
+5. "closesIn" should be a funny time like "3 hours" or "when pigs fly" or "next Tuesday"
+6. "totalPool" should be a fake token amount like "42,069🪙" or "1,337🪙"
+7. Generate 6 betting markets
+
+Return JSON: {"bets": [{"id": "bet-1", "question": "...", "options": [{"label": "...", "odds": "...", "percentage": N}], "category": "...", "closesIn": "...", "totalPool": "..."}]}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: context },
+      ],
+      temperature: 0.95,
+      max_tokens: 1200,
+      response_format: { type: 'json_object' },
+    });
+
+    const content = response.choices[0]?.message?.content || '{"bets": []}';
+    const parsed = JSON.parse(content);
+    return parsed.bets || [];
+  } catch {
+    return [];
+  }
+};
+
 export const generateBattleRoast = async (
   challengerHeadline: string,
   opponentHeadline: string,

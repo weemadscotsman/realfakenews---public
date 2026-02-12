@@ -15,6 +15,7 @@ RealFake News is a satirical news platform with gamification features. Think "Th
 - **Achievements** — Unlock badges for peak fake news consumption
 - **Story Arcs** — AI generates personalized satirical stories featuring YOU
 - **Daily Challenges** — Fresh content and competitions every day
+- **Fake Bets** — AI-generated prediction markets with utterly meaningless fake wagers
 
 ## Tech Stack
 

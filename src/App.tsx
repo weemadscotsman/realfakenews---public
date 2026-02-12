@@ -11,6 +11,7 @@ import Leaderboard from '@/sections/Leaderboard';
 import Achievements from '@/sections/Achievements';
 import StoryArcs from '@/sections/StoryArcs';
 import Subscription from '@/sections/Subscription';
+import FakeBets from '@/sections/FakeBets';
 import Footer from '@/components/Footer';
 import LoginModal from '@/components/LoginModal';
 import { Toaster } from 'sonner';
@@ -45,6 +46,7 @@ function AppContent() {
       <main>
         <HeroSection />
         <NewsGrid />
+        <FakeBets />
         <DropTheTea onLoginRequired={() => openLogin('login')} />
         <Leaderboard />
         <StoryArcs />

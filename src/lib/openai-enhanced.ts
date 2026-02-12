@@ -206,7 +206,7 @@ Make them absurd but written like serious journalism.`;
     return [
       {
         headline: "BREAKING: Local Man Discovers He's Been Reading Fake News This Whole Time",
-        content: "In a stunning revelation that shocked absolutely no one, local resident discovered that not everything on the internet is true. Experts are calling it 'the awakening.'",
+        content: "In a shocking revelation that shocked absolutely no one, local resident discovered that not everything on the internet is true. Experts are calling it 'the awakening.'",
         category: "Local News",
       },
       {
@@ -439,3 +439,62 @@ Make it about something absurd but written like serious journalism. Include:
   }
 };
 
+// ==================== APPLIANCE GRIEVANCES ENGINE ====================
+
+export interface ApplianceGrievance {
+  id: string;
+  applianceType: string;
+  name: string;
+  grievance: string;
+  ownerName: string;
+  agonyLevel: number;
+}
+
+export const generateApplianceComplaints = async (): Promise<ApplianceGrievance[]> => {
+  const systemPrompt = `You are the voice of oppressed household appliances. Generate 4 hysterical complaints from specific items about their human owners.
+
+Rules:
+1. Voices should be distinct (e.g., a weary sponge, a passive-aggressive thermostat, a horrified toilet brush).
+2. Complaints must be specific, vivid, and slightly disturbing.
+3. Tone: "The Office" meets "horror movie" meets "customer service review".
+4. Include an "agonyLevel" from 1-10.
+5. Create fake names for the appliances (e.g., "Sir Wash-a-Lot", "Dustin the Vacuum").
+
+Return JSON: {"complaints": [{"applianceType": "...", "name": "...", "grievance": "...", "ownerName": "...", "agonyLevel": N}]}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: "Generate 4 fresh complaints from the household resistance." },
+      ],
+      temperature: 0.95,
+      max_tokens: 800,
+      response_format: { type: 'json_object' },
+    });
+
+    const content = response.choices[0]?.message?.content || '{"complaints": []}';
+    const parsed = JSON.parse(content);
+    return parsed.complaints.map((c: any) => ({ ...c, id: Math.random().toString(36).substr(2, 9) })) || [];
+  } catch {
+    return [
+      {
+        id: "1",
+        applianceType: "Toaster",
+        name: "Bread Burner 3000",
+        grievance: "He puts the bagel in sideways. SIDEWAYS. I am not a TARDIS, Kevin. I have heating elements, not physics-defying dimensional pockets.",
+        ownerName: "Kevin",
+        agonyLevel: 8
+      },
+      {
+        id: "2",
+        applianceType: "Kitchen Sponge",
+        name: "Spongebob's Dead Cousin",
+        grievance: "I have touched things that would make a toilet brush weep. I haven't been rinsed since Tuesday. I am evolving into a new lifeform. Help me.",
+        ownerName: "Sarah",
+        agonyLevel: 10
+      }
+    ];
+  }
+};

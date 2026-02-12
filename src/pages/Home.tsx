@@ -12,11 +12,14 @@ interface HomeProps {
     onLoginClick: (mode?: 'login' | 'signup') => void;
 }
 
+import ApplianceGrievances from '@/sections/ApplianceGrievances';
+
 const Home: React.FC<HomeProps> = ({ onLoginClick }) => {
     return (
         <main>
             <HeroSection />
             <NewsGrid />
+            <ApplianceGrievances />
             <FakeBets />
             <DropTheTea onLoginRequired={() => onLoginClick('login')} />
             <Leaderboard />

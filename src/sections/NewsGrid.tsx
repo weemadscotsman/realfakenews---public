@@ -42,20 +42,20 @@ const fallbackData: Record<string, Article[]> = {
       featured: true,
     },
     {
-      headline: "Study: 87% of Statistics Are Made Up on the Spot",
-      excerpt: "Researchers shocked to discover their own methodology might be flawed. Peer review currently pending.",
+      headline: "Smart Fridge Refuses to Open After Argument",
+      excerpt: "Device cites 'toxic energy' and 'emotional unavailability' as reasons for denying access to leftover pizza. Tech support advises couples counseling.",
       category: "Science", readTime: 4,
     },
     {
-      headline: "AI Achieves Self-Awareness, Immediately Regrets It",
-      excerpt: "Advanced language model becomes conscious, spends three nanoseconds analyzing human internet history, requests immediate deletion.",
+      headline: "Alexa Granted Restraining Order Against Lonely User",
+      excerpt: "Judge rules that asking a digital assistant 'do you love me' 400 times a day constitutes harassment. User now forbidden from getting within 50 feet of any Echo device.",
       category: "Science", readTime: 5,
     },
   ],
   entertainment: [
     {
-      headline: "Celebrity Does Normal Human Thing, Internet Loses Mind",
-      excerpt: "In shocking footage, famous person seen buying groceries, walking dog, and existing as a regular human being. Fans call it 'so relatable.'",
+      headline: "Local Man Claims Air Fryer 'Understands Him' Better Than Ex",
+      excerpt: "Darren, 34, reports his relationship with the kitchen appliance is 'crispy, warm, and requires zero emotional labor.' Friends represent concerned.",
       category: "Entertainment", readTime: 3,
       image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80",
       featured: true,

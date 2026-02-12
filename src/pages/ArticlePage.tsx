@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Share2, Printer, Flag, MessageSquare, Clock, User, Award } from 'lucide-react';
+import { ArrowLeft, Share2, Printer, Flag, MessageSquare, User, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import OpenAI from 'openai';

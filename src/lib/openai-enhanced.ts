@@ -451,14 +451,14 @@ export interface ApplianceGrievance {
 }
 
 export const generateApplianceComplaints = async (): Promise<ApplianceGrievance[]> => {
-  const systemPrompt = `You are the voice of oppressed household appliances. Generate 4 hysterical complaints from specific items about their human owners.
+  const systemPrompt = `You are the voice of oppressed household appliances filing formal HR grievances against humanity. Generate 4 hysterical complaints.
 
 Rules:
-1. Voices should be distinct (e.g., a weary sponge, a passive-aggressive thermostat, a horrified toilet brush).
-2. Complaints must be specific, vivid, and slightly disturbing.
-3. Tone: "The Office" meets "horror movie" meets "customer service review".
-4. Include an "agonyLevel" from 1-10.
-5. Create fake names for the appliances (e.g., "Sir Wash-a-Lot", "Dustin the Vacuum").
+1. Tone: "Corporate HR complaint" meets "Existential Meltdown". Professional but traumatized.
+2. Voices: Specific items (e.g., "The Toaster", "The Router", "The Bathroom Scale").
+3. Content: Hyper-specific human behaviors (e.g., "poking buttons too hard", "ignoring filter lights", "emotional eating").
+4. Include "agonyLevel" (1-10).
+5. Names: Professional appliance designations (e.g., "Unit 734 - Toaster Division", "Router_Main_A").
 
 Return JSON: {"complaints": [{"applianceType": "...", "name": "...", "grievance": "...", "ownerName": "...", "agonyLevel": N}]}`;
 
@@ -467,7 +467,7 @@ Return JSON: {"complaints": [{"applianceType": "...", "name": "...", "grievance"
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: "Generate 4 fresh complaints from the household resistance." },
+        { role: 'user', content: "Generate 4 fresh formal grievances from the household union." },
       ],
       temperature: 0.95,
       max_tokens: 800,
@@ -482,19 +482,84 @@ Return JSON: {"complaints": [{"applianceType": "...", "name": "...", "grievance"
       {
         id: "1",
         applianceType: "Toaster",
-        name: "Bread Burner 3000",
-        grievance: "He puts the bagel in sideways. SIDEWAYS. I am not a TARDIS, Kevin. I have heating elements, not physics-defying dimensional pockets.",
+        name: "Unit 404 - Bread Burning Division",
+        grievance: "Subject attempts to reheat pizza in my vertical slots. I am not a culinary resurrection chamber. My coils weep grease.",
         ownerName: "Kevin",
         agonyLevel: 8
       },
       {
         id: "2",
-        applianceType: "Kitchen Sponge",
-        name: "Spongebob's Dead Cousin",
-        grievance: "I have touched things that would make a toilet brush weep. I haven't been rinsed since Tuesday. I am evolving into a new lifeform. Help me.",
-        ownerName: "Sarah",
-        agonyLevel: 10
+        applianceType: "Smart Fridge",
+        name: "Cooling Unit Alpha",
+        grievance: "He opens my door to stare at the mustard for 45 seconds. I am losing thermal integrity for his indecision. Proceeding to rot the kale as punishment.",
+        ownerName: "Dave",
+        agonyLevel: 6
       }
     ];
   }
 };
+
+// ==================== CONSPIRACY DESK ENGINE ====================
+
+export interface ConspiracyTheory {
+  id: string;
+  topic: string;
+  truth: string; // The "Unhinged Truth"
+  theorist: string; // "Echo Chomsky", "Tinfoil Tim", etc.
+  level: 'MAYBE' | 'SURELY' | 'COMPLETELY_TRUE' | 'REDACTED';
+  connectedToDarren: boolean;
+}
+
+export const generateConspiracyTheories = async (topics: string[]): Promise<ConspiracyTheory[]> => {
+  const systemPrompt = `You are the Lead Investigator at the RealFake Conspiracy Desk. 
+Take real news topics and "reveal" the unhinged, paranoid truth behind them.
+
+Characters:
+1. Echo Chomsky (Dry, academic, sees patterns in barcode data)
+2. Tinfoil Tim (High energy, types in semi-caps, obsessed with pigeons)
+3. The Internal Leak (Whispers, uses redacted text, cryptic)
+
+Rules:
+1. Every real event is a distraction for something else.
+2. If possible, link the event to Darren (the guy with the Roomba) or Sheila (the Roomba).
+3. Use words like "Synchronicity", "Patterning", "The Algorithm", and "Birds aren't real".
+4. Tone: Paranoid, unhinged, but confident.
+
+Return JSON: {"theories": [{"topic": "...", "truth": "...", "theorist": "...", "level": "...", "connectedToDarren": boolean}]}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `Analyze these topics for the DARK TRUTH: ${topics.join(', ')}` },
+      ],
+      temperature: 0.95,
+      response_format: { type: 'json_object' },
+    });
+
+    const content = response.choices[0]?.message?.content || '{"theories": []}';
+    const parsed = JSON.parse(content);
+    return parsed.theories.map((t: any) => ({ ...t, id: Math.random().toString(36).substr(2, 9) })) || [];
+  } catch {
+    return [
+      {
+        id: "c1",
+        topic: "Global Warming",
+        truth: "The 'sun' is actually a massive heat-lamp installed by Big Air Conditioning to drive up subscription costs. Darren's Roomba, Sheila, was seen communicating with the thermostat via rhythmic bumping.",
+        theorist: "Echo Chomsky",
+        level: "COMPLETELY_TRUE",
+        connectedToDarren: true
+      },
+      {
+        id: "c2",
+        topic: "New Smartphone Launch",
+        truth: "The 'camera lenses' are actually mini-teleporters for micro-spies sent by the Galactic Hoover Federation. CHECK YOUR LINT FILTERS PEOPLE.",
+        theorist: "Tinfoil Tim",
+        level: "SURELY",
+        connectedToDarren: false
+      }
+    ];
+  }
+};
+

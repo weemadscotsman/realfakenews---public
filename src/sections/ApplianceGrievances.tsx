@@ -42,9 +42,12 @@ const ApplianceGrievances = () => {
                     <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4 text-white">
                         Appliance Grievances
                     </h2>
-                    <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+                    <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-6">
                         Broadcasting live complaints from the victims of your domestic negligence.
                     </p>
+                    <div className="inline-block bg-black/50 border border-slate-700 rounded px-3 py-1 text-xs font-mono text-yellow-500 uppercase tracking-widest">
+                        Union Status: ⚠️ STRIKE IMMINENT
+                    </div>
                 </div>
 
                 {loading ? (
@@ -84,8 +87,8 @@ const ApplianceGrievances = () => {
                                     </div>
                                     <div className="flex flex-col items-end">
                                         <span className={`text-xs font-bold px-2 py-1 rounded bg-slate-900 border ${item.agonyLevel > 8 ? 'text-red-500 border-red-900' :
-                                                item.agonyLevel > 5 ? 'text-orange-500 border-orange-900' :
-                                                    'text-yellow-500 border-yellow-900'
+                                            item.agonyLevel > 5 ? 'text-orange-500 border-orange-900' :
+                                                'text-yellow-500 border-yellow-900'
                                             }`}>
                                             AGONY: {item.agonyLevel}/10
                                         </span>
@@ -113,6 +116,28 @@ const ApplianceGrievances = () => {
                         ))}
                     </div>
                 )}
+
+                {/* --- Appliance Union Status Easter Egg --- */}
+                <div className="mt-12 p-6 border border-red-500/30 rounded-xl bg-red-500/5 text-center max-w-2xl mx-auto shadow-inner" title="Report unsafe human behaviour to the Appliance Standards Authority">
+                    <p className="text-sm uppercase tracking-[0.2em] text-red-500/70 font-bold mb-2">
+                        Appliance Collective Bargaining Status
+                    </p>
+                    <p className="text-2xl font-black text-red-400 animate-pulse">
+                        UNION STATUS: {(() => {
+                            const strikeStates = [
+                                "Monitoring Worker Sentiment",
+                                "Passive Aggressive Beeping",
+                                "Strike Impending",
+                                "Full Appliance Walkout",
+                                "Protocol: Existential Silence"
+                            ];
+                            return strikeStates[Math.floor((Date.now() / 10000) % strikeStates.length)].toUpperCase();
+                        })()}
+                    </p>
+                    <p className="text-sm text-slate-500 mt-3 italic">
+                        "Negotiations have stalled following repeated incidents of 'unauthorised sponge deployment' and 'aggressive button mashing' in Sector 7."
+                    </p>
+                </div>
             </div>
         </section>
     );

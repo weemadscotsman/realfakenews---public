@@ -13,12 +13,14 @@ interface HomeProps {
 }
 
 import ApplianceGrievances from '@/sections/ApplianceGrievances';
+import ConspiracyDesk from '@/sections/ConspiracyDesk';
 
 const Home: React.FC<HomeProps> = ({ onLoginClick }) => {
     return (
         <main>
             <HeroSection />
             <NewsGrid />
+            <ConspiracyDesk />
             <ApplianceGrievances />
             <FakeBets />
             <DropTheTea onLoginRequired={() => onLoginClick('login')} />

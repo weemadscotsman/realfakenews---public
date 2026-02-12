@@ -8,6 +8,7 @@ const openai = new OpenAI({
 });
 
 const RSS_FEEDS = {
+    latest: 'http://feeds.bbci.co.uk/news/world/rss.xml',
     politics: 'http://feeds.bbci.co.uk/news/politics/rss.xml',
     technology: 'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
     science: 'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
@@ -29,16 +30,26 @@ export const handler: Handler = async (event, context) => {
     }
 
     try {
-        const category = event.queryStringParameters?.category || 'world';
-        const feedUrl = RSS_FEEDS[category as keyof typeof RSS_FEEDS] || RSS_FEEDS.world;
+        const category = event.queryStringParameters?.category || 'latest';
+        const mode = event.queryStringParameters?.mode || 'parody';
+        const feedUrl = RSS_FEEDS[category as keyof typeof RSS_FEEDS] || RSS_FEEDS.latest;
 
         // 1. Fetch Real News
         const feed = await parser.parseURL(feedUrl);
-        const topStories = feed.items.slice(0, 5).map(item => ({
+        const topStories = feed.items.slice(0, 8).map(item => ({
             title: item.title,
             snippet: item.contentSnippet?.slice(0, 100),
             link: item.link,
         }));
+
+        // If mode is raw, return immediately
+        if (mode === 'raw') {
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({ news: topStories }),
+            };
+        }
 
         if (!process.env.OPENAI_API_KEY) {
             console.warn("Missing OPENAI_API_KEY. Returning raw feed.");

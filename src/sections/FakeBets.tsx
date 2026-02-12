@@ -102,10 +102,21 @@ const FakeBets = () => {
         let cancelled = false;
 
         const fetchBets = async () => {
-            const aiBets = await generateFakeBets();
-            if (!cancelled && aiBets.length > 0) {
-                setBets(aiBets);
-                setIsAiGenerated(true);
+            try {
+                // 1. Fetch live headlines for context
+                const res = await fetch('/.netlify/functions/fetch-live-news?mode=raw');
+                const data: { news?: { title: string }[] } = await res.json(); // Explicitly type data
+                const liveHeadlines = (data.news || []).map((n) => n.title);
+
+                // 2. Generate bets based on live headlines
+                const aiBets = await generateFakeBets(liveHeadlines.length > 0 ? liveHeadlines : undefined);
+
+                if (!cancelled && aiBets.length > 0) {
+                    setBets(aiBets);
+                    setIsAiGenerated(true);
+                }
+            } catch (error) {
+                console.error("Bets fetch failed:", error);
             }
         };
 

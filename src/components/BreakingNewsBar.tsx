@@ -33,8 +33,12 @@ const BreakingNewsBar = () => {
 
     const fetchHeadlines = async () => {
       try {
-        const shuffled = [...TRENDING_TOPICS].sort(() => Math.random() - 0.5);
-        const topics = shuffled.slice(0, 4);
+        // 1. Fetch live raw news for topics
+        const res = await fetch('/.netlify/functions/fetch-live-news?mode=raw');
+        const data = await res.json();
+        const liveTopics = (data.news || []).map((n: { title: string }) => n.title);
+
+        const topics = liveTopics.length > 0 ? liveTopics.slice(0, 4) : TRENDING_TOPICS.slice(0, 4);
         const articles = await generateDailyNews(topics);
 
         if (!cancelled && articles.length > 0) {

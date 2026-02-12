@@ -9,7 +9,9 @@ const HeroSection: React.FC = () => {
   const [liveStories, setLiveStories] = useState<{ headline: string; excerpt: string; category: string; readTime: number; image?: string }[]>([]);
   const [isLive, setIsLive] = useState(false);
 
-  const pinnedStory = narrative.featuredStory;
+  const saga = narrative.darrenSaga;
+  const pinnedStory = saga[0]; // The Origin remains #1
+  const latestSagaPart = saga[saga.length - 1]; // The latest betrayal
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -18,8 +20,9 @@ const HeroSection: React.FC = () => {
         if (!response.ok) throw new Error('Failed to fetch live news');
         const data = await response.json();
         if (data.news && data.news.length > 0) {
-          // Filter out the pinned story if it happens to appear in the live feed
-          const filtered = data.news.filter((s: { headline: string }) => s.headline !== pinnedStory.headline);
+          // Filter out any headlines that match our saga stories
+          const sagaHeadlines = saga.map(s => s.headline);
+          const filtered = data.news.filter((s: { headline: string }) => !sagaHeadlines.includes(s.headline));
           setLiveStories(filtered);
           setIsLive(true);
         }
@@ -30,23 +33,27 @@ const HeroSection: React.FC = () => {
     };
 
     fetchNews();
-  }, [pinnedStory.headline]);
+  }, [saga]);
 
   // Derived state for rendering
   const mainFeaturedArticle = pinnedStory;
 
-  // Slot 2: Use the first live story, or a fallback if none
-  const secondaryFeaturedArticle = liveStories[0] || {
-    headline: "Science Confirms: Your Opinion is Wrong and Here's Why",
-    excerpt: "Revolutionary study finds that people who disagree with you are statistically more likely to be misinformed.",
-    category: "Science",
-    readTime: 6,
-    image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
-  };
+  // Slot 2: Use the latest saga part if it's different from the origin, otherwise live story
+  const secondaryFeaturedArticle = (latestSagaPart.id !== pinnedStory.id
+    ? { ...latestSagaPart, isSaga: true }
+    : (liveStories[0] || {
+      headline: "Science Confirms: Your Opinion is Wrong and Here's Why",
+      excerpt: "Revolutionary study finds that people who disagree with you are statistically more likely to be misinformed.",
+      category: "Science",
+      readTime: 6,
+      image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80",
+      id: 'fallback-science',
+      isSaga: false
+    })) as { headline: string; excerpt: string; category: string; readTime: number; image?: string; id?: string; isSaga?: boolean };
 
   // Quick Links: Remainder of live stories
-  const sideStories = liveStories.length > 1
-    ? liveStories.slice(1, 5)
+  const sideStories = liveStories.length > 0
+    ? liveStories.slice(secondaryFeaturedArticle.id === latestSagaPart.id ? 0 : 1, 5)
     : [
       { headline: "Celebrity Does Thing, World Somehow Survives", category: "Entertainment" },
       { headline: "Local Man Has Opinion on Everything, Expertise on Nothing", category: "Opinion" },
@@ -93,9 +100,10 @@ const HeroSection: React.FC = () => {
                   alt={mainFeaturedArticle.headline}
                   className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <span className="absolute top-4 left-4 section-header bg-white px-3 flex items-center gap-1">
+                <span className="absolute top-4 left-4 section-header bg-white px-3 flex items-center gap-1 group-hover:bg-amber-50 transition-colors">
                   {mainFeaturedArticle.category}
                   <Sparkles size={12} className="text-amber-500" />
+                  <span className="ml-2 py-0.5 px-1.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded">THE DARREN SAGA: PART 1</span>
                 </span>
                 <span className="absolute bottom-4 right-4 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase rounded shadow-lg animate-pulse">
                   TOP STORY
@@ -126,15 +134,22 @@ const HeroSection: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           {/* Secondary Featured */}
-          <article className="group cursor-pointer pb-6 border-b border-gray-200">
-            <span className="section-header mb-2">{secondaryFeaturedArticle.category}</span>
-            <h3 className="newspaper-headline text-xl mb-2 group-hover:text-red-600 transition-colors">
-              {secondaryFeaturedArticle.headline}
-            </h3>
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {secondaryFeaturedArticle.excerpt}
-            </p>
-          </article>
+          <Link to={`/article/${encodeURIComponent(secondaryFeaturedArticle.headline)}`}>
+            <article className="group cursor-pointer pb-6 border-b border-gray-200">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="section-header">{secondaryFeaturedArticle.category}</span>
+                {secondaryFeaturedArticle.isSaga && (
+                  <span className="py-0.5 px-1.5 bg-amber-100 text-amber-800 text-[9px] font-bold rounded">THE DARREN SAGA: PART 2</span>
+                )}
+              </div>
+              <h3 className="newspaper-headline text-xl mb-2 group-hover:text-red-600 transition-colors">
+                {secondaryFeaturedArticle.headline}
+              </h3>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {secondaryFeaturedArticle.excerpt}
+              </p>
+            </article>
+          </Link>
 
           {/* Quick Links */}
           <div>

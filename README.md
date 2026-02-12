@@ -8,7 +8,7 @@ RealFake News is a satirical news platform with gamification features. Think "Th
 
 ### Features
 
-- **Breaking News** — Satirical headlines that rotate in real-time
+- **Breaking News** — AI-generated satirical headlines that rotate in real-time
 - **Drop The Tea** — Submit your own "hot takes" and get roasted by AI
 - **Roast Battles** — Challenge other users to wit-based duels
 - **Leaderboards** — Compete for the title of Most Gullible Reader
@@ -19,7 +19,7 @@ RealFake News is a satirical news platform with gamification features. Think "Th
 ## Tech Stack
 
 - **Frontend:** React 19, TypeScript, Vite, Tailwind CSS
-- **UI Components:** shadcn/ui, Radix UI
+- **UI Components:** shadcn/ui, Radix UI, Framer Motion
 - **Backend:** Supabase (auth, database, functions)
 - **AI:** OpenAI GPT-4o-mini (roasts, story generation)
 - **Hosting:** Netlify

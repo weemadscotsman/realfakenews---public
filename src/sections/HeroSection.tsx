@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, TrendingUp, MessageCircle, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 const HeroSection: React.FC = () => {
   const featuredArticles = [
@@ -42,7 +43,12 @@ const HeroSection: React.FC = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Stats Bar */}
-      <div className="flex flex-wrap justify-center gap-8 mb-8 py-4 border-y border-gray-100">
+      <motion.div
+        className="flex flex-wrap justify-center gap-8 mb-8 py-4 border-y border-gray-100"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <TrendingUp size={16} className="text-red-600" />
           <span><strong>2.4M</strong> People Fooled</span>
@@ -55,12 +61,17 @@ const HeroSection: React.FC = () => {
           <Users size={16} className="text-red-600" />
           <span><strong>156K</strong> Subscribers</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Featured Article */}
-        <div className="lg:col-span-2">
+        <motion.div
+          className="lg:col-span-2"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <article className="group cursor-pointer">
             <div className="relative overflow-hidden rounded-lg mb-4">
               <img
@@ -86,10 +97,15 @@ const HeroSection: React.FC = () => {
               </span>
             </div>
           </article>
-        </div>
+        </motion.div>
 
         {/* Side Column */}
-        <div className="space-y-6">
+        <motion.div
+          className="space-y-6"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
           {/* Secondary Featured */}
           <article className="group cursor-pointer pb-6 border-b border-gray-200">
             <span className="section-header mb-2">{featuredArticles[1].category}</span>
@@ -106,32 +122,43 @@ const HeroSection: React.FC = () => {
             <h4 className="font-semibold text-sm uppercase tracking-wider mb-4">Trending Now</h4>
             <div className="space-y-4">
               {sideStories.map((story, index) => (
-                <article key={index} className="group cursor-pointer">
+                <motion.article
+                  key={index}
+                  className="group cursor-pointer"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
+                >
                   <span className="text-xs text-red-600 font-medium uppercase">
                     {story.category}
                   </span>
                   <h5 className="text-sm font-medium group-hover:text-red-600 transition-colors mt-1">
                     {story.headline}
                   </h5>
-                </article>
+                </motion.article>
               ))}
             </div>
           </div>
 
           {/* CTA */}
-          <div className="bg-black text-white p-6 rounded-lg">
+          <motion.div
+            className="bg-black text-white p-6 rounded-lg"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
             <h4 className="font-bold text-lg mb-2">Think You Can Do Better?</h4>
             <p className="text-sm text-gray-300 mb-4">
               Submit your own fake headlines and let our AI roast you into oblivion.
             </p>
-            <Button 
+            <Button
               className="w-full bg-red-600 hover:bg-red-700"
               onClick={() => document.getElementById('drop-the-tea')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Drop The Tea
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

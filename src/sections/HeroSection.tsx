@@ -69,7 +69,7 @@ const HeroSection: React.FC = () => {
           setFeaturedArticles(newFeatured);
 
           // Use remaining live articles for side stories
-          const newSideStories = liveArticles.slice(1, 5).map((a: any) => ({
+          const newSideStories = liveArticles.slice(1, 5).map((a: { headline: string; category?: string }) => ({
             headline: a.headline,
             category: a.category || 'Trending',
           }));
@@ -219,7 +219,5 @@ const HeroSection: React.FC = () => {
     </section>
   );
 };
-
-export default HeroSection;
 
 export default HeroSection;

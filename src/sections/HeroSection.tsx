@@ -6,11 +6,11 @@ import { motion } from 'framer-motion';
 const HeroSection: React.FC = () => {
   const featuredArticles = [
     {
-      headline: "BREAKING: Government Announces Plan to Fix Everything by Doing Absolutely Nothing",
-      excerpt: "In a stunning display of bureaucratic innovation, officials have discovered that ignoring problems makes them disappear. Early results show 0% improvement.",
-      category: "Politics",
-      readTime: 4,
-      image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800&q=80",
+      headline: "Human Falls Into Despair After Falling for Sentient Roomba Called Sheila",
+      excerpt: "Witnesses say Sheila held him together. Now he’s a mess. So is the house. Residents of a quiet suburban street were left confused Tuesday after a local man suffered an emotional breakdown following the sudden departure of his vacuum cleaner.",
+      category: "Human Interest",
+      readTime: 8,
+      image: "https://images.unsplash.com/photo-1589820296156-2454bb8a6d54?w=800&q=80",
     },
     {
       headline: "Science Confirms: Your Opinion is Wrong and Here's Why",

@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
               <span className="text-white"> News</span>
             </h3>
             <p className="text-gray-400 text-sm mb-4">
-              The world's most trusted source of completely fabricated information. 
+              The world's most trusted source of completely fabricated information.
               If you believe anything here, we have a bridge to sell you.
             </p>
             <div className="flex gap-4">
@@ -108,8 +108,8 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-xs text-center md:text-left">
-              © {new Date().getFullYear()} RealFake News. All rights reserved. 
-              Not responsible for any loss of faith in journalism.
+              © {new Date().getFullYear()} RealFake News. All rights reserved.
+              Not responsible for any loss of faith in journalism. <span className="text-gray-700 ml-2">v2.0 - The Sheila Edition</span>
             </p>
             <div className="flex gap-6">
               {footerLinks.legal.map((link) => (
@@ -128,8 +128,8 @@ const Footer: React.FC = () => {
         {/* Disclaimer */}
         <div className="mt-8 p-4 bg-gray-800 rounded-lg">
           <p className="text-gray-500 text-xs text-center">
-            <strong>Disclaimer:</strong> RealFake News is a satirical publication. 
-            Nothing on this website is real. If you believed any of it, please seek help. 
+            <strong>Disclaimer:</strong> RealFake News is a satirical publication.
+            Nothing on this website is real. If you believed any of it, please seek help.
             Or subscribe. We need the money.
           </p>
         </div>

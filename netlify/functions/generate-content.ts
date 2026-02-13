@@ -33,8 +33,17 @@ export const handler = async (event: { httpMethod: string; body: string | null }
         }
 
         const isJson = mode === 'json';
+        const apiKey = process.env.GOOGLE_API_KEY;
 
-        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+        if (!apiKey) {
+            return {
+                statusCode: 503,
+                headers,
+                body: JSON.stringify({ error: 'AI service not configured', fallback: true }),
+            };
+        }
+
+        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
         const result = await model.generateContent({

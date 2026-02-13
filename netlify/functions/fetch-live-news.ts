@@ -1,8 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Parser from 'rss-parser';
 
-const parser = new Parser();
-
 const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -50,6 +48,8 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
     }
 
     try {
+        const parser = new Parser();
+        const apiKey = process.env.GOOGLE_API_KEY;
         const { category = 'politics' } = event.queryStringParameters || {};
         const cacheKey = category.toLowerCase();
 
@@ -93,7 +93,8 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
         // Pick a random persona
         const persona = PERSONAS[Math.floor(Math.random() * PERSONAS.length)];
 
-        if (!process.env.GOOGLE_API_KEY) {
+        if (!apiKey) {
+            console.warn('GOOGLE_API_KEY is missing. Returning raw headlines.');
             // Return raw headlines as satirical-ish if no API key
             const news = realHeadlines.slice(0, 5).map(h => ({
                 headline: h,
@@ -106,7 +107,7 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
             return { statusCode: 200, headers, body: JSON.stringify({ news, persona, source: 'no-api-key' }) };
         }
 
-        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
         const prompt = `You are ${persona.name} — ${persona.bio}. You work at RealFake News, a satirical news site.

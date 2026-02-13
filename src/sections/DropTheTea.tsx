@@ -137,8 +137,11 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
 
     const styleCost = ROAST_STYLES.find(s => s.id === selectedStyle)?.cost || 1;
 
-    const success = await spendTokens(styleCost, `Roast (${selectedStyle})`);
-    if (!success) return;
+    // Billing Logic (Unlimited for VIPs)
+    if (!user?.is_subscribed) {
+      const success = await spendTokens(styleCost, `Roast (${selectedStyle})`);
+      if (!success) return;
+    }
 
     setLoading(true);
 
@@ -163,7 +166,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
 
       await addXp(styleCost * 10, 'Tea Drop');
 
-      toast.success(`Roast delivered! +${styleCost * 10} XP`);
+      toast.success(user?.is_subscribed ? `Roast delivered! (VIP Unlimited)` : `Roast delivered! +${styleCost * 10} XP`);
 
       if (activeTab === 'challenge' && todayChallenge) {
         setHasEnteredChallenge(true);
@@ -335,8 +338,8 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
                         onClick={() => setSelectedStyle(style.id)}
                         disabled={!isAuthenticated}
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${selectedStyle === style.id
-                            ? 'border-red-500 bg-red-50 text-red-700'
-                            : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-red-500 bg-red-50 text-red-700'
+                          : 'border-gray-200 hover:border-gray-300'
                           } ${!isAuthenticated ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         <span>{style.icon}</span>

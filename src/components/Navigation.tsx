@@ -15,15 +15,15 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
   const location = useLocation();
 
   const navItems = [
-    { label: 'Politics', href: '#politics' },
-    { label: 'Science', href: '#science' },
+    { label: 'Politics', href: '/politics', isRoute: true },
+    { label: 'Science', href: '/science', isRoute: true },
     { label: 'Tech', href: '/tech', isRoute: true },
     { label: 'Apocalypse', href: '/apocalypse', isRoute: true },
-    { label: 'Entertainment', href: '#entertainment' },
-    { label: 'Sports', href: '#sports' },
-    { label: 'Conspiracy', href: '#conspiracy' },
-    { label: 'Resistance', href: '#appliance-resistance' },
-    { label: 'Bets', href: '#fake-bets' },
+    { label: 'Entertainment', href: '/entertainment', isRoute: true },
+    { label: 'Sports', href: '/sports', isRoute: true },
+    { label: 'Conspiracy', href: '/conspiracy', isRoute: true },
+    { label: 'Resistance', href: '/resistance', isRoute: true },
+    { label: 'Bets', href: '/bets', isRoute: true },
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
@@ -106,7 +106,7 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
                 </Button>
                 <Button
                   size="sm"
-                  onClick={onLoginClick}
+                  onClick={() => navigate('/membership')}
                   className="btn-primary"
                 >
                   Subscribe

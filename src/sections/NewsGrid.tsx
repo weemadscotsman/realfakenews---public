@@ -96,15 +96,23 @@ const item = {
   show: { y: 0, opacity: 1 }
 };
 
-const NewsGrid = () => {
+interface NewsGridProps {
+  limitCategory?: string;
+}
+
+const NewsGrid = ({ limitCategory }: NewsGridProps) => {
   const [newsData, setNewsData] = useState<Record<string, Article[]>>(fallbackData);
+
+  const displayedCategories = limitCategory
+    ? CATEGORIES.filter(c => c.key === limitCategory)
+    : CATEGORIES;
 
   useEffect(() => {
     const fetchAllNews = async () => {
       const updatedData: Record<string, Article[]> = { ...fallbackData };
 
       try {
-        const fetchPromises = CATEGORIES.map(async (cat) => {
+        const fetchPromises = displayedCategories.map(async (cat) => {
           try {
             const response = await fetch(`/.netlify/functions/fetch-live-news?category=${cat.key}`);
             if (response.ok) {
@@ -138,9 +146,9 @@ const NewsGrid = () => {
   }, []);
 
   return (
-    <section className="bg-white py-16 sm:py-24" id="politics">
+    <section className="bg-white py-16 sm:py-24" id={limitCategory || "news-grid"}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {CATEGORIES.map((category) => (
+        {displayedCategories.map((category) => (
           <div key={category.key} className="mb-20 last:mb-0" id={category.key}>
             <div className="flex items-end justify-between mb-8 border-b-2 border-black pb-2">
               <h2 className="section-header text-3xl flex items-center gap-2">

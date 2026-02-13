@@ -42,6 +42,16 @@ const StoryArcs = () => {
       return;
     }
 
+    if (!user.is_subscribed) {
+      toast.error('Story Arcs are for VIPs only!', {
+        action: {
+          label: 'Upgrade',
+          onClick: () => window.location.href = '/membership'
+        }
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {

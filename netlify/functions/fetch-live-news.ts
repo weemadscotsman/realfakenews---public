@@ -1,8 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Parser from 'rss-parser';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 const parser = new Parser();
 
 const headers = {
@@ -107,6 +105,9 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
 
             return { statusCode: 200, headers, body: JSON.stringify({ news, persona, source: 'no-api-key' }) };
         }
+
+        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
         const prompt = `You are ${persona.name} — ${persona.bio}. You work at RealFake News, a satirical news site.
 

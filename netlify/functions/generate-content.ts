@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
 
 const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -34,6 +33,9 @@ export const handler = async (event: { httpMethod: string; body: string | null }
         }
 
         const isJson = mode === 'json';
+
+        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
         const result = await model.generateContent({
             contents: [{ role: 'user', parts: [{ text: isJson ? prompt + '\n\nRespond ONLY with valid JSON. No markdown, no code blocks, just raw JSON.' : prompt }] }],

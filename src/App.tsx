@@ -5,6 +5,8 @@ import { Toaster } from 'sonner';
 import { useState } from 'react';
 import Home from '@/pages/Home';
 import ArticlePage from '@/pages/ArticlePage';
+import TechPage from '@/pages/TechPage';
+import DoomsdayPage from '@/pages/DoomsdayPage';
 import Timeline from '@/pages/Timeline';
 import LoginModal from '@/components/LoginModal';
 import Navigation from '@/components/Navigation';
@@ -33,6 +35,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Home onLoginClick={openLogin} />} />
               <Route path="/article/:slug" element={<ArticlePage />} />
+              <Route path="/tech" element={<TechPage />} />
+              <Route path="/apocalypse" element={<DoomsdayPage />} />
               <Route path="/timeline" element={<Timeline />} />
             </Routes>
 

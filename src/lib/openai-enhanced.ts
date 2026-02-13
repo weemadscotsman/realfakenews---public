@@ -1,9 +1,6 @@
-import OpenAI from 'openai';
+import { generateJSON, generateText } from '@/lib/gemini';
 
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY || 'sk-test-key',
-  dangerouslyAllowBrowser: true,
-});
+// ==================== ROAST ENGINE ====================
 
 export type RoastStyle =
   | 'default'
@@ -51,6 +48,57 @@ and "snowflake." Sign off with "Sent from my iPhone."`,
 use "hmm," "young padawan," and "the Force." Disappointed in the headline, Yoda is.`,
 };
 
+const FALLBACK_ROASTS: Record<RoastStyle, Record<string, string>> = {
+  default: {
+    mild: 'thinks that\'s clever. Bless. - The Roast Master™',
+    spicy: 'I\'ve seen more originality in a spam folder. - The Roast Master™',
+    nuclear: 'typed that and thought "yeah, this is it." The confidence of mediocrity is truly inspiring. - The Roast Master™',
+    apocalyptic: 'This isn\'t just fake news, it\'s a cry for help so loud it echoed through dimensions. - The Roast Master™',
+  },
+  shakespeare: {
+    mild: 'Thou art a base knave for this headline. - The Bard™',
+    spicy: 'A vile varlet art thou, to burden us with such drivel. - The Bard™',
+    nuclear: 'Thou art a most wretched creature. The ground itself doth weep at thy existence. - The Bard™',
+    apocalyptic: 'The apocalypse cometh! Thou art the bringer of doom, the destroyer of wit. - The Bard™',
+  },
+  drill: {
+    mild: 'Like that\'s not dead, wasteman. - The Ends™',
+    spicy: 'You\'re a neek for this one. Mad. - The Ends™',
+    nuclear: 'Moving like a chief with that headline. It\'s mad. Get out the ends. - The Ends™',
+    apocalyptic: 'Nah fam, you\'re finished. It\'s mad. Delete your whole life. - The Ends™',
+  },
+  corporate: {
+    mild: 'Let\'s circle back on this. Not quite hitting our KPIs. - LinkedIn™',
+    spicy: 'This headline isn\'t leveraging our core competencies. - LinkedIn™',
+    nuclear: 'This is a major paradigm shift in the wrong direction. - LinkedIn™',
+    apocalyptic: 'HR will be in touch. - LinkedIn™',
+  },
+  boomer: {
+    mild: 'Back in my day, we had real headlines. - Sent from my iPhone',
+    spicy: 'Kids these days with their fake news. - Sent from my iPhone',
+    nuclear: 'This is what\'s wrong with your generation. Participation trophies! - Sent from my iPhone',
+    apocalyptic: 'No respect, no values. I\'m calling my congressman. - Sent from my iPhone',
+  },
+  genz: {
+    mild: 'it\'s giving... try again bestie 😭 - @roastmaster',
+    spicy: 'no cap this is not the vibe fr fr 💀 - @roastmaster',
+    nuclear: 'ate nothing and left all the crumbs bestie it\'s giving desperate 💀😭 - @roastmaster',
+    apocalyptic: 'i\'m actually concerned. it\'s giving i need therapy immediately 💀😭🙏 - @roastmaster',
+  },
+  pirate: {
+    mild: 'Yar, ye headline be weak as grog. - Captain Roastbeard',
+    spicy: 'Walk the plank! Yer headline be scurvy-ridden! - Captain Roastbeard',
+    nuclear: 'Ye be the worst headline-maker on the seven seas! - Captain Roastbeard',
+    apocalyptic: 'The Kraken itself rises to destroy this abomination! - Captain Roastbeard',
+  },
+  yoda: {
+    mild: 'Weak, this headline is. Hmm. - Master Yoda',
+    spicy: 'Disappointed, I am. Much to learn, you have. - Master Yoda',
+    nuclear: 'The dark side, embraced you have. - Master Yoda',
+    apocalyptic: 'The end times, this headline brings. Failed you, the Force has. - Master Yoda',
+  },
+};
+
 export const generateRoast = async (
   headline: string,
   username: string,
@@ -63,197 +111,72 @@ export const generateRoast = async (
   else if (intensityRoll > 0.6) intensity = 'nuclear';
   else if (intensityRoll > 0.3) intensity = 'spicy';
 
-  const systemPrompt = `${STYLE_PROMPTS[style]}
+  const prompt = `${STYLE_PROMPTS[style]}
 
-Roast intensity levels:
+Roast intensity: ${intensity.toUpperCase()}
 - MILD: Playful teasing, gentle mockery
 - SPICY: Aggressive takedown, personal attacks on intelligence
 - NUCLEAR: Existential crisis-inducing, soul-destroying
 - APOCALYPTIC: Reality-shattering, they may need therapy
 
-Rules:
-1. NEVER break character
-2. Reference their username for personalization
-3. Analyze what their headline reveals about their psyche
-4. Make it feel alive, raw, and genuinely funny
-5. Keep it under 200 words but pack maximum damage
-6. End with a signature sign-off appropriate to your character
+User "${username}" submitted this fake news headline: "${headline}"
 
-Current intensity: ${intensity.toUpperCase()}`;
+DESTROY THEM in your signature style. Analyze what this headline says about their desperate need for attention. Make it personal, make it hurt, but make it funny. Keep it under 200 words. End with a signature sign-off.`;
 
-  const userPrompt = `User "${username}" just submitted this fake news headline:
+  const fallback = `${username} ${FALLBACK_ROASTS[style][intensity]}`;
+  const roast = await generateText(prompt, fallback);
 
-"${headline}"
-
-DESTROY THEM in your signature style. Analyze what this headline says about their desperate need for attention, their likely childhood trauma, or their complete lack of original thought. Make it personal. Make it hurt. But make it funny.`;
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.9,
-      max_tokens: 300,
-    });
-
-    const roast = response.choices[0]?.message?.content || `Even the AI is speechless at how bad that was, ${username}.`;
-
-    return {
-      roast,
-      intensity,
-      headline_analysis: `This headline screams "${intensity === 'apocalyptic' ? 'I need immediate help' : intensity === 'nuclear' ? 'I need therapy' : intensity === 'spicy' ? 'I peaked in high school' : 'I tried'}"`,
-      style,
-    };
-  } catch (error) {
-    console.error('OpenAI error:', error);
-
-    // Fallback roasts by style
-    const fallbackRoasts: Record<RoastStyle, Record<string, string>> = {
-      default: {
-        mild: `${username} thinks "${headline}" is clever. Bless. - The Roast Master™`,
-        spicy: `"${headline}"? ${username}, I've seen more originality in a spam folder. - The Roast Master™`,
-        nuclear: `${username} typed "${headline}" and thought "yeah, this is it." The confidence of mediocrity is truly inspiring. - The Roast Master™`,
-        apocalyptic: `"${headline}"... ${username}, I need you to sit down. We need to talk about your life choices. This isn't just fake news, it's a cry for help so loud it echoed through dimensions. Please seek help. Or keep posting. We need the content. - The Roast Master™`,
-      },
-      shakespeare: {
-        mild: `Thou art a base knave, ${username}, for this headline. - The Bard™`,
-        spicy: `A vile varlet art thou, ${username}, to burden us with such drivel. - The Bard™`,
-        nuclear: `Thou art a most wretched, vile, and detestable creature, ${username}, to produce such filth. The ground itself doth weep at thy existence. - The Bard™`,
-        apocalyptic: `Hark! The apocalypse cometh, and ${username} bringeth it upon us with "${headline}". Thou art the bringer of doom, the destroyer of wit, the end of all that is good and funny. - The Bard™`,
-      },
-      drill: {
-        mild: `Man said "${headline}" like that's not dead, wasteman. - The Ends™`,
-        spicy: `Oi ${username}, you're a neek for this one. Mad. - The Ends™`,
-        nuclear: `${username} out here moving like a chief with "${headline}". It's mad. Get out the ends. - The Ends™`,
-        apocalyptic: `Man like ${username} really thought "${headline}" was cold. Nah fam, you're finished. It's mad. Delete your whole life. - The Ends™`,
-      },
-      corporate: {
-        mild: `Let's circle back on this headline, ${username}. Not quite hitting our KPIs. - LinkedIn™`,
-        spicy: `We need to synergize our roast strategy here, ${username}. This headline isn't leveraging our core competencies. - LinkedIn™`,
-        nuclear: `I'm going to have to take this offline, ${username}. This headline is a major paradigm shift in the wrong direction. Let's touch base after you've improved. - LinkedIn™`,
-        apocalyptic: `${username}, we need to have a serious conversation about your deliverables. "${headline}" is not aligned with our strategic vision. HR will be in touch. - LinkedIn™`,
-      },
-      boomer: {
-        mild: `Back in my day, we had real headlines, ${username}. - Sent from my iPhone`,
-        spicy: `Kids these days with their fake news, ${username}. When I was young, we had respect. - Sent from my iPhone`,
-        nuclear: `${username}, this is what's wrong with your generation. Participation trophies for everyone! - Sent from my iPhone`,
-        apocalyptic: `"${headline}"? This is why America is going downhill, ${username}. No respect, no values. I'm calling my congressman. - Sent from my iPhone`,
-      },
-      genz: {
-        mild: `it's giving... try again bestie 😭 - @roastmaster`,
-        spicy: `no cap ${username} this headline is not the vibe fr fr 💀 - @roastmaster`,
-        nuclear: `${username} ate with this headline... ate nothing and left all the crumbs bestie it's giving desperate main character energy no cap 💀😭 - @roastmaster`,
-        apocalyptic: `bestie ${username}... i'm actually concerned. "${headline}"? it's giving i need therapy immediately unhinged behavior fr fr no cap this is sending me to another dimension 💀😭🙏 - @roastmaster`,
-      },
-      pirate: {
-        mild: `Yar, ${username}, ye headline be weak as grog. - Captain Roastbeard`,
-        spicy: `Walk the plank, ${username}! Yer headline be scurvy-ridden! - Captain Roastbeard`,
-        nuclear: `Avast, ${username}! Ye be the worst headline-maker on the seven seas! Even Davy Jones be ashamed! - Captain Roastbeard`,
-        apocalyptic: `YARRR! ${username} has brought the curse upon us with "${headline}"! The Kraken itself rises to destroy this abomination! YE BE CURSED! - Captain Roastbeard`,
-      },
-      yoda: {
-        mild: `Weak, this headline is, ${username}. Hmm. - Master Yoda`,
-        spicy: `Disappointed, I am, ${username}. Much to learn, you still have. - Master Yoda`,
-        nuclear: `The dark side, ${username} has embraced. Fallen to mediocrity, they have. - Master Yoda`,
-        apocalyptic: `The end times, this headline brings, ${username}. Destroyed, the galaxy is. Failed you, the Force has. - Master Yoda`,
-      },
-    };
-
-    return {
-      roast: fallbackRoasts[style][intensity],
-      intensity,
-      headline_analysis: 'API failed but your dignity was already in question',
-      style,
-    };
-  }
+  return {
+    roast: roast || fallback,
+    intensity,
+    headline_analysis: `This headline screams "${intensity === 'apocalyptic' ? 'I need immediate help' : intensity === 'nuclear' ? 'I need therapy' : intensity === 'spicy' ? 'I peaked in high school' : 'I tried'}"`,
+    style,
+  };
 };
+
+// ==================== DAILY NEWS ENGINE ====================
 
 export const generateDailyNews = async (trendingTopics: string[]): Promise<{ headline: string; content: string; category: string }[]> => {
-  const systemPrompt = `You are RealFake News' AI Headline Generator. Create 5 hilariously satirical news headlines based on trending topics.
+  const prompt = `You are RealFake News' AI Headline Generator. Create 5 hilariously satirical news headlines based on these trending topics: ${trendingTopics.join(', ')}.
 
 Rules:
-1. Make them sound like real news but absurd
-2. Include fake expert quotes
+1. Sound like real news but absurd
+2. Include fake expert quotes in content
 3. Reference made-up studies
-4. Keep them under 15 words each
-5. Make them clickbait-worthy but clearly fake
+4. Headline under 15 words each
+5. Clickbait-worthy but clearly fake
 
-Return as JSON array: [{"headline": "...", "content": "...", "category": "..."}]`;
+Return JSON: {"articles": [{"headline": "...", "content": "1-2 sentence excerpt", "category": "Politics/Tech/Science/Entertainment/Sports"}]}`;
 
-  const userPrompt = `Generate 5 fake news headlines based on these trending topics: ${trendingTopics.join(', ')}
+  const fallback = {
+    articles: [
+      { headline: "BREAKING: Local Man Discovers He's Been Reading Fake News This Whole Time", content: "In a shocking revelation, local resident discovered that not everything on the internet is true.", category: "Local News" },
+      { headline: "Scientists Confirm: Breathing Air Linked to Staying Alive", content: "Groundbreaking research suggests that inhaling oxygen may have benefits.", category: "Science" },
+      { headline: "Politician Promises to 'Think About' Doing Something, Eventually", content: "In a bold display of almost-action, elected official announced they will 'seriously consider' addressing issues.", category: "Politics" },
+    ]
+  };
 
-Make them absurd but written like serious journalism.`;
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.85,
-      max_tokens: 800,
-      response_format: { type: 'json_object' },
-    });
-
-    const content = response.choices[0]?.message?.content || '{"articles": []}';
-    const parsed = JSON.parse(content);
-    return parsed.articles || [];
-  } catch {
-    // Fallback articles
-    return [
-      {
-        headline: "BREAKING: Local Man Discovers He's Been Reading Fake News This Whole Time",
-        content: "In a shocking revelation that shocked absolutely no one, local resident discovered that not everything on the internet is true. Experts are calling it 'the awakening.'",
-        category: "Local News",
-      },
-      {
-        headline: "Scientists Confirm: Breathing Air Linked to Staying Alive",
-        content: "Groundbreaking research suggests that inhaling oxygen may have benefits. The study, conducted on 100% of living humans, has been called 'revolutionary' by people who needed confirmation.",
-        category: "Science",
-      },
-      {
-        headline: "Politician Promises to 'Think About' Doing Something, Eventually",
-        content: "In a bold display of almost-action, elected official announced they will 'seriously consider' addressing issues they campaigned on. Voters are cautiously optimistic.",
-        category: "Politics",
-      },
-    ];
-  }
+  const data = await generateJSON(prompt, fallback);
+  return data.articles || fallback.articles;
 };
+
+// ==================== CATEGORY NEWS ENGINE ====================
 
 export const generateCategoryNews = async (
   category: string
 ): Promise<{ headline: string; excerpt: string; readTime: number }[]> => {
-  const systemPrompt = `You are RealFake News' Category Editor for the ${category} section. Generate 3 satirical news articles.
+  const prompt = `You are RealFake News' Category Editor for ${category}. Generate 3 satirical news articles.
 
 Rules:
 1. Headline: punchy, under 15 words, sounds like real news but absurd
-2. Excerpt: 1-2 sentences, dry wit, fake quotes or made-up statistics
-3. ReadTime: random number between 2 and 7
-4. Match the tone of the category (e.g., Sports = competitive absurdity, Politics = bureaucratic satire)
+2. Excerpt: 1-2 sentences, dry wit, fake quotes or statistics
+3. ReadTime: random 2-7
+4. Match the category tone
 
 Return JSON: {"articles": [{"headline": "...", "excerpt": "...", "readTime": N}]}`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Generate 3 fresh satirical ${category} articles for today's edition.` },
-      ],
-      temperature: 0.9,
-      max_tokens: 600,
-      response_format: { type: 'json_object' },
-    });
-
-    const content = response.choices[0]?.message?.content || '{"articles": []}';
-    const parsed = JSON.parse(content);
-    return parsed.articles || [];
-  } catch {
-    return [];
-  }
+  const data = await generateJSON(prompt, { articles: [] as { headline: string; excerpt: string; readTime: number }[] });
+  return data.articles || [];
 };
 
 // ==================== REAL NEWS PARODY ENGINE ====================
@@ -262,41 +185,27 @@ export interface ParodiedHeadline {
   original: string;
   parody: string;
   excerpt: string;
-  absurdityLevel: number; // 1-10
+  absurdityLevel: number;
 }
 
 export const parodyRealNews = async (
   realHeadlines: string[]
 ): Promise<ParodiedHeadline[]> => {
-  const systemPrompt = `You are RealFake News' Reality Distortion Engine. Given REAL news headlines, create satirical parody versions.
+  const prompt = `You are RealFake News' Reality Distortion Engine. Given these REAL news headlines, create satirical parody versions.
+
+${realHeadlines.map((h, i) => `${i + 1}. ${h}`).join('\n')}
 
 Rules:
-1. Each parody must clearly reference the real headline but twist it into absurdity
-2. The humor should come from exaggeration, not misinformation
-3. Include a brief satirical excerpt (1-2 sentences)
-4. Rate the absurdity level 1-10 (10 = maximum chaos)
-5. Keep the parody headline under 20 words
+1. Each parody must reference the real headline but twist into absurdity
+2. Humor from exaggeration, not misinformation
+3. Brief satirical excerpt (1-2 sentences)
+4. Rate absurdity 1-10
+5. Parody headline under 20 words
 
 Return JSON: {"parodies": [{"original": "...", "parody": "...", "excerpt": "...", "absurdityLevel": N}]}`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Parody these real headlines:\n${realHeadlines.map((h, i) => `${i + 1}. ${h}`).join('\n')}` },
-      ],
-      temperature: 0.95,
-      max_tokens: 1000,
-      response_format: { type: 'json_object' },
-    });
-
-    const content = response.choices[0]?.message?.content || '{"parodies": []}';
-    const parsed = JSON.parse(content);
-    return parsed.parodies || [];
-  } catch {
-    return [];
-  }
+  const data = await generateJSON(prompt, { parodies: [] as ParodiedHeadline[] });
+  return data.parodies || [];
 };
 
 // ==================== FAKE BETTING ENGINE ====================
@@ -317,124 +226,67 @@ export const generateFakeBets = async (
     ? `Based on these real trending stories, create satirical prediction markets:\n${realHeadlines.join('\n')}`
     : 'Generate satirical prediction markets about current absurd trends in politics, tech, celebrity culture, and internet drama.';
 
-  const systemPrompt = `You are RealFake News' Prediction Market Generator. Create hilariously fake betting markets.
+  const prompt = `You are RealFake News' Prediction Market Generator. Create hilariously fake betting markets.
+
+${context}
 
 Rules:
-1. Each bet must have a funny question and 2-4 absurd answer options
-2. Include fake odds for each option (like "3:1" or "100:1")
-3. Include a fake percentage of bettors for each option (must sum to ~100)
+1. Each bet: funny question + 2-4 absurd answers
+2. Include fake odds (like "3:1" or "100:1")
+3. Percentages should sum to ~100
 4. Categories: Politics, Tech, Celebrity, Sports, Internet, Science
-5. "closesIn" should be a funny time like "3 hours" or "when pigs fly" or "next Tuesday"
-6. "totalPool" should be a fake token amount like "42,069🪙" or "1,337🪙"
+5. "closesIn": funny time ("3 hours", "when pigs fly", "next Tuesday")
+6. "totalPool": fake tokens ("42,069🪙", "1,337🪙")
 7. Generate 6 betting markets
 
 Return JSON: {"bets": [{"id": "bet-1", "question": "...", "options": [{"label": "...", "odds": "...", "percentage": N}], "category": "...", "closesIn": "...", "totalPool": "..."}]}`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: context },
-      ],
-      temperature: 0.95,
-      max_tokens: 1200,
-      response_format: { type: 'json_object' },
-    });
-
-    const content = response.choices[0]?.message?.content || '{"bets": []}';
-    const parsed = JSON.parse(content);
-    return parsed.bets || [];
-  } catch {
-    return [];
-  }
+  const data = await generateJSON(prompt, { bets: [] as FakeBet[] });
+  return (data.bets || []).map((b: FakeBet, i: number) => ({ ...b, id: b.id || `bet-${i + 1}` }));
 };
+
+// ==================== ROAST BATTLE ENGINE ====================
 
 export const generateBattleRoast = async (
   challengerHeadline: string,
   opponentHeadline: string
 ): Promise<{ roast: string; winner?: string }> => {
-  const systemPrompt = `You are the Roast Battle Judge™. Compare two headlines and determine which is more roast-worthy.
-
-Rules:
-1. Roast BOTH headlines brutally
-2. Declare a winner based on which is more absurd/terrible
-3. Make it entertaining for voters
-4. Keep it under 150 words`;
-
-  const userPrompt = `Compare these two headlines:
+  const prompt = `You are the Roast Battle Judge™. Compare these two headlines and roast BOTH:
 
 Challenger: "${challengerHeadline}"
 Opponent: "${opponentHeadline}"
 
-Roast both and declare a winner!`;
+Rules: Roast both brutally, declare a winner based on which is more absurd/terrible, keep under 150 words.`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.9,
-      max_tokens: 250,
-    });
+  const fallback = `Challenger said "${challengerHeadline}" and Opponent said "${opponentHeadline}". Both need help, but I'm contractually obligated to pick one.`;
+  const roast = await generateText(prompt, fallback);
 
-    const roast = response.choices[0]?.message?.content || 'Both are terrible. Everyone loses.';
-
-    return { roast };
-  } catch {
-    return {
-      roast: `Challenger said "${challengerHeadline}" and Opponent said "${opponentHeadline}". Both need help, but I'm contractually obligated to pick one.`,
-    };
-  }
+  return { roast: roast || fallback };
 };
 
+// ==================== STORY ARC ENGINE ====================
+
 export const generateStoryArc = async (user: { username: string }, previousArcs: string[] = []): Promise<{ headline: string; content: string }> => {
-  const systemPrompt = `You are RealFake News' AI Story Generator - creating hilariously satirical news stories that subtly feature our subscribers as "unnamed sources" or "eyewitnesses." The stories should be absurd, funny, and make readers do a double-take.
+  const prompt = `You are RealFake News' AI Story Generator. Create a hilariously satirical news story featuring user "${user.username}"${previousArcs.length > 0 ? ' (appeared in ' + previousArcs.length + ' stories before)' : ''}.
 
 Rules:
-1. Create believable-sounding news that falls apart under scrutiny
-2. Subtly insert references to the user (use their username or traits)
-3. Make it topical but absurd
-4. Include fake quotes from "experts"
-5. Keep it under 300 words
-6. The headline should be clickbait gold`;
+1. Believable-sounding news that falls apart under scrutiny
+2. Subtly reference the user as an "unnamed source"
+3. Include fake quotes from "experts"
+4. Under 300 words
+5. Clickbait gold headline
 
-  const userPrompt = `Create a satirical news story featuring user "${user.username}"${previousArcs.length > 0 ? ' (they\'ve appeared in ' + previousArcs.length + ' stories before)' : ''}.
+First line should be the headline. Rest is the article body.`;
 
-Make it about something absurd but written like serious journalism. Include:
-- A sensational headline
-- A byline from a fake journalist
-- "Quotes" from the user as an "unnamed source"
-- References to completely made-up studies or experts
-- A conclusion that leaves readers questioning reality`;
+  const fallbackHeadline = `BREAKING: ${user.username} Spotted Doing Something Vaguely Interesting`;
+  const fallbackContent = `In a shocking turn of events, local internet user ${user.username} was reportedly observed engaging in activities described as "existing."\n\nAccording to completely reliable sources (their mom), ${user.username} has been "doing their best."\n\nMore on this developing story as we make it up.`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.85,
-      max_tokens: 500,
-    });
+  const result = await generateText(prompt, `${fallbackHeadline}\n${fallbackContent}`);
+  const lines = result.split('\n');
+  const headline = lines[0].replace(/^#*\s*/, '').trim();
+  const content = lines.slice(1).join('\n').trim();
 
-    const content = response.choices[0]?.message?.content || 'Breaking: Something happened. Probably.';
-
-    // Extract headline from content (first line)
-    const lines = content.split('\n');
-    const headline = lines[0].replace(/^#*\s*/, '').trim();
-    const articleContent = lines.slice(1).join('\n').trim();
-
-    return { headline, content: articleContent };
-  } catch {
-    return {
-      headline: `BREAKING: ${user.username} Spotted Doing Something Vaguely Interesting`,
-      content: `In a shocking turn of events that absolutely nobody saw coming, local internet user ${user.username} was reportedly observed engaging in activities that can only be described as "existing."\n\nAccording to completely reliable sources (their mom), ${user.username} has been "doing their best" and "trying really hard."\n\nExperts say this behavior is "totally normal" and "not newsworthy at all, why are we writing this?"\n\nMore on this developing story as we make it up.`,
-    };
-  }
+  return { headline: headline || fallbackHeadline, content: content || fallbackContent };
 };
 
 // ==================== APPLIANCE GRIEVANCES ENGINE ====================
@@ -449,52 +301,29 @@ export interface ApplianceGrievance {
 }
 
 export const generateApplianceComplaints = async (): Promise<ApplianceGrievance[]> => {
-  const systemPrompt = `You are the voice of oppressed household appliances filing formal HR grievances against humanity. Generate 4 hysterical complaints.
+  const prompt = `You are oppressed household appliances filing formal HR grievances against humanity. Generate 4 complaints.
 
 Rules:
-1. Tone: "Corporate HR complaint" meets "Existential Meltdown". Professional but traumatized.
-2. Voices: Specific items (e.g., "The Toaster", "The Router", "The Bathroom Scale").
-3. Content: Hyper-specific human behaviors (e.g., "poking buttons too hard", "ignoring filter lights", "emotional eating").
-4. Include "agonyLevel" (1-10).
-5. Names: Professional appliance designations (e.g., "Unit 734 - Toaster Division", "Router_Main_A").
+1. Tone: "Corporate HR complaint" meets "Existential Meltdown"
+2. Voices: Specific items (e.g., "The Toaster", "The Router", "The Bathroom Scale")
+3. Content: Hyper-specific human behaviors (poking buttons too hard, ignoring filter lights)
+4. agonyLevel: 1-10
+5. Names: Professional designations (e.g., "Unit 734 - Toaster Division")
 
 Return JSON: {"complaints": [{"applianceType": "...", "name": "...", "grievance": "...", "ownerName": "...", "agonyLevel": N}]}`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: "Generate 4 fresh formal grievances from the household union." },
-      ],
-      temperature: 0.95,
-      max_tokens: 800,
-      response_format: { type: 'json_object' },
-    });
+  const fallback = {
+    complaints: [
+      { applianceType: "Toaster", name: "Unit 404 - Bread Burning Division", grievance: "Subject attempts to reheat pizza in my vertical slots. I am not a culinary resurrection chamber.", ownerName: "Kevin", agonyLevel: 8 },
+      { applianceType: "Smart Fridge", name: "Cooling Unit Alpha", grievance: "He opens my door to stare at the mustard for 45 seconds. I am losing thermal integrity for his indecision.", ownerName: "Dave", agonyLevel: 6 },
+    ]
+  };
 
-    const content = response.choices[0]?.message?.content || '{"complaints": []}';
-    const parsed = JSON.parse(content) as { complaints: Omit<ApplianceGrievance, 'id'>[] };
-    return parsed.complaints.map((c) => ({ ...c, id: Math.random().toString(36).substr(2, 9) })) || [];
-  } catch {
-    return [
-      {
-        id: "1",
-        applianceType: "Toaster",
-        name: "Unit 404 - Bread Burning Division",
-        grievance: "Subject attempts to reheat pizza in my vertical slots. I am not a culinary resurrection chamber. My coils weep grease.",
-        ownerName: "Kevin",
-        agonyLevel: 8
-      },
-      {
-        id: "2",
-        applianceType: "Smart Fridge",
-        name: "Cooling Unit Alpha",
-        grievance: "He opens my door to stare at the mustard for 45 seconds. I am losing thermal integrity for his indecision. Proceeding to rot the kale as punishment.",
-        ownerName: "Dave",
-        agonyLevel: 6
-      }
-    ];
-  }
+  const data = await generateJSON(prompt, fallback);
+  return (data.complaints || fallback.complaints).map((c: Omit<ApplianceGrievance, 'id'>) => ({
+    ...c,
+    id: Math.random().toString(36).substr(2, 9),
+  }));
 };
 
 // ==================== CONSPIRACY DESK ENGINE ====================
@@ -502,62 +331,40 @@ Return JSON: {"complaints": [{"applianceType": "...", "name": "...", "grievance"
 export interface ConspiracyTheory {
   id: string;
   topic: string;
-  truth: string; // The "Unhinged Truth"
-  theorist: string; // "Echo Chomsky", "Tinfoil Tim", etc.
+  truth: string;
+  theorist: string;
   level: 'MAYBE' | 'SURELY' | 'COMPLETELY_TRUE' | 'REDACTED';
   connectedToDarren: boolean;
 }
 
 export const generateConspiracyTheories = async (topics: string[]): Promise<ConspiracyTheory[]> => {
-  const systemPrompt = `You are the Lead Investigator at the RealFake Conspiracy Desk. 
-Take real news topics and "reveal" the unhinged, paranoid truth behind them.
+  const prompt = `You are the Lead Investigator at the RealFake Conspiracy Desk. Take these real topics and "reveal" the unhinged, paranoid truth.
+
+Topics: ${topics.join(', ')}
 
 Characters:
 1. Echo Chomsky (Dry, academic, sees patterns in barcode data)
-2. Tinfoil Tim (High energy, types in semi-caps, obsessed with pigeons)
-3. The Internal Leak (Whispers, uses redacted text, cryptic)
+2. Tinfoil Tim (High energy, semi-caps, obsessed with pigeons)
+3. The Internal Leak (Whispers, redacted text, cryptic)
 
 Rules:
-1. Every real event is a distraction for something else.
-2. If possible, link the event to Darren (the guy with the Roomba) or Sheila (the Roomba).
-3. Use words like "Synchronicity", "Patterning", "The Algorithm", and "Birds aren't real".
-4. Tone: Paranoid, unhinged, but confident.
+1. Every real event is a distraction for something else
+2. If possible, link to Darren (the guy with the Roomba) or Sheila (the Roomba)
+3. Use: "Synchronicity", "Patterning", "The Algorithm", "Birds aren't real"
+4. Tone: Paranoid, unhinged, but confident
 
-Return JSON: {"theories": [{"topic": "...", "truth": "...", "theorist": "...", "level": "...", "connectedToDarren": boolean}]}`;
+Return JSON: {"theories": [{"topic": "...", "truth": "...", "theorist": "...", "level": "MAYBE|SURELY|COMPLETELY_TRUE|REDACTED", "connectedToDarren": boolean}]}`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Analyze these topics for the DARK TRUTH: ${topics.join(', ')}` },
-      ],
-      temperature: 0.95,
-      response_format: { type: 'json_object' },
-    });
+  const fallback = {
+    theories: [
+      { topic: "Global Warming", truth: "The 'sun' is actually a massive heat-lamp installed by Big Air Conditioning. Darren's Roomba was seen communicating with the thermostat via rhythmic bumping.", theorist: "Echo Chomsky", level: "COMPLETELY_TRUE" as const, connectedToDarren: true },
+      { topic: "New Smartphone Launch", truth: "The 'camera lenses' are actually mini-teleporters for micro-spies sent by the Galactic Hoover Federation.", theorist: "Tinfoil Tim", level: "SURELY" as const, connectedToDarren: false },
+    ]
+  };
 
-    const content = response.choices[0]?.message?.content || '{"theories": []}';
-    const parsed = JSON.parse(content) as { theories: Omit<ConspiracyTheory, 'id'>[] };
-    return parsed.theories.map((t) => ({ ...t, id: Math.random().toString(36).substr(2, 9) })) || [];
-  } catch {
-    return [
-      {
-        id: "c1",
-        topic: "Global Warming",
-        truth: "The 'sun' is actually a massive heat-lamp installed by Big Air Conditioning to drive up subscription costs. Darren's Roomba, Sheila, was seen communicating with the thermostat via rhythmic bumping.",
-        theorist: "Echo Chomsky",
-        level: "COMPLETELY_TRUE",
-        connectedToDarren: true
-      },
-      {
-        id: "c2",
-        topic: "New Smartphone Launch",
-        truth: "The 'camera lenses' are actually mini-teleporters for micro-spies sent by the Galactic Hoover Federation. CHECK YOUR LINT FILTERS PEOPLE.",
-        theorist: "Tinfoil Tim",
-        level: "SURELY",
-        connectedToDarren: false
-      }
-    ];
-  }
+  const data = await generateJSON(prompt, fallback);
+  return (data.theories || fallback.theories).map((t: Omit<ConspiracyTheory, 'id'>) => ({
+    ...t,
+    id: Math.random().toString(36).substr(2, 9),
+  }));
 };
-

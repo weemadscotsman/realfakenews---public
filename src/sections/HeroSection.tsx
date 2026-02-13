@@ -85,6 +85,31 @@ const HeroSection: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Apocalypse Watch Ticker */}
+      <motion.div
+        className="mb-8 bg-black border-2 border-red-600 p-4 relative overflow-hidden group hover:border-red-500 transition-colors"
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <Link to="/apocalypse" className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse shadow-[0_0_10px_rgba(220,38,38,1)]" />
+            <div className="space-y-0.5">
+              <span className="block text-[10px] font-black text-red-600 uppercase tracking-[0.3em] leading-none mb-1">Special Report / Global Alert</span>
+              <h4 className="text-white font-black italic uppercase tracking-tighter text-xl md:text-2xl leading-none">
+                Countdown to <span className="text-red-600">Digital Doomsday</span>
+              </h4>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-red-600 font-black uppercase italic text-xs md:text-sm group-hover:translate-x-1 transition-transform">
+            View Stats <ArrowRight size={18} />
+          </div>
+        </Link>
+        {/* Animated Background Scanline */}
+        <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(rgba(220,38,38,0)_50%,rgba(220,38,38,0.5)_50%)] bg-[length:100%_4px]" />
+      </motion.div>
+
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Featured Article */}

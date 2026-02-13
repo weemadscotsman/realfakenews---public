@@ -5,35 +5,48 @@ import { Link } from 'react-router-dom';
 const Masthead: React.FC = () => {
   const today = new Date();
 
+  // Deterministic "Stability Index" that changes daily
+  const stabilitySeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+  const stability = 30 + (stabilitySeed % 18); // Varies between 30 and 47
+
   return (
     <header className="masthead bg-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Bar */}
         <div className="flex justify-between items-center text-xs text-gray-500 mb-4">
           <div className="flex gap-4">
-            <span>Vol. CXXVIII No. 42</span>
+            <span className="font-bold">Vol. CXXVIII No. 42</span>
             <span className="hidden sm:inline">|</span>
-            <span className="hidden sm:inline">Est. 2024</span>
+            <span className="hidden sm:inline font-medium italic underline decoration-red-600/30">Est. 2024</span>
           </div>
           <div className="flex gap-4">
-            <span>{format(today, 'EEEE, MMMM do, yyyy')}</span>
+            <span className="font-medium">{format(today, 'EEEE, MMMM do, yyyy')}</span>
             <span className="hidden sm:inline">|</span>
-            <span className="hidden sm:inline">$2.50 / Month</span>
+            <span className="hidden sm:inline font-bold">$2.50 / Month</span>
           </div>
         </div>
 
         {/* Main Title */}
         <div className="text-center py-4">
           <Link to="/">
-            <h1 className="masthead-title cursor-pointer">
+            <h1 className="masthead-title cursor-pointer select-none">
               <span className="text-black">Real</span>
-              <span className="text-red-600 italic">Fake</span>
+              <span className="masthead-fake mx-1 italic" data-text="FAKE">
+                <span className="opacity-0">FAKE</span>
+              </span>
               <span className="text-black"> News</span>
             </h1>
           </Link>
-          <p className="mt-2 text-sm text-gray-500 tracking-wide uppercase">
+          <p className="mt-2 text-sm text-gray-500 tracking-wide uppercase font-medium">
             "The News You Deserve, Not The News You Need"
           </p>
+
+          {/* Stability Index */}
+          <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+            <span>Global Reality Stability Index:</span>
+            <span className="text-red-600 font-mono text-xs">{stability}%</span>
+            <span className="text-red-600 animate-bounce">📉</span>
+          </div>
         </div>
 
         {/* Tagline Bar */}

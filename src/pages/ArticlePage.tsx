@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, Printer, Flag, MessageSquare, User, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { staticArticles } from '@/config/static-articles';
+import { generateArticle as generateArticleGemini } from '@/lib/gemini';
 
 interface ArticleState {
     headline: string;
@@ -13,9 +15,9 @@ interface ArticleState {
     readTime: number;
 }
 
+
 const ArticlePage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
-    // Decode slug back to headline if needed, or use ID lookup if we had a DB
     const initialHeadline = decodeURIComponent(slug || '').replace(/-/g, ' ');
 
     const [article, setArticle] = useState<ArticleState | null>(null);
@@ -23,20 +25,35 @@ const ArticlePage: React.FC = () => {
 
     useEffect(() => {
         const fetchArticle = async () => {
+            // 1. Check static articles first
+            if (slug && staticArticles[slug]) {
+                setArticle(staticArticles[slug]);
+                setLoading(false);
+                return;
+            }
+
+            // 2. Try Netlify function
             try {
                 const response = await fetch(`/.netlify/functions/generate-article?headline=${encodeURIComponent(initialHeadline)}`);
-                if (!response.ok) throw new Error('Failed to fetch article');
+                if (!response.ok) throw new Error('Function returned non-OK');
                 const data = await response.json();
-                setArticle(data);
+                if (data.content) {
+                    setArticle(data);
+                    setLoading(false);
+                    return;
+                }
             } catch (error) {
-                console.error("Failed to generate article:", error);
-            } finally {
-                setLoading(false);
+                console.warn("Netlify function failed, trying Gemini client-side:", error);
             }
+
+            // 3. Generate with Gemini (free) — has built-in fallbacks
+            const geminiArticle = await generateArticleGemini(initialHeadline);
+            setArticle(geminiArticle as ArticleState);
+            setLoading(false);
         };
 
         fetchArticle();
-    }, [initialHeadline]);
+    }, [initialHeadline, slug]);
 
     if (loading) {
         return (

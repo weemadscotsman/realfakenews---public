@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Crown } from 'lucide-react';
@@ -10,10 +11,14 @@ interface NavigationProps {
 const Navigation = ({ onLoginClick }: NavigationProps) => {
   const { user, isAuthenticated, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navItems = [
     { label: 'Politics', href: '#politics' },
     { label: 'Science', href: '#science' },
+    { label: 'Tech', href: '/tech', isRoute: true },
+    { label: 'Apocalypse', href: '/apocalypse', isRoute: true },
     { label: 'Entertainment', href: '#entertainment' },
     { label: 'Sports', href: '#sports' },
     { label: 'Conspiracy', href: '#conspiracy' },
@@ -21,10 +26,18 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
     { label: 'Bets', href: '#fake-bets' },
   ];
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const handleNavClick = (item: typeof navItems[0]) => {
+    if (item.isRoute) {
+      navigate(item.href);
+    } else {
+      if (location.pathname !== '/') {
+        navigate('/' + item.href);
+      } else {
+        const element = document.querySelector(item.href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
     }
     setMobileMenuOpen(false);
   };
@@ -38,7 +51,7 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
             {navItems.map((item) => (
               <button
                 key={item.label}
-                onClick={() => scrollToSection(item.href)}
+                onClick={() => handleNavClick(item)}
                 className="nav-link"
               >
                 {item.label}
@@ -110,7 +123,7 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
               {navItems.map((item) => (
                 <button
                   key={item.label}
-                  onClick={() => scrollToSection(item.href)}
+                  onClick={() => handleNavClick(item)}
                   className="text-left text-gray-700 font-medium py-2"
                 >
                   {item.label}

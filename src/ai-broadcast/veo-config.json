@@ -1,0 +1,13 @@
+{
+    "studio_base": "Professional satirical news studio, cinematic lighting, broadcast graphics, subtle glitch overlays, high realism, anchor seated at desk",
+    "camera_rules": [
+        "slow camera push during serious headlines",
+        "slight zoom on absurd punchlines",
+        "cutaway to ticker during sponsor segments"
+    ],
+    "motion_rules": [
+        "natural anchor gestures",
+        "occasional eyebrow reaction",
+        "calm controlled body language"
+    ]
+}

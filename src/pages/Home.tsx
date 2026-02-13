@@ -1,5 +1,6 @@
 import React from 'react';
 import HeroSection from '@/sections/HeroSection';
+import DailyBroadcastPlayer from '@/components/DailyBroadcastPlayer';
 import NewsGrid from '@/sections/NewsGrid';
 import DropTheTea from '@/sections/DropTheTea';
 import Leaderboard from '@/sections/Leaderboard';
@@ -19,6 +20,7 @@ const Home: React.FC<HomeProps> = ({ onLoginClick }) => {
     return (
         <main>
             <HeroSection />
+            <DailyBroadcastPlayer />
             <NewsGrid />
             <ConspiracyDesk />
             <ApplianceGrievances />

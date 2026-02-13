@@ -1,196 +1,151 @@
-import { Handler } from '@netlify/functions';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import Parser from 'rss-parser';
-import OpenAI from 'openai';
 
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 const parser = new Parser();
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 
-const RSS_FEEDS = {
-    latest: 'http://feeds.bbci.co.uk/news/world/rss.xml',
-    politics: 'http://feeds.bbci.co.uk/news/politics/rss.xml',
-    technology: 'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
-    science: 'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
-    entertainment: 'http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml',
-    sports: 'https://www.espn.com/espn/rss/news',
-    world: 'http://feeds.bbci.co.uk/news/world/rss.xml',
-};
-
-// CORS headers for local development access if needed
 const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
 };
 
-// Simple in-memory cache (note: this is per-instance in Netlify Functions)
-const cache: Record<string, { data: Record<string, unknown>; timestamp: number }> = {};
+// Persona pool
+const PERSONAS = [
+    { name: "Clive Pressington III", bio: "Dry British wit, treats absurdity as mundane fact" },
+    { name: "Zara Nightshade", bio: "Intense, conspiratorial, every story is a thriller reveal" },
+    { name: "Chad Thunderbyte", bio: "Tech bro energy, everything is 'disruption'" },
+    { name: "Brenda from Accounting", bio: "Passive-aggressive, disappointed in everything, mentions her cats" },
+    { name: "Unit 404", bio: "Sentient office toaster, existential dread, speaks in error codes" },
+];
+
+// RSS feeds by category
+const RSS_FEEDS: Record<string, string[]> = {
+    politics: [
+        'https://feeds.bbci.co.uk/news/politics/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',
+    ],
+    science: [
+        'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
+    ],
+    tech: [
+        'https://feeds.bbci.co.uk/news/technology/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
+    ],
+    entertainment: [
+        'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml',
+    ],
+    sports: [
+        'https://feeds.bbci.co.uk/sport/rss.xml',
+    ],
+};
+
+// In-memory cache
+const newsCache: Record<string, { data: any; timestamp: number }> = {};
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 
-const PERSONAS = [
-    {
-        name: "Echo Chomsky",
-        style: "Dry, academic, seeing deep disturbing patterns in mundane data? Reference 'The Algorithm'.",
-        weight: 30
-    },
-    {
-        name: "Tinfoil Tim",
-        style: "High energy, paranoid, obsessed with hidden surveillance and pidgeons. Use SEMI-CAPS.",
-        weight: 30
-    },
-    {
-        name: "Intern Who Has Not Slept",
-        style: "Desperate, caffeinated, slightly nihilistic, and surprisingly honest about corporate despair.",
-        weight: 25
-    },
-    {
-        name: "State Sponsored Pigeon Analyst",
-        style: "Highly technical but clearly insane, focused on avian surveillance networks.",
-        weight: 15
-    }
-];
-
-function pickWeightedPersona() {
-    const totalWeight = PERSONAS.reduce((sum, p) => sum + p.weight, 0);
-    let random = Math.random() * totalWeight;
-    for (const persona of PERSONAS) {
-        if (random < persona.weight) return persona;
-        random -= persona.weight;
-    }
-    return PERSONAS[0];
-}
-
-const FALLBACK_NEWS = [
-    {
-        headline: "Local Man Discovers Reality is a Subscription Service",
-        excerpt: "Darren, 34, reports he can no longer see the color blue after failing to renew his 'Visual Standard' package.",
-        readTime: 4,
-        category: "latest"
-    },
-    {
-        headline: "Study: 100% of Objects in Your House are Recording You",
-        excerpt: "New data suggests your toaster has been writing a screenplay about your morning routine for three years.",
-        readTime: 5,
-        category: "latest"
-    }
-];
-
-export const handler: Handler = async (event: any) => {
+export const handler = async (event: { httpMethod: string; queryStringParameters: any }) => {
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 200, headers, body: '' };
     }
 
     try {
-        const category = event.queryStringParameters?.category || 'latest';
-        const mode = event.queryStringParameters?.mode || 'parody';
-        const cacheKey = `${category}-${mode}`;
+        const { category = 'politics' } = event.queryStringParameters || {};
+        const cacheKey = category.toLowerCase();
 
-        // Check Cache
-        if (cache[cacheKey] && (Date.now() - cache[cacheKey].timestamp < CACHE_TTL)) {
+        // Check cache
+        if (newsCache[cacheKey] && (Date.now() - newsCache[cacheKey].timestamp < CACHE_TTL)) {
             return {
                 statusCode: 200,
                 headers,
-                body: JSON.stringify(cache[cacheKey].data),
+                body: JSON.stringify(newsCache[cacheKey].data),
             };
         }
 
-        const feedUrl = RSS_FEEDS[category as keyof typeof RSS_FEEDS] || RSS_FEEDS.latest;
+        // Fetch real RSS headlines
+        const feeds = RSS_FEEDS[cacheKey] || RSS_FEEDS.politics;
+        const realHeadlines: string[] = [];
 
-        // 1. Fetch Real News
-        let topStories = [];
-        try {
-            const feed = await parser.parseURL(feedUrl);
-            if (!feed?.items?.length) throw new Error("Empty feed");
-
-            topStories = feed.items.slice(0, 8).map(item => ({
-                title: item.title,
-                snippet: item.contentSnippet?.slice(0, 100),
-                link: item.link,
-            }));
-        } catch (rssError) {
-            console.error("RSS Fetch failed:", rssError);
-            if (mode === 'raw') {
-                return { statusCode: 200, headers, body: JSON.stringify({ news: [] }) };
+        for (const feedUrl of feeds) {
+            try {
+                const feed = await parser.parseURL(feedUrl);
+                feed.items.slice(0, 5).forEach(item => {
+                    if (item.title) realHeadlines.push(item.title);
+                });
+            } catch (e) {
+                console.warn(`Failed to parse feed ${feedUrl}:`, e);
             }
-            // If parody mode failed, we'll proceed to use fallbacks later if needed
         }
 
-        // 2. Handle Logic
-        if (mode === 'raw') {
-            const responseData = { news: topStories };
-            cache[cacheKey] = { data: responseData, timestamp: Date.now() };
+        if (realHeadlines.length === 0) {
+            // Use fallback if no feeds available
             return {
                 statusCode: 200,
                 headers,
-                body: JSON.stringify(responseData),
+                body: JSON.stringify({
+                    news: [],
+                    persona: PERSONAS[0],
+                    source: 'fallback',
+                }),
             };
         }
 
-        // If we have no stories, use fallbacks
-        if (topStories.length === 0) {
-            const responseData = { news: FALLBACK_NEWS.map(f => ({ ...f, category: category })) };
-            return { statusCode: 200, headers, body: JSON.stringify(responseData) };
+        // Pick a random persona
+        const persona = PERSONAS[Math.floor(Math.random() * PERSONAS.length)];
+
+        if (!process.env.GOOGLE_API_KEY) {
+            // Return raw headlines as satirical-ish if no API key
+            const news = realHeadlines.slice(0, 5).map(h => ({
+                headline: h,
+                excerpt: `${persona.name} here. Honestly, "${h}" sounds so absurd it could be satire already. But no — this one's depressingly real.`,
+                category: cacheKey.charAt(0).toUpperCase() + cacheKey.slice(1),
+                readTime: 3,
+                originalHeadline: h,
+            }));
+
+            return { statusCode: 200, headers, body: JSON.stringify({ news, persona, source: 'no-api-key' }) };
         }
 
-        if (!process.env.OPENAI_API_KEY) {
-            const responseData = {
-                news: topStories.map(s => ({
-                    headline: s.title,
-                    excerpt: "AI satire inactive. This is real news. Boring.",
-                    category: category,
-                    readTime: 3,
-                    originalLink: s.link
-                }))
-            };
-            return { statusCode: 200, headers, body: JSON.stringify(responseData) };
-        }
+        const prompt = `You are ${persona.name} — ${persona.bio}. You work at RealFake News, a satirical news site.
 
-        // 3. Parody with AI using a weighted random persona
-        const persona = pickWeightedPersona();
-        const systemPrompt = `You are RealFake News' Senior Satirist acting as "${persona.name}".
-    Style: ${persona.style}
-    Task: Take these REAL headlines and rewrite them into biting satire.
-    
-    Rules:
-    1. Keep the core subject recognizable but twist the context absurdly.
-    2. Tone: "The Onion" meets "Black Mirror".
-    3. Make it funny, slightly dark, and cynical.
-    4. Return JSON: { "articles": [{ "headline": "...", "excerpt": "...", "readTime": N, "originalHeadline": "..." }] }`;
+Given these REAL news headlines, create satirical parody versions. Keep the spirit of the original but twist it into absurdity.
 
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: JSON.stringify(topStories) },
-            ],
-            response_format: { type: 'json_object' },
+Real headlines:
+${realHeadlines.slice(0, 8).map((h, i) => `${i + 1}. ${h}`).join('\n')}
+
+Return ONLY valid JSON:
+{"news": [{"headline": "satirical version", "excerpt": "1-2 sentence satirical take", "category": "${cacheKey.charAt(0).toUpperCase() + cacheKey.slice(1)}", "readTime": N, "originalHeadline": "the original headline"}]}
+
+Generate 3-5 satirical articles. Be funny and absurd, not mean-spirited.`;
+
+        const result = await model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            generationConfig: {
+                temperature: 0.95,
+                responseMimeType: 'application/json',
+            },
         });
 
-        const content = JSON.parse(response.choices[0].message.content || '{"articles": []}');
-        const articles = (content.articles || []).map((a: { headline: string; excerpt: string; readTime: number; originalHeadline?: string }, i: number) => ({
-            ...a,
-            category: category.charAt(0).toUpperCase() + category.slice(1),
-            originalLink: topStories[i]?.link,
-            id: Math.random().toString(36).substr(2, 9),
-            persona: persona.name
-        }));
+        const data = JSON.parse(result.response.text());
+        const responseData = { news: data.news || [], persona, source: 'gemini' };
 
-        const finalResponse = { news: articles };
-        cache[cacheKey] = { data: finalResponse, timestamp: Date.now() };
+        // Cache the result
+        newsCache[cacheKey] = { data: responseData, timestamp: Date.now() };
 
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify(finalResponse),
+            body: JSON.stringify(responseData),
         };
 
     } catch (error) {
-        console.error('General Error:', error);
+        console.error('Live News Error:', error);
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'System meltdown', details: String(error) }),
+            body: JSON.stringify({ error: 'Failed to fetch news', details: String(error) }),
         };
     }
 };

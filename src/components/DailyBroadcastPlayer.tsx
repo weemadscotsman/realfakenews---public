@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCcw, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { NewsAnchorPlayer } from './NewsAnchorPlayer';
-import { runBroadcastAgents } from '../ai-broadcast/agent-orchestrator';
+// import { runBroadcastAgents } from '../ai-broadcast/agent-orchestrator';
 import { toast } from 'sonner';
 
 const DailyBroadcastPlayer: React.FC = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
     const [broadcastData, setBroadcastData] = useState<{
         videoUrl: string;
         anchorName: string;
@@ -42,30 +42,7 @@ const DailyBroadcastPlayer: React.FC = () => {
     }, []);
 
     const generateBroadcast = async () => {
-        setIsLoading(true);
-        const promise = runBroadcastAgents();
-
-        toast.promise(promise, {
-            loading: 'Initializing Seedance & Veo Engines...',
-            success: (data) => {
-                setBroadcastData({
-                    videoUrl: data.finalUrl,
-                    anchorName: data.anchor.displayName,
-                    headlines: data.trending,
-                    catchphrase: data.anchor.catchphrase
-                });
-                return `Broadcast Generated with ${data.anchor.displayName}!`;
-            },
-            error: 'Broadcast engine stalled. Reality is too stable.'
-        });
-
-        try {
-            await promise;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
+        toast.info("Daily broadcasts are scheduled automatically. Check back at 07:00 UTC!");
     };
 
     // Auto-generate a preview state on first load
@@ -104,15 +81,11 @@ const DailyBroadcastPlayer: React.FC = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={generateBroadcast}
-                        disabled={isLoading}
+                        // disabled={isLoading}
                         className="flex items-center gap-2 px-6 py-3 bg-zinc-950 text-white font-black rounded-xl hover:bg-zinc-800 transition-all uppercase tracking-tighter shadow-xl disabled:opacity-50"
                     >
-                        {isLoading ? (
-                            <RefreshCcw className="animate-spin" size={18} />
-                        ) : (
-                            <Sparkles size={18} className="text-red-500" />
-                        )}
-                        {isLoading ? "Generating..." : "Generate New Broadcast"}
+                        <Sparkles size={18} className="text-red-500" />
+                        Generate New Broadcast
                     </motion.button>
                 </div>
             </div>

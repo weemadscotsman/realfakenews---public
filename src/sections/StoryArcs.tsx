@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
-import { generateStoryArc } from '@/lib/openai-enhanced';
+import { generateStoryArc } from '@/lib/content-engine';
 import { createStoryArc, getStoryArcs } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Loader2, BookOpen, Sparkles, User, Calendar, Eye } from 'lucide-react';

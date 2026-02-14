@@ -1,4 +1,5 @@
 import NewsGrid from '@/sections/NewsGrid';
+import { PollingStation } from '@/components/PollingStation';
 
 const PoliticsPage = () => {
     return (
@@ -13,6 +14,10 @@ const PoliticsPage = () => {
                 <p className="text-xl text-gray-600 max-w-2xl mx-auto font-serif italic">
                     "Democracy dies in darkness, but at least the memes are lit."
                 </p>
+
+                <div className="max-w-2xl mx-auto mt-12 text-left">
+                    <PollingStation />
+                </div>
             </div>
             <NewsGrid limitCategory="politics" />
         </div>

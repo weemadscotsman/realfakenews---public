@@ -4,7 +4,9 @@ import { ArrowLeft, Share2, Printer, Flag, MessageSquare, User, Award } from 'lu
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { staticArticles } from '@/config/static-articles';
-import { generateArticle as generateArticleGemini } from '@/lib/gemini';
+import { generateArticle as generateArticleGemini, fetchWorldState, logTelemetryEvent } from '@/lib/gemini';
+import { QuestDecision } from '@/components/QuestDecision';
+import { RansomNote } from '@/components/RansomNote';
 
 interface ArticleState {
     headline: string;
@@ -13,6 +15,7 @@ interface ArticleState {
     author: string;
     date: string;
     readTime: number;
+    arcId?: string;
 }
 
 
@@ -21,38 +24,50 @@ const ArticlePage: React.FC = () => {
     const initialHeadline = decodeURIComponent(slug || '').replace(/-/g, ' ');
 
     const [article, setArticle] = useState<ArticleState | null>(null);
+    const [worldState, setWorldState] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchArticle = async () => {
-            // 1. Check static articles first
-            if (slug && staticArticles[slug]) {
-                setArticle(staticArticles[slug]);
-                setLoading(false);
-                return;
-            }
-
-            // 2. Try Netlify function
+        const fetchArticleData = async () => {
+            setLoading(true);
             try {
-                const response = await fetch(`/.netlify/functions/generate-article?headline=${encodeURIComponent(initialHeadline)}`);
-                if (!response.ok) throw new Error('Function returned non-OK');
-                const data = await response.json();
-                if (data.content) {
-                    setArticle(data);
-                    setLoading(false);
-                    return;
+                // 1. Fetch World State for context
+                const ws = await fetchWorldState();
+                setWorldState(ws);
+
+                // 2. Fetch/Generate Article
+                let data: ArticleState;
+                if (slug && staticArticles[slug]) {
+                    data = staticArticles[slug];
+                } else {
+                    const generated = await generateArticleGemini(initialHeadline);
+                    data = generated as ArticleState;
+                }
+
+                setArticle(data);
+
+                // 3. Log Telemetry Engagement
+                // Identify if this article headline matches an active story
+                const activeArc = ws.activeStories?.find((s: any) =>
+                    data.headline.toLowerCase().includes(s.title.toLowerCase()) ||
+                    s.title.toLowerCase().includes(data.headline.toLowerCase())
+                );
+
+                if (activeArc) {
+                    await logTelemetryEvent({
+                        type: 'engagement',
+                        arcId: activeArc.id,
+                        metadata: { headline: data.headline }
+                    });
                 }
             } catch (error) {
-                console.warn("Netlify function failed, trying Gemini client-side:", error);
+                console.error("Critical article/world-state fetch failure:", error);
+            } finally {
+                setLoading(false);
             }
-
-            // 3. Generate with Gemini (free) — has built-in fallbacks
-            const geminiArticle = await generateArticleGemini(initialHeadline);
-            setArticle(geminiArticle as ArticleState);
-            setLoading(false);
         };
 
-        fetchArticle();
+        fetchArticleData();
     }, [initialHeadline, slug]);
 
     if (loading) {
@@ -65,7 +80,7 @@ const ArticlePage: React.FC = () => {
         );
     }
 
-    if (!article) return <div className="pt-24 text-center">Article not found (or censored by the Deep State).</div>;
+    if (!article) return <RansomNote />;
 
     return (
         <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
@@ -119,6 +134,13 @@ const ArticlePage: React.FC = () => {
                     className="prose prose-lg prose-red max-w-none mb-12 font-serif text-gray-800 leading-relaxed"
                     dangerouslySetInnerHTML={{ __html: article.content }}
                 />
+
+                {/* --- Lore Quest Decisions --- */}
+                {worldState?.activeStories && (
+                    <QuestDecision
+                        activeStories={worldState.activeStories}
+                    />
+                )}
 
                 {/* Fake Engagement Section */}
                 <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-12">

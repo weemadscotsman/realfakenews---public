@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Clock, Users, Flame, Trophy, Dice6 } from 'lucide-react';
-import { generateFakeBets, type FakeBet } from '@/lib/openai-enhanced';
+import { generateFakeBets, type FakeBet } from '@/lib/content-engine';
 
 const FALLBACK_BETS: FakeBet[] = [
     {

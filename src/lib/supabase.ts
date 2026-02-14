@@ -7,9 +7,10 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
 const isConfigured = supabaseUrl !== 'https://placeholder.supabase.co' && supabaseKey !== 'placeholder-key';
 
 if (!isConfigured) {
-  console.warn('Supabase credentials not configured. Auth will not work.');
+  console.warn('Supabase credentials not configured. Using offline mock mode.');
 }
 
+// Create client (will fail network calls if unconfigured, so we guard usage below)
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
     autoRefreshToken: true,
@@ -27,7 +28,7 @@ export const signUp = async (email: string, password: string, username: string) 
       data: { username },
     },
   });
-  
+
   if (error) throw error;
   return { data };
 };
@@ -37,7 +38,7 @@ export const signIn = async (email: string, password: string) => {
     email,
     password,
   });
-  
+
   if (error) throw error;
   return { data };
 };
@@ -48,16 +49,17 @@ export const signOut = async () => {
 };
 
 export const getCurrentUser = async (): Promise<User | null> => {
+  if (!isConfigured) return null;
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
-    
+
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
-      
+
     if (error || !profile) return null;
     return profile as User;
   } catch (error) {
@@ -79,12 +81,13 @@ export const getSession = async () => {
 // ==================== PROFILES ====================
 
 export const getProfile = async (userId: string): Promise<User | null> => {
+  if (!isConfigured) return null;
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', userId)
     .single();
-    
+
   if (error) return null;
   return data as User;
 };
@@ -96,7 +99,7 @@ export const updateProfile = async (userId: string, updates: Partial<User>) => {
     .eq('id', userId)
     .select()
     .single();
-    
+
   if (error) throw error;
   return data as User;
 };
@@ -109,24 +112,25 @@ export const createTeaDrop = async (teaDrop: Omit<TeaDrop, 'id' | 'created_at' |
     .insert([teaDrop])
     .select()
     .single();
-    
+
   if (error) throw error;
-  
+
   // Increment user's tea_drops_count
   await supabase.rpc('increment_tea_drops_count', { user_id: teaDrop.user_id });
-  
+
   return data as TeaDrop;
 };
 
 export const getTeaDrops = async (limit = 20, offset = 0): Promise<TeaDrop[]> => {
+  if (!isConfigured) return [];
   const { data, error } = await supabase
     .from('tea_drops')
     .select('*, profiles(username, avatar_url, level)')
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
-    
+
   if (error) throw error;
-  
+
   // Transform the data to match our interface
   return (data || []).map((item: any) => ({
     ...item,
@@ -137,9 +141,9 @@ export const getTeaDrops = async (limit = 20, offset = 0): Promise<TeaDrop[]> =>
 };
 
 export const likeTeaDrop = async (teaDropId: string, userId: string) => {
-  const { error } = await supabase.rpc('like_tea_drop', { 
+  const { error } = await supabase.rpc('like_tea_drop', {
     drop_id: teaDropId,
-    user_id: userId 
+    user_id: userId
   });
   if (error) throw error;
 };
@@ -152,7 +156,7 @@ export const getTokenBalance = async (userId: string): Promise<number> => {
     .select('roast_tokens')
     .eq('id', userId)
     .single();
-    
+
   if (error) return 0;
   return data?.roast_tokens || 0;
 };
@@ -163,12 +167,12 @@ export const spendTokens = async (userId: string, amount: number, description: s
     p_amount: amount,
     p_description: description
   });
-  
+
   if (error) {
     console.error('Spend tokens error:', error);
     return false;
   }
-  
+
   return data === true;
 };
 
@@ -179,7 +183,7 @@ export const addTokens = async (userId: string, amount: number, type: string, de
     p_type: type,
     p_description: description
   });
-  
+
   if (error) throw error;
 };
 
@@ -187,27 +191,30 @@ export const claimDailyReward = async (userId: string) => {
   const { data, error } = await supabase.rpc('claim_daily_reward', {
     p_user_id: userId
   });
-  
+
   if (error) throw error;
   return data as { tokens: number; xp: number; streak: number };
 };
 
 // ==================== DAILY CHALLENGES ====================
 
+// ==================== DAILY CHALLENGES ====================
+
 export const getTodayChallenge = async (): Promise<DailyChallenge | null> => {
+  if (!isConfigured) return null;
   const today = new Date().toISOString().split('T')[0];
-  
+
   const { data, error } = await supabase
     .from('daily_challenges')
     .select('*')
     .eq('date', today)
     .single();
-    
+
   if (error) {
     // No challenge for today, create one
     return createDailyChallenge();
   }
-  
+
   return data as DailyChallenge;
 };
 
@@ -218,9 +225,9 @@ export const createDailyChallenge = async (): Promise<DailyChallenge | null> => 
     { theme: 'Political Absurdity', description: 'The most ridiculous political news', examples: ['Politician Discovers Internet, Horrified', 'New Law Requires Politicians to Pass Turing Test'] },
     { theme: 'Celebrity Nonsense', description: 'Celebrity news that makes you question reality', examples: ['Influencer Discovers Poverty, Calls it "Aesthetic"', 'Celebrity Releases Perfume That Smells Like Ego'] },
   ];
-  
+
   const randomTheme = themes[Math.floor(Math.random() * themes.length)];
-  
+
   const { data, error } = await supabase
     .from('daily_challenges')
     .insert([{
@@ -231,21 +238,22 @@ export const createDailyChallenge = async (): Promise<DailyChallenge | null> => 
     }])
     .select()
     .single();
-    
+
   if (error) return null;
   return data as DailyChallenge;
 };
 
 export const getChallengeEntries = async (challengeId: string): Promise<TeaDrop[]> => {
+  if (!isConfigured) return [];
   const { data, error } = await supabase
     .from('tea_drops')
     .select('*, profiles(username, avatar_url, level)')
     .eq('challenge_id', challengeId)
     .eq('is_challenge_entry', true)
     .order('likes', { ascending: false });
-    
+
   if (error) throw error;
-  
+
   return (data || []).map((item: any) => ({
     ...item,
     username: item.profiles?.username || 'Unknown',
@@ -267,21 +275,22 @@ export const createBattle = async (challengerId: string, opponentId: string): Pr
     }])
     .select()
     .single();
-    
+
   if (error) throw error;
   return data as RoastBattle;
 };
 
 export const getActiveBattles = async (): Promise<RoastBattle[]> => {
+  if (!isConfigured) return [];
   const { data, error } = await supabase
     .from('roast_battles')
     .select('*, challenger:profiles!challenger_id(username), opponent:profiles!opponent_id(username)')
     .in('status', ['active', 'voting'])
     .order('created_at', { ascending: false })
     .limit(10);
-    
+
   if (error) throw error;
-  
+
   return (data || []).map((item: any) => ({
     ...item,
     challenger_username: item.challenger?.username || 'Unknown',
@@ -295,20 +304,20 @@ export const submitBattleRoast = async (battleId: string, userId: string, headli
     .select('*')
     .eq('id', battleId)
     .single();
-    
+
   if (!battle) throw new Error('Battle not found');
-  
+
   const isChallenger = battle.challenger_id === userId;
-  
-  const updates = isChallenger 
+
+  const updates = isChallenger
     ? { challenger_headline: headline, challenger_roast: roast }
     : { opponent_headline: headline, opponent_roast: roast, status: 'voting' };
-    
+
   const { error } = await supabase
     .from('roast_battles')
     .update(updates)
     .eq('id', battleId);
-    
+
   if (error) throw error;
 };
 
@@ -318,7 +327,7 @@ export const voteInBattle = async (battleId: string, userId: string, forChalleng
     p_user_id: userId,
     p_for_challenger: forChallenger
   });
-  
+
   if (error) throw error;
 };
 
@@ -330,7 +339,7 @@ export const getUserAchievements = async (userId: string): Promise<Achievement[]
     .select('*')
     .eq('user_id', userId)
     .order('unlocked_at', { ascending: false });
-    
+
   if (error) throw error;
   return data as Achievement[] || [];
 };
@@ -340,21 +349,22 @@ export const claimAchievementReward = async (achievementId: string, userId: stri
     p_achievement_id: achievementId,
     p_user_id: userId
   });
-  
+
   if (error) throw error;
 };
 
 // ==================== LEADERBOARD ====================
 
 export const getLeaderboard = async (_timeframe: 'daily' | 'weekly' | 'alltime' = 'weekly', limit = 20): Promise<User[]> => {
+  if (!isConfigured) return [];
   let query = supabase
     .from('profiles')
     .select('id, username, avatar_url, level, title, xp, tea_drops_count, battle_wins, followers_count')
     .order('xp', { ascending: false })
     .limit(limit);
-    
+
   const { data, error } = await query;
-  
+
   if (error) throw error;
   return data as User[] || [];
 };
@@ -362,19 +372,20 @@ export const getLeaderboard = async (_timeframe: 'daily' | 'weekly' | 'alltime' 
 // ==================== NOTIFICATIONS ====================
 
 export const getNotifications = async (userId: string, unreadOnly = false): Promise<Notification[]> => {
+  if (!isConfigured) return [];
   let query = supabase
     .from('notifications')
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
     .limit(50);
-    
+
   if (unreadOnly) {
     query = query.eq('read', false);
   }
-  
+
   const { data, error } = await query;
-  
+
   if (error) throw error;
   return data as Notification[] || [];
 };
@@ -384,7 +395,7 @@ export const markNotificationRead = async (notificationId: string) => {
     .from('notifications')
     .update({ read: true })
     .eq('id', notificationId);
-    
+
   if (error) throw error;
 };
 
@@ -398,7 +409,7 @@ export const createNotification = async (userId: string, type: string, title: st
       message,
       data: data || {},
     }]);
-    
+
   if (error) console.error('Failed to create notification:', error);
 };
 
@@ -414,28 +425,29 @@ export const createStoryArc = async (userId: string, headline: string, content: 
     }])
     .select()
     .single();
-    
+
   if (error) throw error;
-  
+
   // Increment user's story_arc_count
   await supabase.rpc('increment_story_arc_count', { user_id: userId });
-  
+
   return data as StoryArc;
 };
 
 export const getStoryArcs = async (userId?: string, limit = 10): Promise<StoryArc[]> => {
+  if (!isConfigured) return [];
   let query = supabase
     .from('story_arcs')
     .select('*, profiles(username)')
     .order('published_at', { ascending: false })
     .limit(limit);
-    
+
   if (userId) {
     query = query.eq('user_id', userId);
   }
-  
+
   const { data, error } = await query;
-  
+
   if (error) throw error;
   return data as StoryArc[] || [];
 };
@@ -447,7 +459,7 @@ export const addXp = async (userId: string, amount: number) => {
     p_user_id: userId,
     p_xp: amount
   });
-  
+
   if (error) throw error;
 };
 
@@ -465,9 +477,9 @@ export const subscribeToTeaDrops = (callback: (teaDrop: TeaDrop) => void) => {
 export const subscribeToNotifications = (userId: string, callback: (notification: Notification) => void) => {
   return supabase
     .channel(`notifications:${userId}`)
-    .on('postgres_changes', { 
-      event: 'INSERT', 
-      schema: 'public', 
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
       table: 'notifications',
       filter: `user_id=eq.${userId}`
     }, (payload) => {

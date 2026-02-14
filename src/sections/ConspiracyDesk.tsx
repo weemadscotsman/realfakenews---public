@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Radio, AlertTriangle, EyeOff, Zap, Search } from 'lucide-react';
-import { generateConspiracyTheories, type ConspiracyTheory } from '@/lib/openai-enhanced';
+import { Radio, AlertTriangle, EyeOff, Search, FileText } from 'lucide-react';
+import { generateConspiracyTheories, type ConspiracyTheory } from '@/lib/content-engine';
+import { ConspiracyGraph } from '@/components/ConspiracyGraph';
+import { InterceptedSignal } from '@/components/InterceptedSignal';
+import { FactionTrustRadar } from '@/components/FactionTrustRadar';
+import { Link } from 'react-router-dom';
 
 interface NewsItem {
     title: string;
@@ -99,89 +103,130 @@ const ConspiracyDesk = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        {/* Main Theory Display */}
-                        <div className="lg:col-span-8 bg-zinc-950 border-2 border-red-900 p-8 rounded-3xl relative overflow-hidden">
+                        {/* LEFT COLUMN: Visuals & Radar */}
+                        <div className="lg:col-span-4 space-y-8">
+                            <div className="bg-zinc-950 border-2 border-red-900 rounded-xl overflow-hidden shadow-lg hover:border-red-600 transition-colors group">
+                                <div className="p-3 bg-red-900/10 border-b border-red-900 flex justify-between items-center">
+                                    <h3 className="text-xs font-black uppercase text-red-500 tracking-widest">The String Wall</h3>
+                                    <Search size={14} className="text-red-700 group-hover:text-red-400" />
+                                </div>
+                                <div className="p-4">
+                                    <ConspiracyGraph />
+                                </div>
+                            </div>
+
+                            <FactionTrustRadar />
+
+                            {/* ARCHIVES LINK */}
+                            <Link to="/archives" className="block group">
+                                <div className="bg-amber-950/20 border-2 border-amber-900/50 p-6 rounded-xl hover:bg-amber-900/30 hover:border-amber-600 transition-all cursor-pointer">
+                                    <div className="flex items-center gap-4 mb-2">
+                                        <FileText className="text-amber-600 group-hover:text-amber-400" size={24} />
+                                        <h3 className="text-lg font-black uppercase text-amber-700 group-hover:text-amber-500">Classified Archives</h3>
+                                    </div>
+                                    <p className="text-xs text-amber-800 font-mono">
+                                        ACCESS LEVEL: CLEARANCE GRANTED<br />
+                                        &gt; READ THE FOUNDING DOCUMENTS
+                                    </p>
+                                </div>
+                            </Link>
+                        </div>
+
+                        {/* MIDDLE COLUMN: Main Theory Display */}
+                        <div className="lg:col-span-5 bg-zinc-950 border-2 border-red-900 p-8 rounded-3xl relative overflow-hidden min-h-[500px] flex flex-col justify-between">
                             <div className="absolute top-0 right-0 p-4 opacity-10">
                                 <EyeOff size={100} />
                             </div>
 
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={currentIndex}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    className="relative z-10"
-                                >
-                                    <div className="flex items-center gap-2 mb-4 text-xs font-black text-red-700 uppercase tracking-widest">
-                                        <AlertTriangle size={14} />
-                                        Intercepted Topic: {theories[currentIndex].topic}
-                                    </div>
-
-                                    <div className="mb-6">
-                                        <h3 className="text-3xl md:text-5xl font-black mb-6 leading-tight uppercase italic underline decoration-red-900 decoration-4 underline-offset-8">
-                                            THE TRUTH:
-                                        </h3>
-                                        <p className="text-xl md:text-2xl font-mono text-red-400 font-bold leading-relaxed bg-red-950/20 p-6 rounded-xl border border-red-900/50">
-                                            {theories[currentIndex].truth.split(' ').map((word, i) => (
-                                                <span key={i} className={word.toUpperCase() === 'DARREN' || word.toUpperCase() === 'SHEILA' ? 'text-white bg-red-600 px-1 rounded' : ''}>
-                                                    {word}{' '}
+                            <div className="relative z-10">
+                                <div className="p-4 border border-red-900/30 rounded bg-black/40 mb-8">
+                                    <h4 className="text-red-500 font-bold uppercase text-xs mb-2">Active Investigations</h4>
+                                    <ul className="space-y-2 text-sm">
+                                        <li className="flex items-center gap-2 text-red-400">
+                                            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                                            Subject: Smart Fridge (Code: SPOILED_MILK)
+                                        </li>
+                                        <li className="flex items-center gap-2 text-gray-500">
+                                            <span className="w-2 h-2 bg-gray-700 rounded-full" />
+                                            Operation: Crumb Tray (Stalled)
+                                        </li>
+                                        <li className="pt-2">
+                                            <Link to="/logs/darren-03" className="flex items-center gap-2 text-red-900 hover:text-red-500 transition-colors cursor-pointer group">
+                                                <FileText size={14} />
+                                                <span className="uppercase text-[10px] group-hover:underline decoration-red-500 underline-offset-4">
+                                                    EVIDENCE_FILE_03.wav [ENCRYPTED]
                                                 </span>
-                                            ))}
-                                        </p>
-                                    </div>
-
-                                    <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-red-900/50">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-full bg-red-900 flex items-center justify-center text-white font-black text-xs">
-                                                {theories[currentIndex].theorist[0]}
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] text-red-800 font-black uppercase">Source</p>
-                                                <p className="font-bold uppercase tracking-tighter">{theories[currentIndex].theorist}</p>
-                                            </div>
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={currentIndex}
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 1.05 }}
+                                    >
+                                        <div className="flex items-center gap-2 mb-4 text-xs font-black text-red-700 uppercase tracking-widest border-b border-red-900/30 pb-2">
+                                            <AlertTriangle size={14} />
+                                            Intercepted Theory #{currentIndex + 1}
                                         </div>
 
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-full bg-black border border-red-900 flex items-center justify-center text-red-500">
-                                                <ShieldAlert size={16} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] text-red-800 font-black uppercase">Certainty</p>
-                                                <p className="font-bold uppercase tracking-tighter">{theories[currentIndex].level.replace('_', ' ')}</p>
-                                            </div>
+                                        <div className="mb-6">
+                                            <h3 className="text-3xl font-black mb-6 leading-tight uppercase italic text-red-100">
+                                                {theories[currentIndex].topic}
+                                            </h3>
+                                            <p className="text-xl font-mono text-red-400 font-bold leading-relaxed bg-red-950/20 p-6 rounded-xl border border-red-900/50 shadow-inner">
+                                                <span className="text-red-600 mr-2 text-3xl float-left">"</span>
+                                                {theories[currentIndex].truth}
+                                                <span className="text-red-600 ml-2 text-3xl">"</span>
+                                            </p>
                                         </div>
 
-                                        {theories[currentIndex].connectedToDarren && (
-                                            <div className="flex items-center gap-2 bg-red-900/50 text-red-100 px-3 py-1 rounded-full animate-pulse border border-red-700">
-                                                <Zap size={14} />
-                                                <span className="text-[10px] font-black uppercase">Link Detected: DARREN SAGA</span>
+                                        <div className="flex flex-wrap items-center gap-4 pt-6">
+                                            <div className="px-3 py-1 rounded bg-black border border-red-800 text-[10px] text-red-500 font-mono">
+                                                SOURCE: {theories[currentIndex].theorist}
                                             </div>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            </AnimatePresence>
+                                            <div className="px-3 py-1 rounded bg-black border border-red-800 text-[10px] text-red-500 font-mono">
+                                                CERTAINTY: {theories[currentIndex].level}
+                                            </div>
+                                            {theories[currentIndex].connectedToDarren && (
+                                                <div className="px-3 py-1 rounded bg-red-900 text-[10px] text-white font-black animate-pulse">
+                                                    DARREN LINKED
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+
+                            <div className="mt-8 flex justify-between items-center text-[10px] text-red-800 font-mono pt-4 border-t border-red-900/30">
+                                <span>AUTO-SCROLL: ACTIVE</span>
+                                <span>REFRESH RATE: 8000ms</span>
+                            </div>
                         </div>
 
-                        {/* Sidebar: Theories List */}
-                        <div className="lg:col-span-4 flex flex-col gap-4">
-                            <h4 className="text-xs font-black uppercase text-red-800 tracking-widest pl-2">Intercepted Transmissions</h4>
-                            {theories.map((theory, idx) => (
-                                <button
-                                    key={theory.id}
-                                    onClick={() => setCurrentIndex(idx)}
-                                    className={`p-4 rounded-xl border transition-all text-left uppercase font-mono text-sm ${currentIndex === idx
-                                        ? 'bg-red-900 text-white border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)] translate-x-2'
-                                        : 'bg-zinc-950 border-red-900/30 text-red-900 hover:border-red-900/60'
-                                        }`}
-                                >
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-[10px] opacity-70">SIGNAL #{idx + 1}</span>
-                                        {theory.connectedToDarren && <Zap size={10} className="text-yellow-500" />}
-                                    </div>
-                                    <p className="font-black truncate">{theory.topic}</p>
-                                </button>
-                            ))}
+                        {/* RIGHT COLUMN: Comms & List */}
+                        <div className="lg:col-span-3 space-y-6">
+                            <InterceptedSignal />
+
+                            <div className="bg-zinc-950 border border-red-900/30 rounded-xl p-4">
+                                <h4 className="text-[10px] font-black uppercase text-red-800 tracking-widest mb-4">Active Threads</h4>
+                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {theories.map((theory, idx) => (
+                                        <button
+                                            key={theory.id}
+                                            onClick={() => setCurrentIndex(idx)}
+                                            className={`w-full p-3 rounded border transition-all text-left uppercase font-mono text-[10px] leading-tight ${currentIndex === idx
+                                                ? 'bg-red-900 text-white border-red-500'
+                                                : 'bg-black border-red-900/20 text-red-800 hover:border-red-900/60'
+                                                }`}
+                                        >
+                                            {theory.topic}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

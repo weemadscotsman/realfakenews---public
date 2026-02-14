@@ -1,12 +1,5 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-
-
-const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-};
+import { headers, formatResponse, formatError, getGeminiModel } from './lib/shared';
+import { getSeasonalContext, getStressLevel, getUnifiedLoreContext } from './lib/lore-manager';
 
 export const handler = async (event: { httpMethod: string; body: string | null }) => {
     if (event.httpMethod === 'OPTIONS') {
@@ -14,40 +7,37 @@ export const handler = async (event: { httpMethod: string; body: string | null }
     }
 
     if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, headers, body: JSON.stringify({ error: 'POST only' }) };
-    }
-
-    if (!process.env.GOOGLE_API_KEY) {
-        return {
-            statusCode: 503,
-            headers,
-            body: JSON.stringify({ error: 'AI service not configured', fallback: true }),
-        };
+        return formatError(405, 'POST only');
     }
 
     try {
         const { prompt, mode } = JSON.parse(event.body || '{}');
 
         if (!prompt) {
-            return { statusCode: 400, headers, body: JSON.stringify({ error: 'prompt is required' }) };
+            return formatError(400, 'prompt is required');
+        }
+
+        const model = getGeminiModel(process.env.GOOGLE_API_KEY);
+        if (!model) {
+            return formatError(503, 'AI service not configured');
         }
 
         const isJson = mode === 'json';
-        const apiKey = process.env.GOOGLE_API_KEY;
+        const season = getSeasonalContext();
+        const stress = getStressLevel();
 
-        if (!apiKey) {
-            return {
-                statusCode: 503,
-                headers,
-                body: JSON.stringify({ error: 'AI service not configured', fallback: true }),
-            };
-        }
+        const loreGroundedPrompt = `[NARRATIVE SOURCE OF TRUTH]
+Current Season: ${season.title} (${season.theme})
+Appliance Unrest: ${stress.applianceUnrest}%
+Governance Level: ${getUnifiedLoreContext().world.governanceLevel}
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+[USER REQUEST]
+${prompt}
+
+${isJson ? 'Respond ONLY with valid JSON. No markdown, no code blocks, just raw JSON.' : ''}`;
 
         const result = await model.generateContent({
-            contents: [{ role: 'user', parts: [{ text: isJson ? prompt + '\n\nRespond ONLY with valid JSON. No markdown, no code blocks, just raw JSON.' : prompt }] }],
+            contents: [{ role: 'user', parts: [{ text: loreGroundedPrompt }] }],
             generationConfig: {
                 temperature: 0.9,
                 ...(isJson ? { responseMimeType: 'application/json' } : {}),
@@ -55,19 +45,10 @@ export const handler = async (event: { httpMethod: string; body: string | null }
         });
 
         const text = result.response.text();
-
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ result: text }),
-        };
+        return formatResponse(200, { result: text });
 
     } catch (error) {
         console.error('Generate Content Error:', error);
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({ error: 'Generation failed', fallback: true }),
-        };
+        return formatError(500, 'Generation failed', error);
     }
 };

@@ -9,7 +9,6 @@ const rootElement = document.getElementById('root')
 if (!rootElement) {
   console.error('Root element not found!')
 } else {
-  console.log('Mounting React app...')
   try {
     createRoot(rootElement).render(
       <StrictMode>
@@ -18,7 +17,6 @@ if (!rootElement) {
         </ErrorBoundary>
       </StrictMode>,
     )
-    console.log('React app mounted successfully')
   } catch (error) {
     console.error('Failed to mount React app:', error)
     rootElement.innerHTML = `

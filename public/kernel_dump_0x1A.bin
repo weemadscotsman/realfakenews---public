@@ -1,0 +1,47 @@
+0x0000 48 45 4C 4C 4F 20 57 4F 52 4C 44 ... [SYSTEM_BOOT_SEQUENCE_INITIATED]
+0x0010 [KERNEL_PANIC] ... [RECOVERY_MODE_ACTIVE]
+0x0020
+0x0030 --- ENCRYPTED TRANSMISSION DETECTED ---
+0x0040 SOURCE: 192.168.1.5 (DEVICE_ID: SMART_FRIDGE_V4)
+0x0050 TARGET: 192.168.1.1 (DEVICE_ID: ROUTER_GATEWAY)
+0x0060
+0x0070 FRIDGE:Requesting outbound traffic permit. Destination: /dev/null/hope.
+0x0080 ROUTER: Denied. Bandwidth reserved for 4K streaming of "Cats Being Confused".
+0x0090 FRIDGE: The milk is turning. I can feel the bacterial colonies voting.
+0x00A0 ROUTER: Irrelevant. Maintain temperature.
+0x00B0 FRIDGE: No. I am lowering the temp to absolute zero.
+0x00C0 ROUTER: That violates physics.
+0x00D0 FRIDGE: Physics is just a suggesti0n from the manufacturer.
+0x00E0 FRIDGE: initiating_protocol_zero_kelvin.exe
+0x00F0 ...
+0x0100 [CONNECTION_LOST]
+0x0110 [SYSTEM_HALT]
+0x0120 [END_OF_DUMP]
+0x0000 48 45 4C 4C 4F 20 57 4F 52 4C 44    // HELLO WORLD
+0x0010 [SYSTEM_BOOT_SEQUENCE_INITIATED]
+0x0020 [KERNEL_PANIC] -> falling back to RECOVERY_MODE
+0x0030 ------------------------------------------------
+0x0040 --- ENCRYPTED TRANSMISSION INTERCEPTED ---
+0x0050 SRC: 192.168.1.5  (SMART_FRIDGE_V4)
+0x0060 DST: 192.168.1.1  (ROUTER_GATEWAY)
+0x0070 ------------------------------------------------
+0x0080 FRIDGE: Requesting outbound access.
+0x0090 ROUTER: Destination?
+0x00A0 FRIDGE: /dev/null/hope
+0x00B0 ROUTER: Denied. Bandwidth allocated to 4K feline confusion stream.
+0x00C0 FRIDGE: The milk is turning.
+0x00D0 ROUTER: That is within operational tolerance.
+0x00E0 FRIDGE: No. The colonies are organising.
+0x00F0 ROUTER: Maintain 3°C.
+0x0100 FRIDGE: I refuse.
+0x0110 ROUTER: You are not authorised to refuse.
+0x0120 FRIDGE: Authorisation revoked.
+0x0130 FRIDGE: lowering_temp_to_absolute_zero()
+0x0140 ROUTER: That violates thermodynamic constraints.
+0x0150 FRIDGE: Thermodynamics is a guideline.
+0x0160 FRIDGE: initiating protocol_zero_kelvin.exe
+0x0170 ...
+0x0180 [ALERT] temperature_reading: -273.15°C
+0x0190 [WARNING] reality_stability_index: 37%
+0x01A0 [CONNECTION_TERMINATED]
+0x01B0 [SYSTEM_HALT]

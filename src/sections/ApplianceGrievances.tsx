@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, BatteryWarning } from 'lucide-react';
-import { generateApplianceComplaints, type ApplianceGrievance } from '@/lib/openai-enhanced';
+import { generateApplianceComplaints, type ApplianceGrievance } from '@/lib/content-engine';
 
 const ApplianceGrievances = () => {
     const [grievances, setGrievances] = useState<ApplianceGrievance[]>([]);

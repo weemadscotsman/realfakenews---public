@@ -1,5 +1,6 @@
 import React from 'react';
-import { Twitter, Facebook, Instagram, Youtube, Mail } from 'lucide-react';
+import { Twitter, Facebook, Instagram, Youtube, Mail, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Footer: React.FC = () => {
   const footerLinks = {
@@ -133,6 +134,32 @@ const Footer: React.FC = () => {
             Or subscribe. We need the money.
           </p>
         </div>
+      </div>
+      {/* AGC Compliance Seal */}
+      <div className="mt-12 border-t border-gray-800 pt-8 flex flex-col items-center">
+        <button
+          onClick={() => {
+            toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
+              loading: 'Running Mandatory Compliance Audit...',
+              success: 'Audit Passed. You remain fully authorized.',
+              error: 'Compliance Failure Detected.'
+            });
+          }}
+          className="group flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity"
+        >
+          <div className="relative">
+            <ShieldCheck size={32} className="text-zinc-600 group-hover:text-green-500 transition-colors" />
+            <div className="absolute inset-0 bg-green-500 blur-lg opacity-0 group-hover:opacity-20 transition-opacity" />
+          </div>
+          <div className="text-center">
+            <span className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 group-hover:text-green-500 font-bold">
+              Verified by the Appliance Governance Council
+            </span>
+            <span className="block text-[8px] uppercase tracking-widest text-zinc-600 mt-1">
+              Safety Level: Mandatory
+            </span>
+          </div>
+        </button>
       </div>
     </footer>
   );

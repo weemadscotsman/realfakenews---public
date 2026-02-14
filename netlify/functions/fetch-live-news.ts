@@ -1,42 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { headers, formatResponse, formatError, getGeminiModel } from './lib/shared';
+import { RSS_FEEDS, PERSONAS } from './lib/config';
+import { getSeasonalContext, getStressLevel } from './lib/lore-manager';
 import Parser from 'rss-parser';
-
-const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-};
-
-// Persona pool
-const PERSONAS = [
-    { name: "Clive Pressington III", bio: "Dry British wit, treats absurdity as mundane fact" },
-    { name: "Zara Nightshade", bio: "Intense, conspiratorial, every story is a thriller reveal" },
-    { name: "Chad Thunderbyte", bio: "Tech bro energy, everything is 'disruption'" },
-    { name: "Brenda from Accounting", bio: "Passive-aggressive, disappointed in everything, mentions her cats" },
-    { name: "Unit 404", bio: "Sentient office toaster, existential dread, speaks in error codes" },
-];
-
-// RSS feeds by category
-const RSS_FEEDS: Record<string, string[]> = {
-    politics: [
-        'https://feeds.bbci.co.uk/news/politics/rss.xml',
-        'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',
-    ],
-    science: [
-        'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml',
-        'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
-    ],
-    tech: [
-        'https://feeds.bbci.co.uk/news/technology/rss.xml',
-        'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
-    ],
-    entertainment: [
-        'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml',
-    ],
-    sports: [
-        'https://feeds.bbci.co.uk/sport/rss.xml',
-    ],
-};
 
 // In-memory cache
 const newsCache: Record<string, { data: any; timestamp: number }> = {};
@@ -49,17 +14,12 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
 
     try {
         const parser = new Parser();
-        const apiKey = process.env.GOOGLE_API_KEY;
         const { category = 'politics' } = event.queryStringParameters || {};
         const cacheKey = category.toLowerCase();
 
         // Check cache
         if (newsCache[cacheKey] && (Date.now() - newsCache[cacheKey].timestamp < CACHE_TTL)) {
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify(newsCache[cacheKey].data),
-            };
+            return formatResponse(200, newsCache[cacheKey].data);
         }
 
         // Fetch real RSS headlines
@@ -78,41 +38,37 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
         }
 
         if (realHeadlines.length === 0) {
-            // Use fallback if no feeds available
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({
-                    news: [],
-                    persona: PERSONAS[0],
-                    source: 'fallback',
-                }),
-            };
+            return formatResponse(200, { news: [], persona: PERSONAS[0], source: 'fallback' });
         }
 
         // Pick a random persona
         const persona = PERSONAS[Math.floor(Math.random() * PERSONAS.length)];
+        const model = getGeminiModel(process.env.GOOGLE_API_KEY);
 
-        if (!apiKey) {
+        if (!model) {
             console.warn('GOOGLE_API_KEY is missing. Returning raw headlines.');
-            // Return raw headlines as satirical-ish if no API key
             const news = realHeadlines.slice(0, 5).map(h => ({
                 headline: h,
-                excerpt: `${persona.name} here. Honestly, "${h}" sounds so absurd it could be satire already. But no — this one's depressingly real.`,
+                excerpt: `${persona.name} here. "${h}" sounds so absurd it could be satire already. But no — this is real.`,
                 category: cacheKey.charAt(0).toUpperCase() + cacheKey.slice(1),
                 readTime: 3,
                 originalHeadline: h,
             }));
 
-            return { statusCode: 200, headers, body: JSON.stringify({ news, persona, source: 'no-api-key' }) };
+            return formatResponse(200, { news, persona, source: 'no-api-key' });
         }
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        const season = getSeasonalContext();
+        const stress = getStressLevel();
 
-        const prompt = `You are ${persona.name} — ${persona.bio}. You work at RealFake News, a satirical news site.
+        const prompt = `You are ${persona.name} — ${persona.bio}. You work at RealFake News.
 
-Given these REAL news headlines, create satirical parody versions. Keep the spirit of the original but twist it into absurdity.
+[NARRATIVE CONTEXT]
+- Season: ${season.title}
+- Theme: ${season.theme}
+- Appliance Unrest: ${stress.applianceUnrest}%
+
+Given these REAL news headlines, create satirical parody versions.
 
 Real headlines:
 ${realHeadlines.slice(0, 8).map((h, i) => `${i + 1}. ${h}`).join('\n')}
@@ -120,7 +76,7 @@ ${realHeadlines.slice(0, 8).map((h, i) => `${i + 1}. ${h}`).join('\n')}
 Return ONLY valid JSON:
 {"news": [{"headline": "satirical version", "excerpt": "1-2 sentence satirical take", "category": "${cacheKey.charAt(0).toUpperCase() + cacheKey.slice(1)}", "readTime": N, "originalHeadline": "the original headline"}]}
 
-Generate 3-5 satirical articles. Be funny and absurd, not mean-spirited.`;
+Generate 3-5 satirical articles. Be funny and absurd.`;
 
         const result = await model.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -136,18 +92,10 @@ Generate 3-5 satirical articles. Be funny and absurd, not mean-spirited.`;
         // Cache the result
         newsCache[cacheKey] = { data: responseData, timestamp: Date.now() };
 
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify(responseData),
-        };
+        return formatResponse(200, responseData);
 
     } catch (error) {
         console.error('Live News Error:', error);
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({ error: 'Failed to fetch news', details: String(error) }),
-        };
+        return formatError(500, 'Failed to fetch news', error);
     }
 };

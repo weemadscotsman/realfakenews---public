@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
-import { generateRoast, type RoastStyle } from '@/lib/openai-enhanced';
+import { generateRoast, type RoastStyle } from '@/lib/content-engine';
+import { ROAST_STYLE_METADATA } from '@/lib/roast-constants';
 import {
   createTeaDrop,
   getTeaDrops,
@@ -22,16 +23,7 @@ import {
 import { toast } from 'sonner';
 import type { TeaDrop, DailyChallenge, RoastBattle } from '@/types';
 
-const ROAST_STYLES: { id: RoastStyle; name: string; icon: string; cost: number }[] = [
-  { id: 'default', name: 'Classic', icon: '🔥', cost: 1 },
-  { id: 'shakespeare', name: 'Shakespeare', icon: '🎭', cost: 2 },
-  { id: 'drill', name: 'UK Drill', icon: '🇬🇧', cost: 2 },
-  { id: 'corporate', name: 'Corporate', icon: '💼', cost: 2 },
-  { id: 'boomer', name: 'Boomer', icon: '👴', cost: 2 },
-  { id: 'genz', name: 'Gen Z', icon: '✨', cost: 2 },
-  { id: 'pirate', name: 'Pirate', icon: '🏴‍☠️', cost: 3 },
-  { id: 'yoda', name: 'Yoda', icon: '👽', cost: 3 },
-];
+const ROAST_STYLE_IDS = Object.keys(ROAST_STYLE_METADATA) as RoastStyle[];
 
 interface DropTheTeaProps {
   onLoginRequired: () => void;
@@ -135,7 +127,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
       return;
     }
 
-    const styleCost = ROAST_STYLES.find(s => s.id === selectedStyle)?.cost || 1;
+    const styleCost = ROAST_STYLE_METADATA[selectedStyle]?.cost || 1;
 
     // Billing Logic (Unlimited for VIPs)
     if (!user?.is_subscribed) {
@@ -331,24 +323,27 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
 
                   {/* Roast Style Selector */}
                   <div className="flex flex-wrap gap-2">
-                    {ROAST_STYLES.map((style) => (
-                      <button
-                        key={style.id}
-                        type="button"
-                        onClick={() => setSelectedStyle(style.id)}
-                        disabled={!isAuthenticated}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${selectedStyle === style.id
-                          ? 'border-red-500 bg-red-50 text-red-700'
-                          : 'border-gray-200 hover:border-gray-300'
-                          } ${!isAuthenticated ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        <span>{style.icon}</span>
-                        <span className="text-sm font-medium">{style.name}</span>
-                        <span className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">
-                          {style.cost}🪙
-                        </span>
-                      </button>
-                    ))}
+                    {ROAST_STYLE_IDS.map((id) => {
+                      const style = ROAST_STYLE_METADATA[id];
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          onClick={() => setSelectedStyle(id)}
+                          disabled={!isAuthenticated}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${selectedStyle === id
+                            ? 'border-red-500 bg-red-50 text-red-700'
+                            : 'border-gray-200 hover:border-gray-300'
+                            } ${!isAuthenticated ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <span>{style.icon}</span>
+                          <span className="text-sm font-medium">{style.name}</span>
+                          <span className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">
+                            {style.cost}🪙
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <Button
@@ -366,7 +361,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
                     ) : (
                       <>
                         <Flame className="mr-2" size={20} />
-                        Roast Me ({ROAST_STYLES.find(s => s.id === selectedStyle)?.cost}🪙)
+                        Roast Me ({ROAST_STYLE_METADATA[selectedStyle]?.cost}🪙)
                       </>
                     )}
                   </Button>
@@ -384,7 +379,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
                           </span>
                           {currentRoast.roast_style && currentRoast.roast_style !== 'default' && (
                             <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">
-                              {ROAST_STYLES.find(s => s.id === currentRoast.roast_style)?.icon} {currentRoast.roast_style}
+                              {ROAST_STYLE_METADATA[currentRoast.roast_style as RoastStyle]?.icon} {currentRoast.roast_style}
                             </span>
                           )}
                         </div>

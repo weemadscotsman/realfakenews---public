@@ -1,5 +1,6 @@
 import NewsGrid from '@/sections/NewsGrid';
 import { VenetianMask } from 'lucide-react';
+import { CelebrityFeed } from '@/components/CelebrityFeed';
 
 const EntertainmentPage = () => {
     return (
@@ -15,6 +16,10 @@ const EntertainmentPage = () => {
                 <p className="text-xl text-pink-800 max-w-2xl mx-auto font-serif italic">
                     "Someone wore a dress. The internet collapsed."
                 </p>
+
+                <div className="mt-12">
+                    <CelebrityFeed />
+                </div>
             </div>
             <NewsGrid limitCategory="entertainment" />
         </div>

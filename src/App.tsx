@@ -14,6 +14,7 @@ import Footer from '@/components/Footer';
 import BreakingNewsBar from '@/components/BreakingNewsBar';
 import Masthead from '@/components/Masthead';
 import MembershipPage from '@/pages/MembershipPage';
+import { NarrativeOverlay } from '@/components/NarrativeOverlay';
 import PoliticsPage from '@/pages/PoliticsPage';
 import SciencePage from '@/pages/SciencePage';
 import EntertainmentPage from '@/pages/EntertainmentPage';
@@ -21,6 +22,11 @@ import SportsPage from '@/pages/SportsPage';
 import ConspiracyPage from '@/pages/ConspiracyPage';
 import ResistancePage from '@/pages/ResistancePage';
 import BetsPage from '@/pages/BetsPage';
+import { ArchivesPage } from '@/pages/ArchivesPage';
+import { DarrenHiddenLog } from '@/components/DarrenHiddenLog';
+import { RealityTicker } from '@/components/RealityTicker';
+import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
+import { BatteryWarning } from 'lucide-react';
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
@@ -35,6 +41,15 @@ function App() {
     <Router>
       <AuthProvider>
         <GameEconomyProvider>
+          {/* Scarcity Mechanic: Grid Stability Widget */}
+          <div className="fixed top-4 right-4 z-50 bg-black/80 text-white px-3 py-1 rounded-full border border-zinc-700 flex items-center gap-2 text-xs font-mono shadow-xl pointer-events-none">
+            <BatteryWarning size={12} className={67 < 30 ? "text-red-500 animate-pulse" : "text-yellow-500"} />
+            <span className="opacity-70 uppercase tracking-wider">Grid Stability:</span>
+            <span className={67 < 30 ? "text-red-500 font-bold" : "text-yellow-400 font-bold"}>67%</span>
+          </div>
+
+          <RealityTicker />
+
           <div className="min-h-screen bg-white">
             <BreakingNewsBar />
             <Masthead />
@@ -54,9 +69,14 @@ function App() {
               <Route path="/apocalypse" element={<DoomsdayPage />} />
               <Route path="/timeline" element={<Timeline />} />
               <Route path="/membership" element={<MembershipPage />} />
+              <Route path="/doomsday" element={<DoomsdayPage />} />
+              <Route path="/archives" element={<ArchivesPage />} />
+              <Route path="/logs/darren-03" element={<DarrenHiddenLog />} />
+              <Route path="/admin/surveillance" element={<SurveillanceDashboard />} />
             </Routes>
 
             <Footer />
+            <NarrativeOverlay />
 
             {showLogin && (
               <LoginModal

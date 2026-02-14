@@ -116,7 +116,7 @@ export const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ c
           description: 'Buy more or wait for daily refresh',
           action: {
             label: 'Buy Tokens',
-            onClick: () => document.getElementById('subscription')?.scrollIntoView({ behavior: 'smooth' }),
+            onClick: () => window.location.href = '/membership',
           },
         });
         return false;

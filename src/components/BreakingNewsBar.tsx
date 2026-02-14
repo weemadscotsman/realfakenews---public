@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertCircle, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { generateDailyNews } from '@/lib/openai-enhanced';
+import { generateDailyNews } from '@/lib/content-engine';
 
 const FALLBACK_HEADLINES = [
   "BREAKING: Local Man Discovers He's Been Reading Fake News This Whole Time—Sources Say 'We Told You So'",

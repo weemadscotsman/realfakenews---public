@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Clock, Sparkles } from 'lucide-react';
+import { ArrowRight, Clock, Sparkles, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { CANONICAL_ARTICLES } from '@/data/canonical-articles';
 
 interface Article {
   headline: string;
@@ -12,7 +14,15 @@ interface Article {
   featured?: boolean;
   originalHeadline?: string;
   slug?: string;
+  verified?: boolean; // New property for AGC verification
 }
+
+const VerifiedBadge = () => (
+  <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-green-500/90 text-black px-2 py-0.5 rounded-full backdrop-blur-sm border border-green-400 shadow-lg">
+    <ShieldCheck size={10} className="text-black" />
+    <span className="text-[8px] font-black uppercase tracking-widest">AGC Verified</span>
+  </div>
+);
 
 const CATEGORY_IMAGES: Record<string, string> = {
   politics: 'https://images.unsplash.com/photo-1541872703-74c5963631df?w=600&q=80',
@@ -23,55 +33,29 @@ const CATEGORY_IMAGES: Record<string, string> = {
 };
 
 const fallbackData: Record<string, Article[]> = {
-  politics: [
-    {
-      headline: "Politician Promises to 'Think About' Doing Something, Eventually",
-      excerpt: "In a groundbreaking display of almost-action, an elected official has announced they will 'seriously consider' addressing the issues they campaigned on.",
-      category: "Politics", readTime: 5,
-      image: "https://images.unsplash.com/photo-1541872703-74c5963631df?w=600&q=80",
-    }
-  ],
-  science: [
-    {
-      headline: "Scientists Discover That Looking at Screens Makes You Tired, But You'll Keep Doing It Anyway",
-      excerpt: "A comprehensive study of 5,000 office workers has confirmed what everyone already knew: staring at blue light for 12 hours a day is suboptimal for wellness.",
-      category: "Science", readTime: 4,
-      image: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600&q=80",
-    }
-  ],
-  tech: [
-    {
-      headline: "New AI is So Advanced It Has Already Started Procrastinating",
-      excerpt: "The latest LLM from Silicon Valley has begun responding to prompts with 'I'll get to that later' and 'Actually, let's talk about me for a bit.'",
-      category: "Tech", readTime: 3,
-    },
-    {
-      headline: "Fiber Optic Cable Refuses to Carry Zoom Calls",
-      excerpt: "Data line cites 'low quality conversation' and 'general awkwardness' as reasons for 99.9% packet loss.",
-      category: "Tech", readTime: 2,
-    },
-    {
-      headline: "EDITORIAL: WHATS A FUCING FACEBOOK ANNYWAY? WHO PUTS A FACE IN A BOOK?",
-      excerpt: "A deep dive into why squashing your features between paper pages is a terrible way to socialize.",
-      category: "Tech", readTime: 3,
-      slug: "whats-a-fucking-facebook-anyway"
-    }
-  ],
-  entertainment: [
-    {
-      headline: "Celebrity Apologizes for Having Personality",
-      excerpt: "In a teardown of a notes app screenshot, the A-lister expressed regret for displaying a human emotion that wasn't previously PR-approved.",
-      category: "Entertainment", readTime: 4,
-    }
-  ],
-  sports: [
-    {
-      headline: "Local Man Wins Marathon by Taking a Shortcut and Just Being Really Confident",
-      excerpt: "The winner admitted to taking the subway for three miles but argued that his 'winner's mindset' was what truly carried him across the finish line.",
-      category: "Sports", readTime: 3,
-    }
-  ],
+  politics: CANONICAL_ARTICLES.filter(a => a.category === 'Politics' || (a.tags && a.tags.includes('POLITICS'))),
+  science: CANONICAL_ARTICLES.filter(a => a.category === 'Science' || (a.tags && a.tags.includes('SCIENCE'))),
+  tech: CANONICAL_ARTICLES.filter(a => a.category === 'Technology' || (a.tags && a.tags.includes('TECH'))),
+  entertainment: [],
+  sports: [],
+  investigation: CANONICAL_ARTICLES.filter(a => a.category === 'Investigation' || (a.tags && a.tags.includes('INVESTIGATION'))),
 };
+
+// Ensure fallback data isn't empty if we missed some categories
+if (fallbackData.entertainment.length === 0) {
+  fallbackData.entertainment = [{
+    headline: "Celebrity Apologizes for Having Personality",
+    excerpt: "In a teardown of a notes app screenshot, the A-lister expressed regret for displaying a human emotion that wasn't previously PR-approved.",
+    category: "Entertainment", readTime: 4,
+  }];
+}
+if (fallbackData.sports.length === 0) {
+  fallbackData.sports = [{
+    headline: "Local Man Wins Marathon by Taking a Shortcut and Just Being Really Confident",
+    excerpt: "The winner admitted to taking the subway for three miles but argued that his 'winner's mindset' was what truly carried him across the finish line.",
+    category: "Sports", readTime: 3,
+  }];
+}
 
 const CATEGORIES = [
   { name: 'Politics', key: 'politics' },
@@ -118,22 +102,27 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
             if (response.ok) {
               const data = await response.json();
               if (data.news && data.news.length > 0) {
-                // If the dynamic feed has tech news, we want to PREPEND our static ones
-                if (cat.key === 'tech') {
-                  return { key: cat.key, news: [...fallbackData.tech, ...data.news] };
-                }
-                return { key: cat.key, news: data.news };
+                // ALWAYS prepend canonical articles to ensure they appear first
+                const canonicalForCat = CANONICAL_ARTICLES.filter(a =>
+                  a.category.toLowerCase() === cat.key.toLowerCase() ||
+                  (cat.key === 'tech' && a.category === 'Technology')
+                );
+
+                // Merge: Canonical first, then Dynamic
+                return { key: cat.key, news: [...canonicalForCat, ...data.news] };
               }
             }
           } catch (e) {
             console.warn(`Failed to fetch ${cat.key} news:`, e);
           }
-          return { key: cat.key, news: fallbackData[cat.key] };
+          return { key: cat.key, news: fallbackData[cat.key] || [] };
         });
 
         const results = await Promise.all(fetchPromises);
         results.forEach(res => {
-          updatedData[res.key] = res.news;
+          if (res.news && res.news.length > 0) {
+            updatedData[res.key] = res.news;
+          }
         });
 
         setNewsData(updatedData);
@@ -177,7 +166,17 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
                   className={`group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100 flex flex-col ${article.featured ? 'md:col-span-2 lg:col-span-1 lg:row-span-2' : ''
                     }`}
                 >
-                  <Link to={`/article/${encodeURIComponent(article.slug || article.headline)}`} className="flex-1 flex flex-col group">
+                  <Link
+                    to={`/article/${encodeURIComponent(article.slug || article.headline)}`}
+                    className="flex-1 flex flex-col group"
+                    onClick={() => {
+                      toast('Telemetry Point Acquired', {
+                        description: `[READ_LOG] User accessed: "${article.headline.substring(0, 20)}..."`,
+                        icon: '👁️',
+                        className: 'font-mono'
+                      });
+                    }}
+                  >
                     {article.image || CATEGORY_IMAGES[category.key] ? (
                       <div className="relative h-48 overflow-hidden">
                         <img
@@ -192,6 +191,9 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
                     ) : (
                       <div className="h-4 w-full bg-red-600" />
                     )}
+
+                    {/* AGC Verification Badge (Randomly applied for now, or if featured) */}
+                    {(article.featured || index % 5 === 0) && <VerifiedBadge />}
 
                     <div className="p-6 flex-1 flex flex-col">
                       <div className="flex items-center gap-2 mb-3">

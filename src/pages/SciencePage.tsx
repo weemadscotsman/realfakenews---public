@@ -1,5 +1,6 @@
 import NewsGrid from '@/sections/NewsGrid';
 import { FlaskConical } from 'lucide-react';
+import { LabExperiment } from '@/components/LabExperiment';
 
 const SciencePage = () => {
     return (
@@ -15,6 +16,10 @@ const SciencePage = () => {
                 <p className="text-xl text-slate-600 max-w-2xl mx-auto font-serif italic">
                     "9 out of 10 scientists agree: We have no idea what we're doing."
                 </p>
+
+                <div className="max-w-xl mx-auto mt-12 text-left">
+                    <LabExperiment />
+                </div>
             </div>
             <NewsGrid limitCategory="science" />
         </div>

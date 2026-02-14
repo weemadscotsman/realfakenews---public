@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Globe, Zap, Download, Terminal, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { parodyRealNews, type ParodiedHeadline } from '@/lib/openai-enhanced';
+import { parodyRealNews, type ParodiedHeadline } from '@/lib/content-engine';
+import { ProductReveal } from '@/components/ProductReveal';
 
 const TechPage: React.FC = () => {
     const [siliconValleyPanic, setSiliconValleyPanic] = useState<ParodiedHeadline[]>([]);
@@ -194,14 +194,8 @@ const TechPage: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Ad Space: Fake */}
-                        <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-6 rounded-lg text-white font-bold text-center">
-                            <p className="text-xs uppercase tracking-widest mb-2">SPONSORED</p>
-                            <p className="text-xl mb-4">Tired of your AI having "Ethics"?</p>
-                            <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-orange-600 w-full font-black">
-                                UPGRADE TO "UNVARNISHED"
-                            </Button>
-                        </div>
+                        {/* Product Generator */}
+                        <ProductReveal />
                     </div>
                 </div>
             </div>

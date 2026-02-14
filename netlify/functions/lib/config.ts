@@ -284,11 +284,12 @@ export const WORLD_STATE = {
         milkSpoiled: true, // THE PERMANENT EVENT
         darrenBreakdown: true, // Darren has officially snapped
         gridStability: 45, // Scarcity mechanic
-        realityStability: 33.00, // Rock bottom was 28; now rebounding via redemption
+        realityStability: 31.00, // Synchronized with Teddy OS Kernel Index
         legislationActive: true, // Parliament has intervened
         ontologicalCollapse: false, // RESOLVED
         redemptionActive: true, // ALPHA IS ENLIGHTENED
-        administrativeLeave: false // REINSTATED
+        administrativeLeave: false, // REINSTATED
+        kernelIntegrated: true // ASCENDED
     }
 };
 

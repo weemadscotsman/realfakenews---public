@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { Terminal, Lock, Globe, Activity } from 'lucide-react';
+import CreatorHitList from '@/components/CreatorHitList';
 
 const SurveillanceDashboard: React.FC = () => {
     const { roastTokens } = useGameEconomy();
@@ -63,9 +64,11 @@ const SurveillanceDashboard: React.FC = () => {
                         </DashboardCard>
                     </div>
 
-                    {/* Column 2: Live Feed */}
-                    <div className="lg:col-span-2">
-                        <DashboardCard title="Live Telemetry Stream" icon={<Activity size={16} />} className="h-full min-h-[400px]">
+                    {/* Column 2: Live Feed & Hit List */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <CreatorHitList />
+
+                        <DashboardCard title="Live Telemetry Stream" icon={<Activity size={16} />} className="min-h-[300px]">
                             <div className="space-y-2 font-mono text-xs">
                                 {logs.map((log, i) => (
                                     <div key={i} className="border-b border-green-900/30 pb-1 flex gap-2">

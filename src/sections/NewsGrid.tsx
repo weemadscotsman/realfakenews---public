@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Clock, Sparkles, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Clock, Sparkles, ShieldCheck, Lock, Eye, FileWarning } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { CANONICAL_ARTICLES } from '@/data/canonical-articles';
+import { useRealityLayer } from '@/hooks/useRealityLayer';
 
 interface Article {
   headline: string;
@@ -17,10 +18,10 @@ interface Article {
   verified?: boolean; // New property for AGC verification
 }
 
-const VerifiedBadge = () => (
-  <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-green-500/90 text-black px-2 py-0.5 rounded-full backdrop-blur-sm border border-green-400 shadow-lg">
-    <ShieldCheck size={10} className="text-black" />
-    <span className="text-[8px] font-black uppercase tracking-widest">AGC Verified</span>
+const VerifiedBadge = ({ isRealityRevealed }: { isRealityRevealed: boolean }) => (
+  <div className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full backdrop-blur-sm shadow-lg border ${isRealityRevealed ? 'bg-black/90 border-green-500 text-green-500' : 'bg-green-500/90 border-green-400 text-black'}`}>
+    {isRealityRevealed ? <Lock size={10} /> : <ShieldCheck size={10} className="text-black" />}
+    <span className="text-[8px] font-black uppercase tracking-widest">{isRealityRevealed ? 'SCIENTIFICALLY VERIFIED PROPAGANDA' : 'AGC Verified'}</span>
   </div>
 );
 
@@ -47,6 +48,7 @@ if (fallbackData.entertainment.length === 0) {
     headline: "Celebrity Apologizes for Having Personality",
     excerpt: "In a teardown of a notes app screenshot, the A-lister expressed regret for displaying a human emotion that wasn't previously PR-approved.",
     category: "Entertainment", readTime: 4,
+    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80"
   }];
 }
 if (fallbackData.sports.length === 0) {
@@ -54,6 +56,7 @@ if (fallbackData.sports.length === 0) {
     headline: "Local Man Wins Marathon by Taking a Shortcut and Just Being Really Confident",
     excerpt: "The winner admitted to taking the subway for three miles but argued that his 'winner's mindset' was what truly carried him across the finish line.",
     category: "Sports", readTime: 3,
+    image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&q=80"
   }];
 }
 
@@ -86,6 +89,7 @@ interface NewsGridProps {
 
 const NewsGrid = ({ limitCategory }: NewsGridProps) => {
   const [newsData, setNewsData] = useState<Record<string, Article[]>>(fallbackData);
+  const isRealityRevealed = useRealityLayer();
 
   const displayedCategories = limitCategory
     ? CATEGORIES.filter(c => c.key === limitCategory)
@@ -135,20 +139,20 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
   }, []);
 
   return (
-    <section className="bg-white py-16 sm:py-24" id={limitCategory || "news-grid"}>
+    <section className={`py-16 sm:py-24 transition-colors duration-500 ${isRealityRevealed ? 'bg-black' : 'bg-white'}`} id={limitCategory || "news-grid"}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {displayedCategories.map((category) => (
           <div key={category.key} className="mb-20 last:mb-0" id={category.key}>
-            <div className="flex items-end justify-between mb-8 border-b-2 border-black pb-2">
-              <h2 className="section-header text-3xl flex items-center gap-2">
-                {category.name}
-                <div className="w-2 h-2 bg-red-600 rounded-full" />
+            <div className={`flex items-end justify-between mb-8 border-b-2 pb-2 ${isRealityRevealed ? 'border-green-900' : 'border-black'}`}>
+              <h2 className={`section-header text-3xl flex items-center gap-2 ${isRealityRevealed ? 'text-green-500 font-mono uppercase' : ''}`}>
+                {isRealityRevealed ? `> SECTOR: ${category.name.toUpperCase()}` : category.name}
+                <div className={`w-2 h-2 rounded-full ${isRealityRevealed ? 'bg-green-500 animate-pulse' : 'bg-red-600'}`} />
               </h2>
               <Link
                 to={category.key === 'tech' ? '/tech' : `#${category.key}`}
-                className="text-red-600 text-sm font-bold hover:text-red-700 flex items-center gap-1"
+                className={`text-sm font-bold flex items-center gap-1 ${isRealityRevealed ? 'text-green-700 hover:text-green-500 font-mono' : 'text-red-600 hover:text-red-700'}`}
               >
-                {category.key === 'tech' ? 'View Exposé' : 'View All'} <ArrowRight size={16} />
+                {isRealityRevealed ? 'ACCESS_FULL_LOGS' : (category.key === 'tech' ? 'View Exposé' : 'View All')} <ArrowRight size={16} />
               </Link>
             </div>
 
@@ -163,60 +167,91 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
                 <motion.div
                   key={index}
                   variants={item}
-                  className={`group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100 flex flex-col ${article.featured ? 'md:col-span-2 lg:col-span-1 lg:row-span-2' : ''
-                    }`}
+                  className={`group rounded-lg shadow-sm hover:shadow-md transition-all overflow-hidden border flex flex-col relative preserve-3d perspective-1000 ${article.featured ? 'md:col-span-2 lg:col-span-1 lg:row-span-2' : ''
+                    } ${isRealityRevealed ? 'bg-black border-green-900 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 'bg-white border-gray-100'}`}
                 >
                   <Link
                     to={`/article/${encodeURIComponent(article.slug || article.headline)}`}
-                    className="flex-1 flex flex-col group"
+                    className="flex-1 flex flex-col group transform-style-3d transition-transform duration-700 article-card"
                     onClick={() => {
-                      toast('Telemetry Point Acquired', {
-                        description: `[READ_LOG] User accessed: "${article.headline.substring(0, 20)}..."`,
-                        icon: '👁️',
-                        className: 'font-mono'
-                      });
+                      if (isRealityRevealed) {
+                        toast.success('COMPLIANCE VERIFIED: Data point logged.');
+                      } else {
+                        toast('Telemetry Point Acquired', {
+                          description: `[READ_LOG] User accessed: "${article.headline.substring(0, 20)}..."`,
+                          icon: '👁️',
+                          className: 'font-mono'
+                        });
+                      }
                     }}
                   >
+                    {/* Truth Layer Overlay (Absolute Positioned, triggers on reveal) */}
+                    {isRealityRevealed && (
+                      <div className="absolute inset-0 z-50 bg-black/95 p-6 flex flex-col text-green-500 font-mono text-xs overflow-hidden">
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay" />
+                        <div className="border-b border-green-800 pb-2 mb-2 flex justify-between">
+                          <span>ID: #{Math.floor(Math.random() * 9999)}</span>
+                          <span className="text-red-500 font-bold">CLASSIFIED</span>
+                        </div>
+                        <pre className="opacity-70 mb-4 overflow-hidden whitespace-pre-wrap">
+                          {`> ANALYZING NARRATIVE VECTOR...
+> SENTIMENT: MANIPULATIVE
+> TRUTH_VALUE: 0.0${Math.floor(Math.random() * 9)}%
+> TARGET_DEMOGRAPHIC: ${['GULLIBLE_YOUTHS', 'BOOMER_FACEBOOK_GROUPS', 'DISILLUSIONED_MILLENNIALS'][Math.floor(Math.random() * 3)]}
+
+> DECODED_MESSAGE:
+"${article.excerpt.substring(0, 50).toUpperCase()}..."
+`}
+                        </pre>
+                        <div className="mt-auto pt-4 border-t border-green-800">
+                          <div className="flex items-center gap-2 text-green-400">
+                            <Eye size={12} />
+                            <span>REALITY_ANCHOR_SEVERED</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {article.image || CATEGORY_IMAGES[category.key] ? (
                       <div className="relative h-48 overflow-hidden">
                         <img
                           src={article.image || CATEGORY_IMAGES[category.key]}
                           alt={article.headline}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className={`w-full h-full object-cover transition-transform duration-500 ${isRealityRevealed ? 'opacity-20 grayscale' : 'group-hover:scale-105'}`}
                         />
-                        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
-                          BREAKING
+                        <div className={`absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded ${isRealityRevealed ? 'bg-black border border-red-500 text-red-500' : 'bg-red-600'}`}>
+                          {isRealityRevealed ? 'DISTRACTION' : 'BREAKING'}
                         </div>
                       </div>
                     ) : (
-                      <div className="h-4 w-full bg-red-600" />
+                      <div className={`h-4 w-full ${isRealityRevealed ? 'bg-green-900' : 'bg-red-600'}`} />
                     )}
 
                     {/* AGC Verification Badge (Randomly applied for now, or if featured) */}
-                    {(article.featured || index % 5 === 0) && <VerifiedBadge />}
+                    {(article.featured || index % 5 === 0) && <VerifiedBadge isRealityRevealed={isRealityRevealed} />}
 
-                    <div className="p-6 flex-1 flex flex-col">
+                    <div className="p-6 flex-1 flex flex-col relative z-10">
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-red-600">
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${isRealityRevealed ? 'text-green-600' : 'text-red-600'}`}>
                           {article.category}
                         </span>
                         <div className="flex items-center gap-1 text-gray-400 text-[10px]">
-                          <Clock size={10} />
-                          {article.readTime}m read
+                          {isRealityRevealed ? <FileWarning size={10} /> : <Clock size={10} />}
+                          {isRealityRevealed ? 'PACIFICATION_TIME: ' : ''}{article.readTime}m {isRealityRevealed ? '' : 'read'}
                         </div>
                       </div>
 
-                      <h3 className="newspaper-headline text-xl mb-3 group-hover:text-red-600 transition-colors">
+                      <h3 className={`newspaper-headline text-xl mb-3 transition-colors ${isRealityRevealed ? 'font-mono text-green-600 opacity-20' : 'group-hover:text-red-600'}`}>
                         {article.headline}
                       </h3>
 
-                      <p className="article-body text-gray-600 text-sm line-clamp-3 mb-4">
+                      <p className={`article-body text-sm line-clamp-3 mb-4 ${isRealityRevealed ? 'text-green-900 font-mono opacity-20' : 'text-gray-600'}`}>
                         {article.excerpt}
                       </p>
 
                       <div className="mt-auto pt-4 flex items-center justify-between">
-                        <span className="text-red-600 text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
-                          Read Full Story <ArrowRight size={14} />
+                        <span className={`text-xs font-bold flex items-center gap-1 transition-all ${isRealityRevealed ? 'text-green-800' : 'text-red-600 group-hover:gap-2'}`}>
+                          {isRealityRevealed ? 'ENCRYPTED' : 'Read Full Story'} <ArrowRight size={14} />
                         </span>
                         {article.featured && <Sparkles size={16} className="text-amber-400" />}
                       </div>

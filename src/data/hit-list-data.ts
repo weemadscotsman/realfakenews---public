@@ -10,6 +10,15 @@ export interface HitListEntry {
 
 export const HIT_LIST_DATA: HitListEntry[] = [
     {
+        id: 0,
+        name: "Eddie Cannon",
+        description: "Financial Arsonist // Yeet Enthusiast",
+        status: 'MUTATING',
+        stress: 100,
+        agents: 999,
+        lastModified: "BURNING_NOW"
+    },
+    {
         id: 1,
         name: "RealFake News",
         description: "31-phase narrative infrastructure. Ascended to ECOS Kernel #1.",

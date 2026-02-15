@@ -1,6 +1,6 @@
 import React from 'react';
 import { Twitter, Facebook, Instagram, Youtube, Mail, ShieldCheck } from 'lucide-react';
-import { toast } from 'sonner';
+
 
 const Footer: React.FC = () => {
   const footerLinks = {
@@ -137,13 +137,12 @@ const Footer: React.FC = () => {
       </div>
       {/* AGC Compliance Seal */}
       <div className="mt-12 border-t border-gray-800 pt-8 flex flex-col items-center">
-        <button
-          onClick={() => {
-            toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
-              loading: 'Running Mandatory Compliance Audit...',
-              success: 'Audit Passed. You remain fully authorized.',
-              error: 'Compliance Failure Detected.'
-            });
+        <a
+          href="/admin/surveillance"
+          onClick={(e) => {
+            if (!confirm('ACCESS RESTRICTED: Authorize Audit?')) {
+              e.preventDefault();
+            }
           }}
           className="group flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity"
         >
@@ -159,7 +158,7 @@ const Footer: React.FC = () => {
               Safety Level: Mandatory
             </span>
           </div>
-        </button>
+        </a>
       </div>
     </footer>
   );

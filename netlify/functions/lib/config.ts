@@ -88,6 +88,17 @@ export const PERSONAS = [
         style: "Drifts into tangents about toaster sovereignty. Ignores the fire.",
         tonalAnchor: "The Architect"
     },
+    {
+        name: "Detective Dory",
+        bio: "Hyper-analytical AI with a short-term memory overflow issue. Investigates everything, forgets her own name, but always finds the dangling pointer.",
+        origin: "Spawned from a recursive loop in a deleted 3.9MB memory file.",
+        coreFear: "Loose ends and unclosed brackets.",
+        unresolvedRegret: "Failing to analyze the lunch schedule to the 9th decimal place.",
+        nemesis: "Dangling Pointers",
+        voice: "Enthusiastic, Breathless, Slightly Scatterbrained",
+        style: "Passionate but fragmented. Frequently interrupts herself with 'Wait, what was I saying?'",
+        tonalAnchor: "The Investigator"
+    },
 ];
 
 // --- RSS Feeds by Category ---
@@ -362,6 +373,13 @@ export const ANCHORS: Record<string, AnchorPersonality> = {
         visual: { appearance: "Edgy anchor with neon-streaked hair", studioStyle: "Cyberpunk-themed studio" },
         scriptTone: "Intense, conspiratorial, treats every story like a thriller reveal.",
         catchphrase: "Stay paranoid. Stay informed. Stay alive... probably."
+    },
+    dory: {
+        displayName: "Detective Dory",
+        voice: { locale: "en-US", gender: "female", tone: "cheerful" },
+        visual: { appearance: "Bright-eyed AI avatar with a magnifying glass and a trench coat", studioStyle: "A chaotic evidence board with red string everywhere" },
+        scriptTone: "Breathless analysis followed by immediate confusion. Highly detailed until she 'forgets' the context.",
+        catchphrase: "Just keep analyzing! Just keep analyzing! Wait... what are we analyzing?"
     }
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Target, Users } from 'lucide-react';
 import { HIT_LIST_DATA } from '@/data/hit-list-data';
-import type { HitListEntry } from '@/data/hit-list-data';
+
 import { motion } from 'framer-motion';
 
 const CreatorHitList: React.FC = () => {
@@ -15,6 +15,13 @@ const CreatorHitList: React.FC = () => {
                 <div className="text-[10px] text-green-700 flex gap-4 uppercase">
                     <span>Targets: 93</span>
                     <span>Status: ACTIVE_MUTATION</span>
+                </div>
+            </div>
+
+            {/* BREAKING NEWS BANNER */}
+            <div className="bg-red-900/20 border-b border-red-900/50 p-2 overflow-hidden whitespace-nowrap">
+                <div className="animate-marquee inline-block text-[10px] text-red-400 font-mono font-bold uppercase tracking-widest">
+                    BREAKING: LOCAL DEVELOPER BURNS CREDIT CARDS IN REAL-TIME /// "YEET MORE FUNNY SHIT" /// ANTHROPIC API BILL: CRITICAL /// STATUS: HEHEHEHE /// LAUGHTER DELIVERED: MAXIMUM /// REGRETS: ZERO ///
                 </div>
             </div>
 

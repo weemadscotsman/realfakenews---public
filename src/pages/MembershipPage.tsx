@@ -52,7 +52,7 @@ const FEATURES = [
 
 const MembershipPage = () => {
     const { user, isAuthenticated } = useAuth();
-    const [billingCycle, setBillingCycle] = useState<'monthly' | 'soul'>('monthly');
+    const [billingCycle, setBillingCycle] = useState<'monthly' | 'soul' | 'ironic'>('monthly');
     const [loading, setLoading] = useState(false);
 
     const handleSubscribe = () => {
@@ -62,12 +62,42 @@ const MembershipPage = () => {
         }
 
         setLoading(true);
+
+        let message = "Welcome to the Inner Circle. Your soul transaction is pending.";
+        if (billingCycle === 'ironic') {
+            message = "Transaction Confirmed. We have no idea why you did this.";
+        }
+
         // Mock subscription flow
         setTimeout(() => {
             setLoading(false);
-            toast.success("Welcome to the Inner Circle. Your soul transaction is pending.");
+            toast.success(message);
             // In a real app, this would trigger Stripe/etc.
         }, 1500);
+    };
+
+    const getPrice = () => {
+        switch (billingCycle) {
+            case 'monthly': return '$9.99';
+            case 'soul': return '1 Soul';
+            case 'ironic': return '£2.50';
+        }
+    };
+
+    const getPeriod = () => {
+        switch (billingCycle) {
+            case 'monthly': return '/mo';
+            case 'soul': return '/eternity';
+            case 'ironic': return '/lol';
+        }
+    };
+
+    const getDisclaimer = () => {
+        switch (billingCycle) {
+            case 'monthly': return 'Cancel anytime (we will judge you).';
+            case 'soul': return 'No refunds. No returns. No haunting.';
+            case 'ironic': return 'You get literally nothing. No refunds.';
+        }
     };
 
     return (
@@ -78,7 +108,7 @@ const MembershipPage = () => {
                 <div className="text-center mb-16 space-y-6">
                     <div className="inline-flex items-center gap-2 bg-yellow-400/10 text-yellow-500 px-4 py-1.5 rounded-full border border-yellow-400/20 text-sm font-medium animate-pulse">
                         <Crown size={16} />
-                        Joint the Elite (or just pay us)
+                        Join the Elite (or just pay us)
                     </div>
                     <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase">
                         RealFake <span className="text-red-600">Premium</span>
@@ -94,7 +124,7 @@ const MembershipPage = () => {
                         Best Value
                     </div>
 
-                    <div className="flex justify-center gap-4 mb-8">
+                    <div className="flex justify-center gap-2 mb-8 flex-wrap">
                         <button
                             onClick={() => setBillingCycle('monthly')}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'monthly' ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'}`}
@@ -107,15 +137,21 @@ const MembershipPage = () => {
                         >
                             Soul Contract
                         </button>
+                        <button
+                            onClick={() => setBillingCycle('ironic')}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'ironic' ? 'bg-zinc-700 text-zinc-300' : 'text-zinc-500 hover:text-zinc-400'}`}
+                        >
+                            Ironic Tier
+                        </button>
                     </div>
 
                     <div className="text-center mb-8">
                         <div className="flex items-end justify-center gap-1">
-                            <span className="text-5xl font-black">{billingCycle === 'monthly' ? '$9.99' : '1 Soul'}</span>
-                            <span className="text-zinc-500 mb-1">/{billingCycle === 'monthly' ? 'mo' : 'eternity'}</span>
+                            <span className="text-5xl font-black">{getPrice()}</span>
+                            <span className="text-zinc-500 mb-1">{getPeriod()}</span>
                         </div>
                         <p className="text-zinc-500 text-sm mt-2">
-                            {billingCycle === 'monthly' ? 'Cancel anytime (we will judge you).' : 'No refunds. No returns. No haunting.'}
+                            {getDisclaimer()}
                         </p>
                     </div>
 

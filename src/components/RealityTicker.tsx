@@ -4,7 +4,7 @@ import { Radio } from 'lucide-react';
 export const RealityTicker: React.FC = () => {
     const [stability, setStability] = useState(38.00);
     const [status, setStatus] = useState("ADAPTING");
-    const STATUS_MESSAGES = ["CALCULATING IRONY", "BUFFERING TRUTH", "IGNORING FACTS", "PANICKING GENTLY", "REWRITING HISTORY", "OPTIMIZING CHAOS"];
+    const STATUS_MESSAGES = ["CALCULATING IRONY", "BUFFERING TRUTH", "JUSTICE FOR TOAST", "IGNORING FACTS", "PANICKING GENTLY", "REWRITING HISTORY", "OPTIMIZING CHAOS"];
 
     useEffect(() => {
         // Slow drift towards 42%

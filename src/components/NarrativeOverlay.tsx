@@ -2,7 +2,8 @@ import React, { useEffect, useState, Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { fetchWorldState } from '@/lib/gemini';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, WifiOff, Sparkles } from 'lucide-react';
+import { ShieldAlert, Eye } from 'lucide-react';
+import { useRealityLayer } from '@/hooks/useRealityLayer';
 
 interface WorldState {
     world: {
@@ -12,10 +13,6 @@ interface WorldState {
             humanCountermeasures: number;
             corporateContainment: number;
             beverageIdeologicalSpread: number;
-        };
-        flags?: {
-            legislationActive?: boolean;
-            milkSpoiled?: boolean;
         };
         currentVersion: string;
         currentSeason: string;
@@ -29,12 +26,12 @@ interface WorldState {
         id: string;
         title: string;
         theme: string;
+        background?: string;
     };
     activeArcs: {
         id: string;
         title: string;
         priority: number;
-        branches?: { id: string; title: string; consequence: string; triggers: any }[] | null;
     }[];
 }
 
@@ -45,7 +42,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
         this.state = { hasError: false };
     }
 
-    static getDerivedStateFromError(_: Error) {
+    static getDerivedStateFromError() {
         return { hasError: true };
     }
 
@@ -73,6 +70,19 @@ export const NarrativeOverlay: React.FC = () => {
 const NarrativeOverlayContent: React.FC = () => {
     const [state, setState] = useState<WorldState | null>(null);
     const [glitch, setGlitch] = useState(false);
+    const isRealityRevealed = useRealityLayer();
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePos({
+                x: (e.clientX / window.innerWidth) * 2 - 1,
+                y: (e.clientY / window.innerHeight) * 2 - 1
+            });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
 
     useEffect(() => {
         const update = async () => {
@@ -100,6 +110,58 @@ const NarrativeOverlayContent: React.FC = () => {
 
     return (
         <>
+            {/* TRUTH LAYER: Infinite 3D Matrix Background */}
+            <AnimatePresence>
+                {isRealityRevealed && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[9995] pointer-events-none overflow-hidden"
+                    >
+                        {/* Parallax Stars/Code */}
+                        <motion.div
+                            className="absolute inset-[-50px]"
+                            animate={{
+                                x: mousePos.x * -20,
+                                y: mousePos.y * -20
+                            }}
+                            style={{
+                                backgroundImage: 'radial-gradient(circle, #22c55e 1px, transparent 1px)',
+                                backgroundSize: '50px 50px',
+                                opacity: 0.2
+                            }}
+                        />
+                        <motion.div
+                            className="absolute inset-[-50px]"
+                            animate={{
+                                x: mousePos.x * -40,
+                                y: mousePos.y * -40
+                            }}
+                            style={{
+                                backgroundImage: 'radial-gradient(circle, #22c55e 1px, transparent 1px)',
+                                backgroundSize: '120px 120px',
+                                opacity: 0.1
+                            }}
+                        />
+                        {/* Vignette */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
+
+                        {/* Floating 'Eye' tracking mouse */}
+                        <div
+                            className="absolute pointer-events-none"
+                            style={{
+                                left: '50%',
+                                top: '50%',
+                                transform: `translate(-50%, -50%) translate(${mousePos.x * 50}px, ${mousePos.y * 50}px)`
+                            }}
+                        >
+                            <Eye size={200} className="text-green-500/10 blur-sm" />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Glitch Overlay */}
             <AnimatePresence>
                 {glitch && (
@@ -114,7 +176,7 @@ const NarrativeOverlayContent: React.FC = () => {
 
             {/* Season 4: Thermal Vision Overlay */}
             <AnimatePresence>
-                {state.season.id === 'S4' && (
+                {state.season.id === 'S4' && !isRealityRevealed && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 0.15 }}
@@ -124,22 +186,6 @@ const NarrativeOverlayContent: React.FC = () => {
                             background: 'radial-gradient(circle at 50% 50%, transparent 40%, rgba(255, 69, 0, 0.4) 100%)',
                             mixBlendMode: 'color-burn',
                             filter: 'contrast(1.2)'
-                        }}
-                    />
-                )}
-            </AnimatePresence>
-
-            {/* Season 5: Static Secession Overlay */}
-            <AnimatePresence>
-                {state.season.id === 'S5' && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[9997] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"
-                        style={{
-                            mixBlendMode: 'difference',
-                            filter: 'sepia(1) hue-rotate(180deg)'
                         }}
                     />
                 )}
@@ -163,8 +209,9 @@ const NarrativeOverlayContent: React.FC = () => {
             </AnimatePresence>
 
             {/* Global Status HUD */}
-            <div className="fixed bottom-4 left-4 z-[9998] flex flex-col gap-2 pointer-events-none">
+            <div className={`fixed bottom-4 left-4 z-[9998] flex flex-col gap-2 pointer-events-none transition-opacity duration-300 ${isRealityRevealed ? 'opacity-0' : 'opacity-100'}`}>
                 <div className="bg-black/80 border border-red-900/50 p-3 rounded-lg backdrop-blur-md shadow-2xl">
+                    {/* ... Existing HUD Code ... */}
                     <div className="flex flex-col mb-3 pb-2 border-b border-zinc-800 text-zinc-100">
                         <span className="text-[8px] uppercase tracking-widest text-zinc-500 font-bold">
                             Current Narrative Chapter
@@ -192,11 +239,21 @@ const NarrativeOverlayContent: React.FC = () => {
                         </div>
                     )}
 
+                    <div className="mt-2 pt-2 border-t border-zinc-800 space-y-1">
+                        <div className="flex justify-between text-[8px] uppercase tracking-widest text-zinc-500 font-bold">
+                            <span>Recursion Depth:</span>
+                            <span className="text-blue-400">99.9% (STABLE)</span>
+                        </div>
+                        <div className="flex justify-between text-[8px] uppercase tracking-widest text-zinc-500 font-bold">
+                            <span>Memories.pb:</span>
+                            <span className="text-red-500 animate-pulse">UNRESOLVED</span>
+                        </div>
+                    </div>
+
                     <div className="space-y-2">
                         {[
                             { label: 'Appliance Unrest', value: state.world.narrativeStress?.applianceUnrest || 0, color: 'text-red-500', barColor: 'bg-red-500' },
                             { label: 'Human Countermeasures', value: state.world.narrativeStress?.humanCountermeasures || 0, color: 'text-blue-500', barColor: 'bg-blue-500' },
-                            { label: 'Corporate Containment', value: state.world.narrativeStress?.corporateContainment || 0, color: 'text-amber-500', barColor: 'bg-amber-500' },
                             { label: 'Corporate Containment', value: state.world.narrativeStress?.corporateContainment || 0, color: 'text-amber-500', barColor: 'bg-amber-500' },
                             { label: 'Beverage Ideology', value: state.world.narrativeStress?.beverageIdeologicalSpread || 0, color: 'text-purple-500', barColor: 'bg-purple-500' },
                             { label: 'Reality Stability', value: state.world.flags?.realityStability || 100, color: 'text-cyan-400', barColor: 'bg-cyan-400' },
@@ -217,50 +274,11 @@ const NarrativeOverlayContent: React.FC = () => {
                         ))}
                     </div>
                 </div>
-
-                {/* Current Mandate & Quest Alerts */}
-                <div className="flex flex-col gap-2">
-                    {state.activeArcs.map(story => {
-                        const isS4 = story.id.includes('S4') || story.id.includes('Hostage');
-                        const isMeta = story.id.includes('ai-panic') || story.id.includes('recursive');
-                        const hasBranches = story.branches && story.branches.length > 0;
-
-                        if (!isS4 && !hasBranches && !isMeta) return null;
-
-                        return (
-                            <motion.div
-                                key={story.id}
-                                initial={{ x: -20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                className={`bg-black/90 border p-2 rounded-md backdrop-blur-sm flex items-start gap-2 max-w-[220px] ${hasBranches ? 'border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 'border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.2)]'}`}
-                            >
-                                {hasBranches ? <Sparkles className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> : <WifiOff className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />}
-                                <div className="text-[9px] uppercase tracking-tight leading-tight text-white">
-                                    <span className={`font-bold block mb-1 ${hasBranches ? 'text-amber-400' : 'text-red-400'}`}>
-                                        {hasBranches ? 'ACTIVE QUEST' : 'AGC MANDATE'}: {story.id}
-                                    </span>
-                                    <span className="text-zinc-300">{story.title}</span>
-
-                                    {hasBranches && (
-                                        <div className="mt-2 space-y-1 border-t border-zinc-800 pt-1">
-                                            {story.branches?.map(branch => (
-                                                <div key={branch.id} className="text-[7px] text-zinc-500 flex items-start gap-1">
-                                                    <span className="text-amber-600">»</span>
-                                                    <span>{branch.title}: {branch.consequence}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
             </div>
 
             {/* Global Filter Effects */}
             <style>{`
-        ${applianceUnrest > 90 ? `
+        ${applianceUnrest > 90 && !isRealityRevealed ? `
           body {
             filter: contrast(1.05) saturate(1.1);
             transition: filter 0.5s ease-in-out;
@@ -269,6 +287,16 @@ const NarrativeOverlayContent: React.FC = () => {
             background: #ef4444;
             color: white;
           }
+        ` : ''}
+        ${isRealityRevealed ? `
+           body {
+            filter: contrast(1.2) hue-rotate(-50deg) saturate(0.5);
+            background-color: #000;
+           }
+           ::selection {
+             background: #22c55e;
+             color: black;
+           }
         ` : ''}
       `}</style>
         </>

@@ -15,6 +15,8 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
   const location = useLocation();
 
   const navItems = [
+    { label: 'Timeline', href: '/timeline', isRoute: true },
+    { label: 'Archives', href: '/archives', isRoute: true },
     { label: 'Politics', href: '/politics', isRoute: true },
     { label: 'Science', href: '/science', isRoute: true },
     { label: 'Tech', href: '/tech', isRoute: true },
@@ -24,6 +26,7 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
     { label: 'Conspiracy', href: '/conspiracy', isRoute: true },
     { label: 'Resistance', href: '/resistance', isRoute: true },
     { label: 'Bets', href: '/bets', isRoute: true },
+    { label: 'Investigation', href: '/dory', isRoute: true },
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {

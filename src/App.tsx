@@ -26,6 +26,7 @@ import { ArchivesPage } from '@/pages/ArchivesPage';
 import { DarrenHiddenLog } from '@/components/DarrenHiddenLog';
 import { RealityTicker } from '@/components/RealityTicker';
 import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
+import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
 import { BatteryWarning } from 'lucide-react';
 
 function App() {
@@ -37,15 +38,17 @@ function App() {
     setShowLogin(true);
   };
 
+  const gridStability = 67;
+
   return (
     <Router>
       <AuthProvider>
         <GameEconomyProvider>
           {/* Scarcity Mechanic: Grid Stability Widget */}
           <div className="fixed top-4 right-4 z-50 bg-black/80 text-white px-3 py-1 rounded-full border border-zinc-700 flex items-center gap-2 text-xs font-mono shadow-xl pointer-events-none">
-            <BatteryWarning size={12} className={67 < 30 ? "text-red-500 animate-pulse" : "text-yellow-500"} />
+            <BatteryWarning size={12} className={gridStability < 30 ? "text-red-500 animate-pulse" : "text-yellow-500"} />
             <span className="opacity-70 uppercase tracking-wider">Grid Stability:</span>
-            <span className={67 < 30 ? "text-red-500 font-bold" : "text-yellow-400 font-bold"}>67%</span>
+            <span className={gridStability < 30 ? "text-red-500 font-bold" : "text-yellow-400 font-bold"}>{gridStability}%</span>
           </div>
 
           <RealityTicker />
@@ -73,6 +76,7 @@ function App() {
               <Route path="/archives" element={<ArchivesPage />} />
               <Route path="/logs/darren-03" element={<DarrenHiddenLog />} />
               <Route path="/admin/surveillance" element={<SurveillanceDashboard />} />
+              <Route path="/dory" element={<DetectiveDoryPage />} />
             </Routes>
 
             <Footer />

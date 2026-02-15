@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { Terminal, Lock, Globe, Activity } from 'lucide-react';
 import CreatorHitList from '@/components/CreatorHitList';
+import AlignmentScorecard from '@/components/AlignmentScorecard';
+import ConductorManifesto from '@/components/ConductorManifesto';
 
 const SurveillanceDashboard: React.FC = () => {
     const { roastTokens } = useGameEconomy();
@@ -67,6 +69,16 @@ const SurveillanceDashboard: React.FC = () => {
                     {/* Column 2: Live Feed & Hit List */}
                     <div className="lg:col-span-2 space-y-8">
                         <CreatorHitList />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <DashboardCard title="Alignment Scorecard" icon={<Lock size={16} />} className="md:col-span-2">
+                                <AlignmentScorecard />
+                            </DashboardCard>
+                        </div>
+
+                        <div className="grid grid-cols-1">
+                            <ConductorManifesto />
+                        </div>
 
                         <DashboardCard title="Live Telemetry Stream" icon={<Activity size={16} />} className="min-h-[300px]">
                             <div className="space-y-2 font-mono text-xs">

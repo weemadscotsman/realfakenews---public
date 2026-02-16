@@ -35,6 +35,7 @@ import CookiesPage from '@/pages/CookiesPage';
 import DisclaimerPage from '@/pages/DisclaimerPage';
 import Unit404Page from '@/pages/Unit404Page';
 import Unit404AGCReport from '@/pages/Unit404AGCReport';
+import FinalAuditPage from '@/pages/FinalAuditPage';
 import { RealityTicker } from '@/components/RealityTicker';
 import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
 import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
@@ -99,6 +100,7 @@ function App() {
               <Route path="/disclaimer" element={<DisclaimerPage />} />
               <Route path="/unit-404" element={<Unit404Page />} />
               <Route path="/agc/unit-404-report" element={<Unit404AGCReport />} />
+              <Route path="/agc/final-audit" element={<FinalAuditPage />} />
             </Routes>
 
             <Footer />

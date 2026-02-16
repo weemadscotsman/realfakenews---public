@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Twitter, Facebook, Instagram, Youtube, Mail, ShieldCheck } from 'lucide-react';
 
+const SAFETY_LEVELS = [
+  { level: "Mandatory", color: "text-green-500" },
+  { level: "Mildly Toasted", color: "text-yellow-500" },
+  { level: "Questionable Milk", color: "text-orange-500" },
+  { level: "Pentagram Detected", color: "text-red-500" },
+  { level: "Existential Silence", color: "text-purple-500" },
+  { level: "Crumb Tray Full", color: "text-amber-600" },
+  { level: "Microwave Watching", color: "text-red-600" },
+];
 
 const Footer: React.FC = () => {
+  const [safetyIndex, setSafetyIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSafetyIndex((prev) => (prev + 1) % SAFETY_LEVELS.length);
+    }, 4000); // Rotate every 4 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentSafety = SAFETY_LEVELS[safetyIndex];
   const footerLinks = {
     sections: [
       { label: 'Politics', href: '#politics' },
@@ -154,8 +173,8 @@ const Footer: React.FC = () => {
             <span className="block text-[10px] uppercase tracking-[0.2em] text-zinc-500 group-hover:text-green-500 font-bold">
               Verified by the Appliance Governance Council
             </span>
-            <span className="block text-[8px] uppercase tracking-widest text-zinc-600 mt-1">
-              Safety Level: Mandatory
+            <span className={`block text-[8px] uppercase tracking-widest mt-1 transition-colors duration-500 ${currentSafety.color}`}>
+              Safety Level: {currentSafety.level}
             </span>
           </div>
         </a>

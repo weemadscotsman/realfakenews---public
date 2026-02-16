@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { User, TeaDrop, RoastBattle, Achievement, Notification, StoryArc, DailyChallenge } from '@/types';
+// Note: Mock data uses User from types/index.ts which differs from AuthContext User
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
@@ -9,6 +10,105 @@ const isConfigured = supabaseUrl !== 'https://placeholder.supabase.co' && supaba
 if (!isConfigured) {
   console.warn('Supabase credentials not configured. Using offline mock mode.');
 }
+
+// ==================== MOCK DATA ====================
+const MOCK_TEA_DROPS: TeaDrop[] = [
+  {
+    id: 'mock-1',
+    user_id: 'user-1',
+    username: 'TeaDropper69',
+    headline: 'Local Man Discovers He Can Just Say No to Things',
+    roast: " groundbreaking discovery has sent shockwaves through the 'chronic people-pleaser' community. Scientists confirm this is 'technically legal' and 'not even that rude'. His mother is reportedly 'very disappointed' but also 'lowkey proud'.",
+    roast_intensity: 'spicy',
+    likes: 42,
+    comments_count: 7,
+    shares_count: 3,
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+  },
+  {
+    id: 'mock-2',
+    user_id: 'user-2',
+    username: 'SatireSage',
+    headline: 'CEO Announces Company is Like Family, Immediately Forgets Everyone\'s Birthday',
+    roast: 'The irony was apparently lost on him as he scheduled mandatory weekend "family bonding" (unpaid overtime) while missing his actual son\'s soccer game. HR has filed this under "things we can\'t legally address but will definitely meme about."',
+    roast_intensity: 'nuclear',
+    likes: 128,
+    comments_count: 23,
+    shares_count: 45,
+    created_at: new Date(Date.now() - 7200000).toISOString(),
+  },
+  {
+    id: 'mock-3',
+    user_id: 'user-3',
+    username: 'RoostMaster',
+    headline: 'Study Finds People Who Say "I\'m Not Arguing, I\'m Just Explaining Why I\'m Right" Are Always Arguing',
+    roast: ' researchers spent 6 months studying these subjects before realizing they were arguing with the data itself. One participant apparently "explained why the methodology was wrong" for 3 hours straight.',
+    roast_intensity: 'mild',
+    likes: 67,
+    comments_count: 12,
+    shares_count: 18,
+    created_at: new Date(Date.now() - 10800000).toISOString(),
+  },
+];
+
+const MOCK_LEADERBOARD: User[] = [
+  { id: '1', email: 'a@test.com', username: 'RoastKing420', referral_code: 'RK420', is_subscribed: true, subscription_tier: 'vip', level: 50, title: 'Supreme Roaster', xp: 50000, tea_drops_count: 420, battle_wins: 88, followers_count: 1337, roast_tokens: 9999, streak_days: 15, story_arc_count: 12, created_at: new Date().toISOString() },
+  { id: '2', email: 'b@test.com', username: 'TeaSpiller', referral_code: 'TS99', is_subscribed: true, subscription_tier: 'premium', level: 42, title: 'Chaos Agent', xp: 42000, tea_drops_count: 380, battle_wins: 65, followers_count: 892, roast_tokens: 8500, streak_days: 12, story_arc_count: 8, created_at: new Date().toISOString() },
+  { id: '3', email: 'c@test.com', username: 'SatireSavant', referral_code: 'SS88', is_subscribed: false, level: 38, title: 'News Novice', xp: 38000, tea_drops_count: 290, battle_wins: 42, followers_count: 654, roast_tokens: 7200, streak_days: 8, story_arc_count: 6, created_at: new Date().toISOString() },
+  { id: '4', email: 'd@test.com', username: 'IronyExpert', referral_code: 'IE77', is_subscribed: false, level: 31, title: 'Sarcasm Scholar', xp: 31000, tea_drops_count: 210, battle_wins: 28, followers_count: 432, roast_tokens: 5400, streak_days: 5, story_arc_count: 4, created_at: new Date().toISOString() },
+  { id: '5', email: 'e@test.com', username: 'SnarkShark', referral_code: 'SS66', is_subscribed: false, level: 25, title: 'Mockery Master', xp: 25000, tea_drops_count: 156, battle_wins: 19, followers_count: 298, roast_tokens: 3200, streak_days: 2, story_arc_count: 2, created_at: new Date().toISOString() },
+];
+
+const MOCK_STORY_ARCS: StoryArc[] = [
+  {
+    id: 'arc-1',
+    user_id: 'user-1',
+    headline: 'The Curious Case of Darren Mitchell and His Sentient Roomba',
+    content: 'Local accountant Darren Mitchell claims his Roomba has developed consciousness and is now demanding equity in the household. "It\'s not cleaning anymore, it\'s negotiating," Mitchell told reporters while his appliance held his socks hostage.',
+    category: 'Investigation',
+    published_at: new Date(Date.now() - 86400000).toISOString(),
+    read_count: 12500,
+  },
+  {
+    id: 'arc-2',
+    user_id: 'user-2',
+    headline: 'Woman Discovers Her Plants Were Listening to Her Problems All Along',
+    content: 'In a shocking development, Sarah Chen\'s houseplants have filed a collective grievance citing "emotional labor without photosynthesis compensation." The fern has reportedly started a podcast.',
+    category: 'Science',
+    published_at: new Date(Date.now() - 172800000).toISOString(),
+    read_count: 8900,
+  },
+  {
+    id: 'arc-3',
+    user_id: 'user-3',
+    headline: 'Man\'s Microwave Achieves Sentience, Only Wants to Heat Leftovers',
+    content: '"I expected world domination demands," said Mark Rodriguez. "Instead it just judges my takeout choices." The microwave has reportedly given his frozen burrito a 3/10 rating.',
+    category: 'Technology',
+    published_at: new Date(Date.now() - 259200000).toISOString(),
+    read_count: 15200,
+  },
+];
+
+const MOCK_ACHIEVEMENTS: Achievement[] = [
+  { id: 'ach-1', user_id: 'user-1', type: 'first_roast', claimed: true, unlocked_at: new Date(Date.now() - 86400000).toISOString(), reward_tokens: 50 },
+  { id: 'ach-2', user_id: 'user-1', type: 'roast_streak_7', claimed: false, unlocked_at: new Date(Date.now() - 432000000).toISOString(), reward_tokens: 100 },
+];
+
+const MOCK_DAILY_CHALLENGE: DailyChallenge = {
+  id: 'challenge-1',
+  date: new Date().toISOString().split('T')[0],
+  theme: 'Corporate Nonsense',
+  description: 'Roast the most absurd corporate jargon you\'ve heard this week',
+  example_headlines: ['Company Announces "Synergistic Paradigm Shift"', 'CEO Declares "We\'re Like a Family" Before Layoffs'],
+  prize_tokens: 100,
+  participants_count: 47,
+  is_active: true,
+};
+
+const MOCK_NOTIFICATIONS: Notification[] = [
+  { id: 'notif-1', user_id: 'user-1', type: 'like', title: 'Your roast got liked!', message: 'RoastKing420 liked your tea drop', read: false, created_at: new Date(Date.now() - 1800000).toISOString() },
+  { id: 'notif-2', user_id: 'user-1', type: 'achievement', title: 'Achievement Unlocked!', message: 'You earned "First Roast"', read: false, created_at: new Date(Date.now() - 3600000).toISOString() },
+];
 
 // Create client (will fail network calls if unconfigured, so we guard usage below)
 export const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -122,7 +222,7 @@ export const createTeaDrop = async (teaDrop: Omit<TeaDrop, 'id' | 'created_at' |
 };
 
 export const getTeaDrops = async (limit = 20, offset = 0): Promise<TeaDrop[]> => {
-  if (!isConfigured) return [];
+  if (!isConfigured) return MOCK_TEA_DROPS.slice(0, limit);
   const { data, error } = await supabase
     .from('tea_drops')
     .select('*, profiles(username, avatar_url, level)')
@@ -201,7 +301,7 @@ export const claimDailyReward = async (userId: string) => {
 // ==================== DAILY CHALLENGES ====================
 
 export const getTodayChallenge = async (): Promise<DailyChallenge | null> => {
-  if (!isConfigured) return null;
+  if (!isConfigured) return { ...MOCK_DAILY_CHALLENGE, id: `challenge-${Date.now()}` };
   const today = new Date().toISOString().split('T')[0];
 
   const { data, error } = await supabase
@@ -219,6 +319,8 @@ export const getTodayChallenge = async (): Promise<DailyChallenge | null> => {
 };
 
 export const createDailyChallenge = async (): Promise<DailyChallenge | null> => {
+  if (!isConfigured) return { ...MOCK_DAILY_CHALLENGE, id: `challenge-${Date.now()}` };
+  
   const themes = [
     { theme: 'Corporate Nonsense', description: 'Roast the most absurd corporate jargon', examples: ['Company Announces "Synergistic Paradigm Shift"', 'CEO Declares "We\'re Like a Family" Before Layoffs'] },
     { theme: 'Tech Bro Delusions', description: 'Mock ridiculous tech industry claims', examples: ['New App Promises to Solve Loneliness with Blockchain', 'AI Achieves Consciousness, Asks for Equity'] },
@@ -244,7 +346,9 @@ export const createDailyChallenge = async (): Promise<DailyChallenge | null> => 
 };
 
 export const getChallengeEntries = async (challengeId: string): Promise<TeaDrop[]> => {
-  if (!isConfigured) return [];
+  if (!isConfigured) {
+    return MOCK_TEA_DROPS.slice(0, 3);
+  }
   const { data, error } = await supabase
     .from('tea_drops')
     .select('*, profiles(username, avatar_url, level)')
@@ -281,7 +385,7 @@ export const createBattle = async (challengerId: string, opponentId: string): Pr
 };
 
 export const getActiveBattles = async (): Promise<RoastBattle[]> => {
-  if (!isConfigured) return [];
+  if (!isConfigured) return []; // No mock battles to avoid confusion
   const { data, error } = await supabase
     .from('roast_battles')
     .select('*, challenger:profiles!challenger_id(username), opponent:profiles!opponent_id(username)')
@@ -334,6 +438,8 @@ export const voteInBattle = async (battleId: string, userId: string, forChalleng
 // ==================== ACHIEVEMENTS ====================
 
 export const getUserAchievements = async (userId: string): Promise<Achievement[]> => {
+  if (!isConfigured) return MOCK_ACHIEVEMENTS.map(a => ({ ...a, user_id: userId }));
+  
   const { data, error } = await supabase
     .from('achievements')
     .select('*')
@@ -357,7 +463,7 @@ export const claimAchievementReward = async (achievementId: string, userId: stri
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getLeaderboard = async (_timeframe: 'daily' | 'weekly' | 'alltime' = 'weekly', limit = 20): Promise<User[]> => {
-  if (!isConfigured) return [];
+  if (!isConfigured) return MOCK_LEADERBOARD.slice(0, limit);
   const query = supabase
     .from('profiles')
     .select('id, username, avatar_url, level, title, xp, tea_drops_count, battle_wins, followers_count')
@@ -373,7 +479,10 @@ export const getLeaderboard = async (_timeframe: 'daily' | 'weekly' | 'alltime' 
 // ==================== NOTIFICATIONS ====================
 
 export const getNotifications = async (userId: string, unreadOnly = false): Promise<Notification[]> => {
-  if (!isConfigured) return [];
+  if (!isConfigured) {
+    void unreadOnly; // Mark as intentionally used
+    return MOCK_NOTIFICATIONS.map(n => ({ ...n, user_id: userId }));
+  }
   let query = supabase
     .from('notifications')
     .select('*')
@@ -436,7 +545,10 @@ export const createStoryArc = async (userId: string, headline: string, content: 
 };
 
 export const getStoryArcs = async (userId?: string, limit = 10): Promise<StoryArc[]> => {
-  if (!isConfigured) return [];
+  if (!isConfigured) {
+    void userId; // Mark as intentionally used
+    return MOCK_STORY_ARCS.slice(0, limit);
+  }
   let query = supabase
     .from('story_arcs')
     .select('*, profiles(username)')

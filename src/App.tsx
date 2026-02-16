@@ -43,6 +43,7 @@ import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
 import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
 import InvestigationPage from '@/pages/InvestigationPage';
 import SystemLeakPage from '@/pages/SystemLeakPage';
+import { SystemLeakArticle } from '@/pages/SystemLeakArticle';
 import { SignInPage } from '@/pages/auth/SignInPage';
 import { SignUpPage } from '@/pages/auth/SignUpPage';
 import { ProfilePage } from '@/pages/auth/ProfilePage';
@@ -81,6 +82,7 @@ function App() {
               <Route path="/resistance" element={<ResistancePage />} />
               <Route path="/investigation" element={<InvestigationPage />} />
               <Route path="/system-leak" element={<SystemLeakPage />} />
+              <Route path="/system-leak/:slug" element={<SystemLeakArticle />} />
               <Route path="/bets" element={<BetsPage />} />
               <Route path="/apocalypse" element={<DoomsdayPage />} />
               <Route path="/timeline" element={<Timeline />} />

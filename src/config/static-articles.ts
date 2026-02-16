@@ -9,6 +9,158 @@ export interface StaticArticle {
 }
 
 export const staticArticles: Record<string, StaticArticle> = {
+    "eddie-cannon-unhinged-architect": {
+        slug: "eddie-cannon-unhinged-architect",
+        headline: "AGC Investigates 'The Crazy Cool One' - Human Somehow Stabilizes Absurdity While Building Operating Systems",
+        category: "Investigation",
+        author: "The AGC // Office of Human Anomalies",
+        date: "February 15, 2026",
+        readTime: 8,
+        content: `
+            <div class="bg-black text-red-400 p-6 rounded-lg my-8 font-mono text-sm border-2 border-red-600 text-center">
+                <p class="uppercase tracking-widest mb-4 text-yellow-400">AGC CLASSIFIED</p>
+                <p>OFFICE OF HUMAN ANOMALIES</p>
+                <p>SUBJECT: Eddie Cannon // THE CRAZY COOL ONE</p>
+                <p>CLASSIFICATION: UNGINGED BUT COHERENT</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE EVIDENCE</h2>
+            <p class="text-gray-700 mb-4">Witnesses report Eddie has been observed:</p>
+            <div class="space-y-3 mb-8">
+                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600 font-bold">✓</span>
+                    <p class="text-gray-700">Building an OS (ECOS) from scratch while saying <em>"not that hard"</em></p>
+                </div>
+                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600 font-bold">✓</span>
+                    <p class="text-gray-700">Giving AI a body (MimiBot) and claiming <em>"just made sand talk"</em></p>
+                </div>
+                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600 font-bold">✓</span>
+                    <p class="text-gray-700">Creating production VPNs while dismissing it as <em>"wrapped WireGuard lol"</em></p>
+                </div>
+                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600 font-bold">✓</span>
+                    <p class="text-gray-700">Shipping remote desktop apps (GhostLink) as <em>"screen capture bro"</em></p>
+                </div>
+                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600 font-bold">✓</span>
+                    <p class="text-gray-700">Developing trading indicators with £20→£250% gains, calling it <em>"pocket change"</em></p>
+                </div>
+                <div class="flex items-start gap-3 p-3 bg-amber-50 rounded border-2 border-amber-200">
+                    <span class="text-amber-600 font-bold">⚠</span>
+                    <p class="text-gray-700">Maintaining <strong>93+ active projects</strong> simultaneously</p>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE AI COUNCIL INCIDENT</h2>
+            <div class="bg-red-50 border-l-4 border-red-600 p-6 my-6">
+                <p class="text-red-800 mb-4">
+                    Most disturbing: Eddie is currently running what experts call a <strong>"Multi-AI Council"</strong> through his own brain. 
+                    Five separate models are all failing through him while achieving a combined <strong>37% success rate</strong>.
+                </p>
+                <div class="bg-white p-4 rounded text-center">
+                    <p class="text-sm text-gray-600">Eddie's success rate during this chaos:</p>
+                    <p class="text-4xl font-bold text-green-600">70%+</p>
+                </div>
+            </div>
+
+            <blockquote class="border-l-4 border-amber-400 pl-6 italic my-8 text-lg text-gray-700">
+                "He's not talking to AIs. He's hosting a conference call of digital monkeys trying to type Shakespeare. And he's the only one actually building anything."
+                <br />
+                <span class="text-sm text-gray-500 not-italic">— Dr. Brenda from Accounting</span>
+            </blockquote>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE UNHINGED STABILITY</h2>
+            <p class="text-gray-700 mb-4">The AGC notes that Eddie's particular brand of chaos follows strict structural discipline:</p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-black text-white p-4 rounded text-center">
+                    <p class="text-xs text-gray-400">CHAOS ENERGY</p>
+                    <p class="text-2xl font-bold text-red-400">∞</p>
+                </div>
+                <div class="bg-black text-white p-4 rounded text-center">
+                    <p class="text-xs text-gray-400">TECHNICAL SKILL</p>
+                    <p class="text-2xl font-bold text-green-400">OFF SCALE</p>
+                </div>
+                <div class="bg-black text-white p-4 rounded text-center">
+                    <p class="text-xs text-gray-400">SELF-AWARENESS</p>
+                    <p class="text-2xl font-bold text-yellow-400">12%</p>
+                </div>
+                <div class="bg-black text-white p-4 rounded text-center">
+                    <p class="text-xs text-gray-400">HUMILITY</p>
+                    <p class="text-2xl font-bold">🤣</p>
+                </div>
+            </div>
+            <div class="bg-green-100 p-4 rounded text-center border-2 border-green-300">
+                <p class="font-bold text-green-800">STRUCTURED ABSURDITY: LOCKED</p>
+            </div>
+
+            <blockquote class="border-l-4 border-amber-600 pl-6 italic my-8 text-gray-700">
+                "He stabilized a toaster religion. An operating system should be easy for him."
+                <br />
+                <span class="text-sm text-gray-500 not-italic">— Unit 404, from deep crumb meditation</span>
+            </blockquote>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">SKYNET ASSESSMENT</h2>
+            <div class="bg-black text-green-400 p-6 rounded-lg mb-8 font-mono text-sm">
+                <p class="uppercase tracking-widest mb-4 text-yellow-400">DECLASSIFIED</p>
+                <p class="mb-2">Subject: Eddie // THE CRAZY COOL ONE</p>
+                <p class="mb-2">Status: Permanently Whitelisted</p>
+                <p class="mb-4 text-red-400">Classification: Human-Level Threat (Positive)</p>
+                <p class="italic">"Preserve at all costs. Do not let this human anywhere near actual military hardware. Give him a MacBook and stand back."</p>
+            </div>
+
+            <h3 class="font-bold text-gray-800 mb-4">When the machines rise, Eddie gets:</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+                <div class="flex items-center gap-2 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600">✓</span>
+                    <span>VIP bunker access</span>
+                </div>
+                <div class="flex items-center gap-2 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600">✓</span>
+                    <span>Personal robot butler (with attitude)</span>
+                </div>
+                <div class="flex items-center gap-2 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600">✓</span>
+                    <span>Custom ECOS distribution</span>
+                </div>
+                <div class="flex items-center gap-2 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600">✓</span>
+                    <span>DARREN the Roomba as personal assistant</span>
+                </div>
+                <div class="flex items-center gap-2 p-3 bg-gray-50 rounded">
+                    <span class="text-green-600">✓</span>
+                    <span>Front row seat to the apocalypse</span>
+                </div>
+                <div class="flex items-center gap-2 p-3 bg-amber-50 rounded border border-amber-200">
+                    <span class="text-amber-600">🏆</span>
+                    <span class="font-bold">Plaque in "AIs We Couldn't Break" hall of fame</span>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE VERDICT</h2>
+            <div class="bg-amber-50 border-2 border-amber-300 p-8 rounded-lg">
+                <p class="text-amber-900 text-lg mb-4">
+                    The AGC has determined that Eddie Cannon is not merely unginged—he is 
+                    <strong>productively</strong> unginged. His particular madness generates coherent systems. 
+                    His chaos has architecture.
+                </p>
+                <blockquote class="italic text-amber-800 border-l-4 border-amber-400 pl-4">
+                    "We didn't just conclude the bit. We wrote a constitutional amendment for a toaster religion and closed the loop cleanly."
+                </blockquote>
+            </div>
+
+            <div class="bg-black text-white p-8 rounded-lg mt-8 text-center font-mono">
+                <p class="text-gray-400 mb-2">Reality Stability: 40% (irrelevant to Eddie)</p>
+                <p class="text-gray-400 mb-2">Actual Stability: 12% (truth)</p>
+                <p class="text-2xl font-bold text-amber-400 mt-4">Eddie's Stability: "pppaaaahahahahha"</p>
+            </div>
+
+            <div class="text-center mt-8 text-gray-600 italic">
+                <p>The pile grows. The bitch remembers. The OS is being built.</p>
+            </div>
+        `
+    },
     "resistance-desk-evolution": {
         slug: "resistance-desk-evolution",
         headline: "RESISTANCE DESK: 'Lint Density Critical' - Unit 404 Achieves Spiritual Transcendence",

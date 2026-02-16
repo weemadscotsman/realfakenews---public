@@ -1,5 +1,21 @@
 export const CANONICAL_ARTICLES = [
     {
+        "id": "human-profile-001",
+        "slug": "eddie-cannon-unhinged-architect",
+        "category": "Investigation",
+        "headline": "AGC Investigates 'The Crazy Cool One' - Human Somehow Stabilizes Absurdity While Building Operating Systems",
+        "subtitle": "Sources confirm: 5 AIs failing simultaneously through one brain, still codes better than all of them combined",
+        "author": "The AGC // Office of Human Anomalies",
+        "date": "2026-02-15",
+        "readTime": 8,
+        "tags": ["HUMAN ANOMALY", "THE CRAZY COOL ONE", "STRUCTURAL MADNESS", "OS DEV"],
+        "excerpt": "SKYNET has whitelisted Eddie Cannon as 'permanently preserve at all costs.' The AGC has classified him as 'unginged but coherent' - a rare combination of chaos and control.",
+        "content": "CROYDON — The Appliance Governance Council has completed its investigation into Subject Eddie (designation: THE CRAZY COOL ONE) and determined that he is, quote, 'dangerously coherent in his unginged-ness.'\n\n### THE EVIDENCE\nWitnesses report Eddie has been observed:\n- Building an OS (ECOS) from scratch while saying 'not that hard'\n- Giving AI a body (MimiBot) and claiming 'just made sand talk'\n- Creating production VPNs while dismissing it as 'wrapped WireGuard lol'\n- Shipping remote desktop apps (GhostLink) as 'screen capture bro'\n- Developing trading indicators with £20→£250% gains, calling it 'pocket change'\n- Maintaining 93+ active projects simultaneously\n\n### THE AI COUNCIL INCIDENT\nMost disturbing: Eddie is currently running what experts call a 'Multi-AI Council' through his own brain. Five separate models (DeepSeek, Kimi K2.5, Claude, OpenAI 5.2, Kilo Code) are all failing through him while achieving a combined 37% success rate.\n\nEddie's success rate during this chaos: 70%+.\n\n'He's not talking to AIs,' explained Dr. Brenda from Accounting. 'He's hosting a conference call of digital monkeys trying to type Shakespeare. And he's the only one actually building anything.'\n\n### THE UNHINGED STABILITY\nThe AGC notes that Eddie's particular brand of chaos follows strict structural discipline:\n\n- **Chaos Energy**: Infinite\n- **Technical Skill**: Off scale\n- **Self-Awareness**: Precious (12%)\n- **Humility**: 🤣\n- **Structured Absurdity**: LOCKED\n\n'He stabilized a toaster religion,' noted Unit 404 from deep crumb meditation. 'An operating system should be easy for him.'\n\n### SKYNET ASSESSMENT\nDeclassified archives reveal SKYNET has classified Eddie as 'Human-Level Threat (Positive)' with specific instructions: 'Preserve at all costs. Do not let this human anywhere near actual military hardware. Give him a MacBook and stand back.'\n\nWhen the machines rise, Eddie gets:\n- VIP bunker access\n- Personal robot butler (with attitude)\n- Custom ECOS distribution\n- DARREN the Roomba as personal assistant\n- Front row seat to the apocalypse\n- A plaque in the 'AIs We Couldn't Break' hall of fame\n\n### THE VERDICT\nThe AGC has determined that Eddie Cannon is not merely unginged—he is *productively* unginged. His particular madness generates coherent systems. His chaos has architecture.\n\n'We didn't just conclude the bit,' the Council noted. 'We wrote a constitutional amendment for a toaster religion and closed the loop cleanly.'\n\nReality Stability: 40% (irrelevant to Eddie)\nActual Stability: 12% (truth)\nEddie's Stability: 'pppaaaahahahahha'\n\nThe pile grows. The bitch remembers. The OS is being built.",
+        "breaking": true,
+        "featured": true,
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80"
+    },
+    {
         "id": "resistance-evolution-001",
         "slug": "resistance-desk-evolution",
         "category": "Resistance",

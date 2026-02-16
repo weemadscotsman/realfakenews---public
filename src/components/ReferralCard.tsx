@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Users, Copy, Check, Share2, Gift } from 'lucide-react';
 import { toast } from 'sonner';
@@ -11,19 +11,37 @@ interface ReferralStats {
   totalEarned: number;
 }
 
-export const ReferralCard: React.FC = () => {
+interface ReferralCardProps {
+  referralCode?: string;
+  referralCount?: number;
+}
+
+export const ReferralCard: React.FC<ReferralCardProps> = ({ 
+  referralCode: propReferralCode, 
+  referralCount: propReferralCount 
+}) => {
   const { user, isAuthenticated } = useAuth();
-  const [referralCode, setReferralCode] = useState<string>('');
+  const [referralCode, setReferralCode] = useState<string>(propReferralCode || '');
   const [referralLink, setReferralLink] = useState<string>('');
-  const [stats, setStats] = useState<ReferralStats | null>(null);
+  const [stats, setStats] = useState<ReferralStats | null>(
+    propReferralCount !== undefined ? {
+      total: propReferralCount,
+      pending: 0,
+      completed: propReferralCount,
+      totalEarned: propReferralCount * 100
+    } : null
+  );
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated && user?.id) {
+    if (propReferralCode) {
+      setReferralCode(propReferralCode);
+      setReferralLink(`${window.location.origin}/signup?ref=${propReferralCode}`);
+    } else if (isAuthenticated && user?.id) {
       generateReferralCode();
       loadStats();
     }
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, propReferralCode]);
 
   const generateReferralCode = async () => {
     try {

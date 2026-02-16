@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';

@@ -1,6 +1,6 @@
 import { Crown, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Link } from 'react-router-dom';
 
 interface PremiumGateProps {

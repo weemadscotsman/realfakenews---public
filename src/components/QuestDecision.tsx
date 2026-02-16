@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, ShieldCheck, ZapOff, Ghost } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { voteOnQuest } from '@/lib/gemini';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { toast } from 'sonner';
 

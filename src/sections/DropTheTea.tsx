@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { generateRoast, type RoastStyle } from '@/lib/content-engine';
 import { ROAST_STYLE_METADATA } from '@/lib/roast-constants';
@@ -111,12 +111,12 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
     setLoading(true);
 
     try {
-      const result = await generateRoast(headline, user!.username, selectedStyle);
+      const result = await generateRoast(headline, user!.name, selectedStyle);
 
       // Save to database
       const savedDrop = await createTeaDrop({
         user_id: user!.id,
-        username: user!.username,
+        username: user!.name,
         headline,
         roast: result.roast,
         roast_intensity: result.intensity,

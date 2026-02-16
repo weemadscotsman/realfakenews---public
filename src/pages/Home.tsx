@@ -13,7 +13,7 @@ import { fetchWorldState, type StoryArc } from '@/lib/gemini';
 import { useState, useEffect } from 'react';
 
 interface HomeProps {
-    onLoginClick: (mode?: 'login' | 'signup') => void;
+    onLoginClick?: (mode?: 'login' | 'signup') => void;
 }
 
 import ApplianceGrievances from '@/sections/ApplianceGrievances';
@@ -64,7 +64,7 @@ const Home: React.FC<HomeProps> = ({ onLoginClick }) => {
             <ConspiracyDesk />
             <ApplianceGrievances />
             <FakeBets />
-            <DropTheTea onLoginRequired={() => onLoginClick('login')} />
+            <DropTheTea onLoginRequired={() => onLoginClick ? onLoginClick('login') : window.location.href = '/signin'} />
             <Leaderboard />
             <StoryArcs />
             <Achievements />

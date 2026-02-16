@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +19,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
   const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signUp, signIn } = useAuth();
+  const { register, login } = useAuth();
 
   if (!isOpen) return null;
 
@@ -34,7 +34,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
           setLoading(false);
           return;
         }
-        const { error } = await signUp(email, password, username);
+        const { error } = await register(email, password, username);
         if (error) {
           toast.error(error.message);
         } else {
@@ -42,7 +42,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
           onClose();
         }
       } else {
-        const { error } = await signIn(email, password);
+        const { error } = await login(email, password);
         if (error) {
           toast.error(error.message);
         } else {

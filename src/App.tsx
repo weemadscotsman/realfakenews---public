@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '@/hooks/useAuth';
+import { AuthProvider } from '@/context/AuthContext';
 import { GameEconomyProvider } from '@/hooks/useGameEconomy';
 import { Toaster } from 'sonner';
-import { useState } from 'react';
+
 import Home from '@/pages/Home';
 import ArticlePage from '@/pages/ArticlePage';
 import TechPage from '@/pages/TechPage';
 import DoomsdayPage from '@/pages/DoomsdayPage';
 import Timeline from '@/pages/Timeline';
-import LoginModal from '@/components/LoginModal';
+
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import BreakingNewsBar from '@/components/BreakingNewsBar';
@@ -43,17 +43,12 @@ import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
 import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
 import InvestigationPage from '@/pages/InvestigationPage';
 import SystemLeakPage from '@/pages/SystemLeakPage';
+import { SignInPage } from '@/pages/auth/SignInPage';
+import { SignUpPage } from '@/pages/auth/SignUpPage';
+import { ProfilePage } from '@/pages/auth/ProfilePage';
 import { BatteryWarning } from 'lucide-react';
 
 function App() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [loginMode, setLoginMode] = useState<'login' | 'signup'>('login');
-
-  const openLogin = (mode: 'login' | 'signup' = 'login') => {
-    setLoginMode(mode);
-    setShowLogin(true);
-  };
-
   const gridStability = 67;
 
   return (
@@ -72,10 +67,10 @@ function App() {
           <div className="min-h-screen bg-white">
             <BreakingNewsBar />
             <Masthead />
-            <Navigation onLoginClick={() => openLogin('login')} />
+            <Navigation />
 
             <Routes>
-              <Route path="/" element={<Home onLoginClick={openLogin} />} />
+              <Route path="/" element={<Home />} />
               <Route path="/article/:slug" element={<ArticlePage />} />
               <Route path="/politics" element={<PoliticsPage />} />
               <Route path="/science" element={<SciencePage />} />
@@ -109,18 +104,16 @@ function App() {
               <Route path="/agc/final-audit" element={<FinalAuditPage />} />
               <Route path="/payment/success" element={<SuccessPage />} />
               <Route path="/payment/cancel" element={<CancelPage />} />
+              {/* Auth Routes */}
+              <Route path="/signin" element={<SignInPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Routes>
 
             <Footer />
             <NarrativeOverlay />
 
-            {showLogin && (
-              <LoginModal
-                isOpen={showLogin}
-                onClose={() => setShowLogin(false)}
-                initialMode={loginMode}
-              />
-            )}
+
             <Toaster position="bottom-right" richColors />
           </div>
         </GameEconomyProvider>

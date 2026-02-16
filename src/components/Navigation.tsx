@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Crown } from 'lucide-react';
 
-interface NavigationProps {
-  onLoginClick: () => void;
-}
-
-const Navigation = ({ onLoginClick }: NavigationProps) => {
-  const { user, isAuthenticated, signOut } = useAuth();
+const Navigation = () => {
+  const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,22 +73,25 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
           <div className="flex items-center gap-4">
             {isAuthenticated && user ? (
               <div className="flex items-center gap-3">
-                {user.is_subscribed && (
+                {user.isPremium && (
                   <span className="sub-badge flex items-center gap-1">
                     <Crown size={12} />
                     VIP
                   </span>
                 )}
-                <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => navigate('/profile')}
+                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
                   <div className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm font-medium">
-                    {user.username.charAt(0).toUpperCase()}
+                    {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="hidden sm:block text-sm font-medium">{user.username}</span>
-                </div>
+                  <span className="hidden sm:block text-sm font-medium">{user.name}</span>
+                </button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => signOut()}
+                  onClick={() => logout()}
                   className="text-gray-500"
                 >
                   Sign Out
@@ -103,17 +102,17 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onLoginClick}
+                  onClick={() => navigate('/signin')}
                   className="text-gray-700"
                 >
                   Sign In
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => navigate('/membership')}
+                  onClick={() => navigate('/signup')}
                   className="btn-primary"
                 >
-                  Subscribe
+                  Join
                 </Button>
               </div>
             )}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { generateStoryArc } from '@/lib/content-engine';
 import { createStoryArc, getStoryArcs } from '@/lib/supabase';

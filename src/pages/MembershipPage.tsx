@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { HallOfShame } from '@/components/HallOfShame';
 import { ReferralCard } from '@/components/ReferralCard';
-
+import { CryptoPayment } from '@/components/CryptoPayment';
 import {
     Crown, Zap, BookOpen, Clock, Star,
     Users, Flame, Skull, Check,
-    Loader2, PartyPopper, XCircle, ExternalLink
+    Loader2, PartyPopper, XCircle, ExternalLink,
+    CreditCard, Bitcoin
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -23,9 +24,9 @@ const FEATURES = [
 ];
 
 const PRICING = {
-    monthly: { id: 'monthly', name: 'Monthly', price: '$2.99', period: '/mo', description: 'Cancel anytime (we will judge you).', popular: true },
-    yearly: { id: 'yearly', name: 'Yearly', price: '$29.99', period: '/yr', description: 'Save $6/year. Commitment issues?', popular: false, savings: 'Save 16%' },
-    ironic: { id: 'ironic', name: 'Ironic', price: '£2.50', period: '/mo', description: 'You get literally nothing. No refunds.', popular: false }
+    monthly: { id: 'monthly', name: 'Monthly', price: '$9.99', period: '/mo', description: 'Cancel anytime (we will judge you).', popular: true },
+    yearly: { id: 'yearly', name: 'Yearly', price: '$99.99', period: '/yr', description: 'Save $20/year. Commitment issues?', popular: false, savings: 'Save 17%' },
+    ironic: { id: 'ironic', name: 'Ironic', price: '$2.50', period: '/mo', description: 'You get literally nothing. No refunds.', popular: false }
 };
 
 const MembershipPage = () => {
@@ -33,6 +34,8 @@ const MembershipPage = () => {
     const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly' | 'ironic'>('monthly');
     const [loading, setLoading] = useState(false);
     const [checkoutStatus, setCheckoutStatus] = useState<'success' | 'canceled' | null>(null);
+    const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'crypto'>('stripe');
+    const [showCryptoPayment, setShowCryptoPayment] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -78,28 +81,11 @@ const MembershipPage = () => {
     };
 
     const handleManageSubscription = async () => {
-        if (!user?.stripe_customer_id) {
-            toast.error('No active subscription found');
-            return;
-        }
-        setLoading(true);
-        try {
-            const response = await fetch('/.netlify/functions/create-portal-session', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ customerId: user.stripe_customer_id }),
-            });
-            const data = await response.json();
-            if (data.url) window.location.href = data.url;
-            else throw new Error('No portal URL');
-        } catch (error) {
-            toast.error('Failed to open billing portal');
-            setLoading(false);
-        }
+        toast.info('Manage subscription through your profile');
     };
 
-    const isSubscribed = user?.is_subscribed;
-    const currentTier = user?.subscription_tier;
+    const isSubscribed = user?.isPremium;
+    const currentTier = user?.subscriptionTier;
 
     return (
         <div className="min-h-screen bg-zinc-950 text-white pt-20 pb-16">
@@ -128,62 +114,141 @@ const MembershipPage = () => {
                     </h1>
                     <p className="text-xl text-zinc-400">Upgrade your existence.</p>
                     <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-zinc-500">
-                        <span className="flex items-center gap-1"><Check size={14} className="text-green-500" /> Secure Stripe</span>
+                        <span className="flex items-center gap-1"><Check size={14} className="text-green-500" /> Stripe or Crypto</span>
                         <span className="flex items-center gap-1"><Check size={14} className="text-green-500" /> Cancel Anytime</span>
                         <span className="flex items-center gap-1"><Check size={14} className="text-green-500" /> Instant Access</span>
                     </div>
                 </div>
 
-                <div className="max-w-md mx-auto bg-zinc-900 rounded-3xl border-2 border-zinc-800 p-8 relative overflow-hidden mb-24">
-                    {PRICING[billingCycle].popular && (
-                        <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">Best Value</div>
-                    )}
-                    {isSubscribed && (
-                        <div className="absolute top-0 left-0 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-br-xl">Current Plan</div>
-                    )}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-24">
+                    {/* Pricing Card */}
+                    <div className="bg-zinc-900 rounded-3xl border-2 border-zinc-800 p-8 relative overflow-hidden">
+                        {PRICING[billingCycle].popular && (
+                            <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">Best Value</div>
+                        )}
+                        {isSubscribed && (
+                            <div className="absolute top-0 left-0 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-br-xl">Current Plan</div>
+                        )}
 
-                    <div className="flex justify-center gap-2 mb-8 flex-wrap">
-                        {Object.values(PRICING).map((p) => (
-                            <button key={p.id} onClick={() => setBillingCycle(p.id as any)} 
-                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === p.id ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'}`}>
-                                {p.name}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="text-center mb-8">
-                        <div className="flex items-end justify-center gap-1">
-                            <span className="text-5xl font-black">{PRICING[billingCycle].price}</span>
-                            <span className="text-zinc-500 mb-1">{PRICING[billingCycle].period}</span>
+                        <div className="flex justify-center gap-2 mb-8 flex-wrap">
+                            {Object.values(PRICING).map((p) => (
+                                <button key={p.id} onClick={() => setBillingCycle(p.id as any)} 
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === p.id ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'}`}>
+                                    {p.name}
+                                </button>
+                            ))}
                         </div>
-                        <p className="text-zinc-500 text-sm mt-2">{PRICING[billingCycle].description}</p>
-                    </div>
 
-                    {isSubscribed ? (
-                        <Button onClick={handleManageSubscription} disabled={loading}
-                            variant="outline" className="w-full h-14 text-lg font-bold border-zinc-600 hover:bg-zinc-800 mb-8">
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
-                            <><ExternalLink className="w-4 h-4 mr-2" /> Manage Subscription</>}
-                        </Button>
-                    ) : (
-                        <Button onClick={handleSubscribe} disabled={loading} 
-                            className="w-full h-14 text-lg font-black uppercase italic bg-white text-black hover:bg-zinc-200 mb-8">
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
-                            billingCycle === 'ironic' ? "Waste Money" : "Upgrade Now"}
-                        </Button>
-                    )}
-
-                    <div className="space-y-4">
-                        {FEATURES.slice(0, 4).map((f, i) => (
-                            <div key={i} className="flex items-center gap-3">
-                                <div className="bg-zinc-800 p-1 rounded-full"><Check size={12} className="text-green-500" /></div>
-                                <span className="text-zinc-300 text-sm">{f.title}</span>
+                        <div className="text-center mb-8">
+                            <div className="flex items-end justify-center gap-1">
+                                <span className="text-5xl font-black">{PRICING[billingCycle].price}</span>
+                                <span className="text-zinc-500 mb-1">{PRICING[billingCycle].period}</span>
                             </div>
-                        ))}
+                            <p className="text-zinc-500 text-sm mt-2">{PRICING[billingCycle].description}</p>
+                        </div>
+
+                        {/* Payment Method Toggle */}
+                        {!showCryptoPayment && !isSubscribed && (
+                            <div className="flex justify-center gap-2 mb-6">
+                                <button
+                                    onClick={() => setPaymentMethod('stripe')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                        paymentMethod === 'stripe' ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                                    }`}
+                                >
+                                    <CreditCard className="w-4 h-4" />
+                                    Card
+                                </button>
+                                <button
+                                    onClick={() => setPaymentMethod('crypto')}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                        paymentMethod === 'crypto' ? 'bg-[#00ff41] text-black' : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                                    }`}
+                                >
+                                    <Bitcoin className="w-4 h-4" />
+                                    Crypto
+                                </button>
+                            </div>
+                        )}
+
+                        {isSubscribed ? (
+                            <Button onClick={handleManageSubscription} disabled={loading}
+                                variant="outline" className="w-full h-14 text-lg font-bold border-zinc-600 hover:bg-zinc-800 mb-8">
+                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+                                <><ExternalLink className="w-4 h-4 mr-2" /> Manage Subscription</>}
+                            </Button>
+                        ) : paymentMethod === 'crypto' || showCryptoPayment ? (
+                            <Button onClick={() => setShowCryptoPayment(true)} disabled={loading || showCryptoPayment}
+                                className="w-full h-14 text-lg font-black uppercase italic bg-[#00ff41] text-black hover:bg-[#00ff41]/90 mb-8">
+                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+                                <><Bitcoin className="w-5 h-5 mr-2" /> Pay with Crypto</>}
+                            </Button>
+                        ) : (
+                            <Button onClick={handleSubscribe} disabled={loading} 
+                                className="w-full h-14 text-lg font-black uppercase italic bg-white text-black hover:bg-zinc-200 mb-8">
+                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+                                billingCycle === 'ironic' ? "Waste Money" : "Upgrade Now"}
+                            </Button>
+                        )}
+
+                        <div className="space-y-4">
+                            {FEATURES.slice(0, 4).map((f, i) => (
+                                <div key={i} className="flex items-center gap-3">
+                                    <div className="bg-zinc-800 p-1 rounded-full"><Check size={12} className="text-green-500" /></div>
+                                    <span className="text-zinc-300 text-sm">{f.title}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {isSubscribed && currentTier && (
+                            <p className="text-center text-sm text-green-500 mt-6">Active {currentTier} subscription</p>
+                        )}
                     </div>
 
-                    {isSubscribed && currentTier && (
-                        <p className="text-center text-sm text-green-500 mt-6">Active {currentTier} subscription</p>
+                    {/* Crypto Payment Panel */}
+                    {showCryptoPayment ? (
+                        <CryptoPayment 
+                            plan={billingCycle}
+                            onSuccess={() => {
+                                setShowCryptoPayment(false);
+                                setCheckoutStatus('success');
+                            }}
+                        />
+                    ) : (
+                        <div className="bg-gradient-to-br from-[#00ff41]/10 to-blue-500/10 border border-[#00ff41]/20 rounded-3xl p-8">
+                            <h3 className="font-display text-xl font-bold text-white mb-4">
+                                Why Go Premium?
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-[#00ff41]/20 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-4 h-4 text-[#00ff41]" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-white">Unlimited Access</h4>
+                                        <p className="text-sm text-gray-400">No paywalls, no limits. Pure unfiltered fake news.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-[#00ff41]/20 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-4 h-4 text-[#00ff41]" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-white">Crypto Accepted</h4>
+                                        <p className="text-sm text-gray-400">Pay with BTC, USDT, XRP, or Polygon. Stay anonymous.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-[#00ff41]/20 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-4 h-4 text-[#00ff41]" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-white">Hall of Shame</h4>
+                                        <p className="text-sm text-gray-400">Your name in lights. Premium members get recognized.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
 
@@ -210,6 +275,7 @@ const MembershipPage = () => {
                     <div className="space-y-4 text-zinc-400 text-sm">
                         <p><strong className="text-white">Real subscription?</strong><br />Yes. Real money for fake news.</p>
                         <p><strong className="text-white">Can I cancel?</strong><br />Yes. Anytime.</p>
+                        <p><strong className="text-white">Crypto payments?</strong><br />Yes! BTC, USDT (TRC20), XRP, and Polygon accepted.</p>
                     </div>
                 </div>
             </div>

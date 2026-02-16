@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -62,7 +62,7 @@ const Leaderboard = () => {
         setMyRank({
           id: user.id,
           rank: 47 + Math.floor(Math.random() * 20),
-          username: user.username,
+          username: user.name,
           avatar_url: user.avatar_url,
           level: user.level || 1,
           title: user.title || 'News Novice',

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useCallback, useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth } from '@/context/AuthContext';
 import type { Achievement } from '@/types';
 import {
   spendTokens as spendTokensApi,

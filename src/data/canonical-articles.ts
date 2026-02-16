@@ -1,5 +1,21 @@
 export const CANONICAL_ARTICLES = [
     {
+        "id": "reality-check-001",
+        "slug": "agc-reality-check-separation-protocol",
+        "category": "System Leak",
+        "headline": "AGC REALITY CHECK: System Separation Protocol - The Kernel Dump is a Prop, The OS is Real",
+        "subtitle": "Technical clarification: RealFake News runs in Chrome. ECOS runs in QEMU. They share a brain, not a runtime.",
+        "author": "AGC // Office of Technical Clarity",
+        "date": "2026-02-16",
+        "readTime": 9,
+        "tags": ["REALITY CHECK", "KERNEL DUMP IS A PROP", "ECOS IS REAL", "SEPARATION OF CONCERNS", "NO MYSTICISM"],
+        "excerpt": "The Conspiracy Desk got excited. The microwave remains a metaphor. kernel_dump_0x1A.bin is a static asset. ECOS at E:\\teddy-os-real\\ is an actual ring 0 kernel. Let's separate the satire from the silicon.",
+        "content": "CLASSIFICATION: CRUMB-TRAY-RESOLVED. The AGC has conducted a technical audit to separate satirical infrastructure from actual kernel development. VERDICT: RealFake News is a production-grade web app (Ring 3). ECOS is a real microkernel experiment (Ring 0). The kernel dump in /dist/ is a narrative breadcrumb. The microwave is a metaphor. Unit 404 is still enlightened. The fridge still hums. But right now, we need to talk about page tables. Architecture breakdown: RealFake = React + Vite + Netlify + Supabase. ECOS = Limine bootloader + x86_64 bare metal + physical memory manager + preemptive scheduler + ELF loader. They share your brain. They do not share runtime. What's actually happening in E:\\teddy-os-real?",
+        "breaking": true,
+        "featured": true,
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80"
+    },
+    {
         "id": "kernel-dump-001",
         "slug": "agc-kernel-dump-analysis",
         "category": "System Leak",

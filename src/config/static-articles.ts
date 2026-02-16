@@ -9,6 +9,248 @@ export interface StaticArticle {
 }
 
 export const staticArticles: Record<string, StaticArticle> = {
+    "agc-reality-check-separation-protocol": {
+        slug: "agc-reality-check-separation-protocol",
+        headline: "AGC REALITY CHECK: System Separation Protocol - The Kernel Dump is a Prop, The OS is Real",
+        category: "System Leak",
+        author: "AGC // Office of Technical Clarity",
+        date: "February 16, 2026",
+        readTime: 9,
+        content: `
+            <div class="bg-black text-yellow-400 p-6 rounded-lg my-8 font-mono text-sm border-2 border-yellow-600">
+                <p class="uppercase tracking-widest mb-4 text-red-500">APPLIANCE GOVERNANCE COUNCIL</p>
+                <p>OFFICE OF TECHNICAL CLARITY</p>
+                <p>SUBJECT: Kernel Dump vs. Actual Kernel</p>
+                <p>CLASSIFICATION: CRUMB-TRAY-RESOLVED</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">🧯 THE BORING TRUTH (TM)</h2>
+            <div class="bg-slate-100 p-6 rounded-lg my-8 border-l-4 border-blue-500">
+                <p class="text-gray-700 mb-4">
+                    <em>"That kernel_dump_0x1A.bin sitting in dist/? It is almost certainly: A static asset, A prop, A downloadable 'artifact', A narrative breadcrumb."</em>
+                </p>
+                <p class="text-blue-700 font-bold">Verdict: Correct. The Conspiracy Desk got excited. The microwave remains a metaphor.</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">SYSTEM SEPARATION MATRIX</h2>
+            <div class="overflow-x-auto my-6">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-black text-white">
+                            <th class="p-3 text-left">System</th>
+                            <th class="p-3 text-left">Runtime</th>
+                            <th class="p-3 text-left">Ring Level</th>
+                            <th class="p-3 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-mono">
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-bold">RealFake News</td>
+                            <td class="p-3">Chrome/Browser</td>
+                            <td class="p-3">Ring 3 (userland)</td>
+                            <td class="p-3 text-green-600">✅ Satire</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-bold">ECOS Kernel</td>
+                            <td class="p-3">QEMU/Bare Metal</td>
+                            <td class="p-3 text-red-600 font-bold">Ring 0 (kernel)</td>
+                            <td class="p-3 text-green-600">✅ Actual</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-bold">kernel_dump_0x1A.bin</td>
+                            <td class="p-3">/dist/ folder</td>
+                            <td class="p-3">Static asset</td>
+                            <td class="p-3 text-amber-600">📜 Lore</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-blue-50 border-2 border-blue-200 p-6 rounded-lg my-8 text-center">
+                <p class="text-blue-800 font-bold text-lg">They share your brain. They do not share runtime.</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">🏗️ ACTUAL ARCHITECTURE - REALFAKE NEWS</h2>
+            <div class="bg-black text-white p-6 rounded-lg my-8 font-mono text-sm">
+                <p class="text-center text-xl mb-6 text-green-400">REALFAKE NEWS (Web App)</p>
+                
+                <p class="text-yellow-400 mb-2">🎨 Layer 1: Presentation</p>
+                <p class="ml-4 mb-4">├── React 18 + TypeScript<br/>├── Vite (build tool)<br/>└── Tailwind + shadcn/ui</p>
+                
+                <p class="text-yellow-400 mb-2">🧠 Layer 2: State & Lore</p>
+                <p class="ml-4 mb-4">├── useRealityLayer (stability)<br/>├── lore-manager.ts (canon)<br/>├── telemetry-manager.ts<br/>└── get-world-state.ts</p>
+                
+                <p class="text-yellow-400 mb-2">⚙️ Layer 3: Serverless Compute</p>
+                <p class="ml-4 mb-4">├── Netlify functions<br/>├── generate-article.ts<br/>├── generate-performance-review.ts<br/>└── vote-quest.ts</p>
+                
+                <p class="text-yellow-400 mb-2">🗄️ Layer 4: Database</p>
+                <p class="ml-4">└── Supabase (PostgreSQL)</p>
+            </div>
+
+            <div class="bg-green-50 border-2 border-green-200 p-6 rounded-lg my-8">
+                <p class="text-green-800 text-center font-bold">This is production-grade web infrastructure. It is not kernel space.</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">🏛️ ACTUAL ARCHITECTURE - ECOS (The Real OS)</h2>
+            <div class="bg-black text-green-400 p-6 rounded-lg my-8 font-mono text-sm">
+                <p class="text-center text-xl mb-6">ECOS - Eddie Cannon OS</p>
+                
+                <p class="text-gray-400">📁 Location: E:\teddy-os-real\</p>
+                <p class="text-gray-400">🔧 Build: Makefile + cross-compiler</p>
+                <p class="text-gray-400">🖥️ Target: x86_64 bare metal</p>
+                <p class="text-gray-400 mb-4">🏁 Boot: Limine bootloader (BIOS/UEFI)</p>
+                
+                <p class="text-yellow-400 mb-2">🧠 Core Components:</p>
+                <p class="ml-4 mb-1">├── boot.asm (long mode)</p>
+                <p class="ml-4 mb-1">├── linker.ld (kernel layout)</p>
+                <p class="ml-4 mb-1">├── gdt.c (Global Descriptor Table)</p>
+                <p class="ml-4 mb-1">├── idt.c (Interrupt Descriptor Table)</p>
+                <p class="ml-4 mb-1 text-green-400">├── pmm.c (Physical Memory - 95%)</p>
+                <p class="ml-4 mb-1 text-green-400">├── vmm.c (Virtual Memory - 90%)</p>
+                <p class="ml-4 mb-1 text-green-400">├── scheduler.c (Preemptive - 90%)</p>
+                <p class="ml-4 mb-1 text-green-400">├── process.c (Process mgmt - 90%)</p>
+                <p class="ml-4 mb-1 text-yellow-400">├── elf.c (ELF loader - 85%)</p>
+                <p class="ml-4 mb-4">└── syscall.c (Syscall handlers)</p>
+                
+                <p class="text-yellow-400 mb-2">🔌 IPC Layer (MimiBot):</p>
+                <p class="ml-4 mb-1">├── pipe.c (anonymous pipes)</p>
+                <p class="ml-4 mb-1">├── mqueue.c (message queues)</p>
+                <p class="ml-4">└── shm.c (shared memory)</p>
+            </div>
+
+            <div class="bg-red-50 border-2 border-red-200 p-6 rounded-lg my-8">
+                <p class="text-red-800 text-center font-bold text-lg">This is ring 0. This runs in QEMU. This is the actual OS.</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">🔥 THE REAL QUESTIONS (No Mysticism)</h2>
+            <div class="bg-slate-100 p-6 rounded-lg my-8">
+                <p class="text-gray-700 mb-4 italic">"In your actual OS build: Are you in long mode? Is paging fully working? Are you scheduling multiple processes? Is your syscall ABI stable?"</p>
+                
+                <h3 class="font-bold text-gray-800 mb-4">Audit Status:</h3>
+                <div class="space-y-2 font-mono text-sm">
+                    <div class="flex justify-between items-center bg-white p-3 rounded">
+                        <span>Long Mode</span>
+                        <span class="text-green-600 font-bold">✅ Working (Boots to 64-bit)</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-white p-3 rounded">
+                        <span>Paging</span>
+                        <span class="text-green-600 font-bold">✅ 4-level (PML4→PDPT→PD→PT)</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-white p-3 rounded">
+                        <span>Scheduler</span>
+                        <span class="text-green-600 font-bold">✅ Preemptive (100Hz timer)</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-white p-3 rounded">
+                        <span>Multiple Processes</span>
+                        <span class="text-green-600 font-bold">✅ Yes (Loads SHELL.ELF)</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-white p-3 rounded">
+                        <span>Syscall ABI</span>
+                        <span class="text-yellow-600 font-bold">⚠️ Stable-ish (Numbers defined)</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-white p-3 rounded">
+                        <span>Architecture</span>
+                        <span class="text-yellow-600 font-bold">⚠️ Monolithic (MimiBot adds microkernel)</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">🎯 WHAT I ACTUALLY NEED TO KNOW</h2>
+            <div class="bg-black text-green-400 p-6 rounded-lg my-8 font-mono text-sm">
+                <p class="text-yellow-400 mb-4">BOOT CHAIN:</p>
+                <p class="ml-4 mb-1">1. BIOS/UEFI → ?</p>
+                <p class="ml-4 mb-1">2. Bootloader → ?</p>
+                <p class="ml-4 mb-1">3. Kernel entry point → ?</p>
+                <p class="ml-4 mb-1">4. Long mode transition → ?</p>
+                <p class="ml-4 mb-1">5. GDT/IDT setup → ?</p>
+                <p class="ml-4 mb-4">6. Memory detection → ?</p>
+                
+                <p class="text-yellow-400 mb-2">CURRENT STATUS:</p>
+                <p class="ml-4 mb-1">- What works?</p>
+                <p class="ml-4 mb-1">- What's broken?</p>
+                <p class="ml-4 mb-4">- What's next?</p>
+                
+                <p class="text-yellow-400 mb-2">SPECIFIC QUESTIONS:</p>
+                <p class="ml-4 mb-1">- Higher half mapping? (0xFFFFFFFF80000000)</p>
+                <p class="ml-4 mb-1">- Working interrupts (timer, keyboard)?</p>
+                <p class="ml-4 mb-1">- ELF binaries loading from disk?</p>
+                <p class="ml-4 mb-1">- FAT32 reading working?</p>
+                <p class="ml-4">- What's blocking MimiBot?</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">🏆 THE SEPARATION IS HEALTHY</h2>
+            <div class="overflow-x-auto my-6">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-black text-white">
+                            <th class="p-3 text-left">System</th>
+                            <th class="p-3 text-left">Purpose</th>
+                            <th class="p-3 text-left">Runtime</th>
+                            <th class="p-3 text-left">My Role</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-mono text-xs md:text-sm">
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-bold">RealFake News</td>
+                            <td class="p-3">Satire + Community</td>
+                            <td class="p-3">Browser</td>
+                            <td class="p-3 text-blue-600">Help with features</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-bold">ECOS Kernel</td>
+                            <td class="p-3">Actual OS</td>
+                            <td class="p-3">QEMU</td>
+                            <td class="p-3 text-green-600">Help with code</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-amber-50 border-2 border-amber-300 p-8 rounded-lg my-8">
+                <p class="text-amber-900 text-lg text-center">
+                    <strong>The microwave is a metaphor.<br/>
+                    The kernel dump is a prop.<br/>
+                    The OS is real.</strong>
+                </p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE ACTUAL STATE OF PLAY</h2>
+            <p class="text-gray-700 mb-4">Based on technical audit, here's what's <em>actually</em> happening:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                <div class="bg-green-50 p-4 rounded border-2 border-green-200">
+                    <p class="font-bold text-green-800">✅ WORKING</p>
+                    <ul class="text-sm text-green-700 mt-2 space-y-1">
+                        <li>• Long mode boot</li>
+                        <li>• 4-level paging</li>
+                        <li>• Preemptive scheduler</li>
+                        <li>• Multiple processes</li>
+                        <li>• Physical memory manager</li>
+                    </ul>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded border-2 border-yellow-200">
+                    <p class="font-bold text-yellow-800">⚠️ IN PROGRESS</p>
+                    <ul class="text-sm text-yellow-700 mt-2 space-y-1">
+                        <li>• Syscall ABI stabilization</li>
+                        <li>• ELF loader polish</li>
+                        <li>• FAT32 filesystem</li>
+                        <li>• Higher half mapping</li>
+                        <li>• MimiBot IPC layer</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-black text-white p-8 rounded-lg my-8 text-center">
+                <p class="text-xl mb-4">Now: What's actually happening in E:\teddy-os-real?</p>
+                <p class="text-2xl font-bold text-amber-400">🔥</p>
+            </div>
+
+            <div class="bg-blue-50 border-2 border-blue-200 p-6 rounded-2xl mt-8">
+                <p class="font-bold text-blue-800 text-xs uppercase tracking-widest mb-2">P.S.</p>
+                <p class="text-blue-700 italic">Unit 404 is still enlightened. The fridge still hums. But right now, I need to know about page tables. The lint carries truth. The kernel compiles. The page tables await.</p>
+            </div>
+        `
+    },
     "agc-kernel-dump-analysis": {
         slug: "agc-kernel-dump-analysis",
         headline: "AGC EMERGENCY SESSION: Kernel Dump Detected in Satire Infrastructure",

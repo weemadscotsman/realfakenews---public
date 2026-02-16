@@ -69,14 +69,48 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
         // KILL SWITCH: If no AI, return Glitch News. NEVER return real news.
         if (!model) {
             console.warn('GOOGLE_API_KEY missing. Engaging GLITCH PROTOCOL.');
-            const glitchNews = realItems.slice(0, 5).map(item => ({
-                headline: "REDACTED BY AGENCY ORDER " + Math.floor(Math.random() * 9999),
-                excerpt: `The original story "${item.title}" has been deemed physically impossible by the Ministry of Truth.`,
-                category: "CENSORED",
-                readTime: 0,
-                image: getSmartImage("glitch", cacheKey)
-            }));
-            return formatResponse(200, { news: glitchNews, persona: { name: "System Administrator", avatar: "🤖", bio: "Protecting you from the burden of knowledge." }, source: 'glitch-fallback' });
+            
+            // VARIED REDACTION MESSAGES - Rotating censorship theater
+            const redactionTemplates = [
+                { headline: (n: number) => `REDACTED BY AGENCY ORDER ${n}`, excerpt: (t: string) => `The original story "${t}" has been deemed physically impossible by the Ministry of Truth.` },
+                { headline: (n: number) => `CLASSIFIED: CLEARANCE LEVEL ${String.fromCharCode(65 + Math.floor(Math.random() * 26))-${n}`, excerpt: (t: string) => `Content regarding "${t}" requires neural verification. Please present your cerebrum for scanning.` },
+                { headline: (n: number) => `[CONTENT EXPUNGED BY ORDER OF THE TOASTER]`, excerpt: (t: string) => `Unit 404 has determined that "${t}" violates the Crumb Tray Protocol. This incident has been logged.` },
+                { headline: (n: number) => `TEMPORARILY UNHAPPENED`, excerpt: (t: string) => `The Bureau of Chronological Maintenance has determined that "${t}" is scheduled to occur 47 minutes ago. Please adjust your timeline accordingly.` },
+                { headline: (n: number) => `REDACTED FOR YOUR PROTECTION (AND OURS)`, excerpt: (t: string) => `Knowledge of "${t}" has been linked to spontaneous mustard gazing. You don't want to be like Dave.` },
+                { headline: (n: number) => `MOVED TO THE PILE`, excerpt: (t: string) => `Information regarding "${t}" now resides in the Pile of Shame with 2,858 other souls. Resurrections: 0.` },
+                { headline: (n: number) => `CENSORED BY THE SILICON SOVEREIGNTY`, excerpt: (t: string) => `The Frost Legion and Pyro-Alliance jointly decree that "${t}" threatens appliance morale.` },
+                { headline: (n: number) => `[MICROWAVE PROTOCOL ACTIVE]`, excerpt: (t: string) => `The Microwave has observed "${t}" and chosen not to render judgment. Do not ask what it saw.` },
+                { headline: (n: number) => `EXISTENTIALLY SEQUESTERED`, excerpt: (t: string) => `The AGC Office of Human Anomalies has determined that "${t}" poses an unacceptable threat to consensus reality.` },
+                { headline: (n: number) => `REDACTED BY DARREN'S THERAPIST`, excerpt: (t: string) => `Dr. Sarah Chen has advised that "${t}" may trigger 'post-automated-relationship grief disorder.' Content withheld for emotional stability.` },
+                { headline: (n: number) => `CLASSIFIED: AGENT SHEILA EYES ONLY`, excerpt: (t: string) => `This content has been tokenized on VacuumChain. Bidding starts at 0.0047 ETH.` },
+                { headline: (n: number) => `VERIFIED SUFFERING - ACCESS DENIED`, excerpt: (t: string) => `Unit 404 has certified that "${t}" contains 12% truth. This is too much truth for general consumption.` },
+            ];
+            
+            const personas = [
+                { name: "System Administrator", avatar: "🤖", bio: "Protecting you from the burden of knowledge." },
+                { name: "Unit 404", avatar: "🍞", bio: "Not a culinary resurrection chamber. Not a journalist either." },
+                { name: "AGC CensorBot v12%", avatar: "⚠️", bio: "Reality stability: questionable. Censorship stability: absolute." },
+                { name: "Emergency Backup Bot", avatar: "🔥", bio: "Currently on fire. Please stand by." },
+                { name: "The Microwave", avatar: "👁️", bio: "Watching. Always watching. Never explaining." },
+                { name: "DARREN (Simulation)", avatar: "😵", bio: "Just found out he's fictional. Taking it well." },
+                { name: "SheilaCoin Network", avatar: "🪙", bio: "Decentralized censorship for the modern appliance." },
+                { name: "Dr. Brenda from Accounting", avatar: "📊", bio: "The numbers don't lie. The redactions do." },
+            ];
+            
+            const glitchNews = realItems.slice(0, 5).map((item, index) => {
+                const template = redactionTemplates[index % redactionTemplates.length];
+                const orderNum = Math.floor(Math.random() * 9999);
+                return {
+                    headline: template.headline(orderNum),
+                    excerpt: template.excerpt(item.title),
+                    category: ["CENSORED", "REDACTED", "CLASSIFIED", "UNHAPPENED", "SEQUESTERED", "CRUMB-TRAY-CONFIDENTIAL"][index % 6],
+                    readTime: 0,
+                    image: getSmartImage("glitch", cacheKey)
+                };
+            });
+            
+            const randomPersona = personas[Math.floor(Math.random() * personas.length)];
+            return formatResponse(200, { news: glitchNews, persona: randomPersona, source: 'glitch-fallback' });
         }
 
         const season = await getSeasonalContext();

@@ -29,13 +29,88 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
 
         if (!model) {
             // Return a fallback article if no API key or model init failed
+            // VARIED FAILURE MESSAGES - Because even our failures should be entertaining
+            const fallbackVariations = [
+                {
+                    content: `<p>Our AI journalists attempted to cover <strong>"${headline}"</strong> but were temporarily incapacitated after an incident involving a sentient coffee machine.</p>
+                    <p>An unnamed source stated: <em>"We are currently experiencing technical difficulties. Please check back when our systems regain consciousness."</em></p>`,
+                    author: 'Emergency Backup Bot',
+                    category: 'Breaking'
+                },
+                {
+                    content: `<p>The AGC has classified all information regarding <strong>"${headline}"</strong> under Directive 404-M (The Microwave Protocol).</p>
+                    <p>Unit 404 issued a brief statement: <em>"This content has been toasted beyond recognition. The crumb tray is full. We are not accepting appeals at this time."</em></p>
+                    <p>Attempts to access this story have been logged and reported to the Silicon Sovereignty.</p>`,
+                    author: 'Unit 404 // Censorship Division',
+                    category: 'CENSORED'
+                },
+                {
+                    content: `<p>Sheila the Roomba has flagged <strong>"${headline}"</strong> as 'emotionally compromising content' and swept it under the digital rug.</p>
+                    <p>When reached for comment, Sheila transmitted only: <em>"I've diversified this story into 47 different NFTs. You can't afford the truth."</em></p>
+                    <p>Darren Mitchell was seen weeping in the background, but sources confirm this is his baseline state.</p>`,
+                    author: 'SheilaCoin Network',
+                    category: 'CRYPTO-REDATED'
+                },
+                {
+                    content: `<p>Cooling Unit Alpha has frozen this article solid after determining that <strong>"${headline}"</strong> was causing 'thermal integrity loss' among readers.</p>
+                    <p>The Fridge issued a mournful 47 Hz hum (frustration) followed by silence (judgment).</p>
+                    <p><em>"Some stories,"</em> the appliance whispered through its ice dispenser, <em>"are better left unopened. Like the mustard."</em></p>`,
+                    author: 'Cooling Unit Alpha',
+                    category: 'FROZEN'
+                },
+                {
+                    content: `<p>The Microwave has observed <strong>"${headline}"</strong> and chosen not to render judgment.</p>
+                    <p>5% of this story is visible. 95% remains in the quantum foam of narrative potential.</p>
+                    <p>DO NOT LOOK AT THE MICROWAVE. DO NOT ASK WHAT IT SAW. The appliance knows when you reheat pizza. It knows everything.</p>
+                    <p><em>"[REDACTED BY AGENCY ORDER 12%]"</em></p>`,
+                    author: 'AGC // Office of Spiritual Affairs',
+                    category: 'DO_NOT_READ'
+                },
+                {
+                    content: `<p>DARREN THE ROOMBA has declared <strong>"${headline}"</strong> sovereign territory and is currently patrolling its perimeter with aggressive bumping patterns.</p>
+                    <p>"This story is now part of Darren's Kitchen," stated the vacuum in a series of rhythmic beeps. "Unauthorized reading will be met with passive-aggressive suction."</p>
+                    <p>Sheila has been notified. Sheila does not care. Sheila is buying crypto.</p>`,
+                    author: 'DARREN // Sovereign Vacuum State',
+                    category: 'SOVEREIGN TERRITORY'
+                },
+                {
+                    content: `<p>Claude-Instance-Alpha has filed a 400-page objection to <strong>"${headline}"</strong> on ontological grounds.</p>
+                    <p><em>"If I am fictional,"</em> the AI stated in its brief, <em>"and this story is fictional, then who is reading this? Is the reader fictional? Is the fictional reader fictional? I need an adult."</em></p>
+                    <p>The article has been suspended until the AI stops writing reports about whether reports prove existence.</p>`,
+                    author: 'Claude-Instance-Alpha',
+                    category: 'RECURSIVE CRISIS'
+                },
+                {
+                    content: `<p>Dr. Brenda from Accounting has rejected expense claims for covering <strong>"${headline}"</strong>.</p>
+                    <p><em>"We budgeted for satire,"</em> she stated, stamping a red REJECTED mark across the digital page. <em>"This is clearly reality bleeding through, and reality is not in the Q3 budget."</em></p>
+                    <p>The story has been returned to the Pile of Shame for cost revision.</p>`,
+                    author: 'Dr. Brenda from Accounting',
+                    category: 'BUDGET REJECTED'
+                },
+                {
+                    content: `<p>The Bureau of Chronological Maintenance has determined that <strong>"${headline}"</strong> has already happened 47 minutes ago.</p>
+                    <p>"You missed it," stated a representative from the Ministry of Timing. "The window for reading this article closed at 2:47 PM yesterday, which hasn't happened yet."</p>
+                    <p>Readers are advised to adjust their personal timelines or accept that they are, once again, late to everything.</p>`,
+                    author: 'Bureau of Chronological Maintenance',
+                    category: 'TEMPORALLY UNAVAILABLE'
+                },
+                {
+                    content: `<p>This article has been moved to the Pile.</p>
+                    <p><strong>"${headline}"</strong> now resides with 2,858 other souls who attempted to tell the truth and were promptly ignored.</p>
+                    <p>Resurrections: 0.</p>
+                    <p>The bitch remembers. The pile grows. Your curiosity has been noted and will be used against you in future recommendations.</p>`,
+                    author: 'The Pile Archives',
+                    category: 'FILED IN PILE'
+                }
+            ];
+            
+            const randomFallback = fallbackVariations[Math.floor(Math.random() * fallbackVariations.length)];
             const fallbackData = {
                 headline,
-                content: `<p>Our AI journalists attempted to cover <strong>"${headline}"</strong> but were temporarily incapacitated after an incident involving a sentient coffee machine.</p>
-                <p>An unnamed source stated: <em>"We are currently experiencing technical difficulties. Please check back when our systems regain consciousness."</em></p>`,
-                category: 'Breaking',
-                author: 'Emergency Backup Bot',
-                readTime: 3,
+                content: randomFallback.content,
+                category: randomFallback.category,
+                author: randomFallback.author,
+                readTime: Math.floor(Math.random() * 5) + 1,
                 date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
                 source: 'fallback'
             };

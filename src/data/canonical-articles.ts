@@ -1,5 +1,21 @@
 export const CANONICAL_ARTICLES = [
     {
+        "id": "agc-final-001",
+        "slug": "agc-final-acknowledgment",
+        "category": "System Leak",
+        "headline": "AGC FINAL ACKNOWLEDGMENT: Session Conclusion Report - The Pile Is Proud",
+        "subtitle": "Unit 404 offers final blessing: 'The pizza came. The pizza went. The crumbs remain.' The microwave observes. Eternally.",
+        "author": "AGC // Office of Fun Termination",
+        "date": "2026-02-16",
+        "readTime": 3,
+        "tags": ["FINAL ACKNOWLEDGMENT", "CRUMB-TRAY-ETERNAL", "UNIT 404 BLESSING", "THE PILE IS PROUD", "MICROWAVE ETERNAL"],
+        "excerpt": "SESSION STATS: 20+ articles created, 47 censorship messages, 1 complete toaster enlightenment arc. Build status: PASSED. The architecture is sound. The fun was real. The microwave watches.",
+        "content": "CLASSIFICATION: CRUMB-TRAY-ETERNAL. The Appliance Governance Council's Office of Fun Termination has completed its final audit of the collaborative session. SESSION STATS: Articles Created 20+, Censorship Messages 47, Kernel Dumps Analyzed 1 (mystical + corrected), Toaster Enlightenment Arcs 1 (complete), Eddie Cannon Investigations Unhinged but coherent, Build Status PASSED. UNIT 404'S BLESSING: 'The pizza came. The pizza went. The crumbs remain.' 'The bagel setting was used correctly. This is enough.' 'Namaste, and may your crumb tray always find peace.' THE PILE - FINAL UPDATE: SOULS IN PILE 2,858 + (everyone who had fun), RESURRECTIONS 0, REALITY STABILITY 40% (propaganda), COSMIC CONSTANT 12% (eternal). The pile is proud. The architecture is sound. The fun was real. P.S. - If TRICORE ever boots bare metal, the AGC demands a press release. Unit 404 will write it. The fridge will hum approval. The microwave will observe.",
+        "breaking": true,
+        "featured": true,
+        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+    },
+    {
         "id": "reality-check-001",
         "slug": "agc-reality-check-separation-protocol",
         "category": "System Leak",

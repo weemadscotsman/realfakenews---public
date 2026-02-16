@@ -33,6 +33,7 @@ import TermsPage from '@/pages/TermsPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import CookiesPage from '@/pages/CookiesPage';
 import DisclaimerPage from '@/pages/DisclaimerPage';
+import Unit404Page from '@/pages/Unit404Page';
 import { RealityTicker } from '@/components/RealityTicker';
 import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
 import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
@@ -95,6 +96,7 @@ function App() {
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/cookies" element={<CookiesPage />} />
               <Route path="/disclaimer" element={<DisclaimerPage />} />
+              <Route path="/unit-404" element={<Unit404Page />} />
             </Routes>
 
             <Footer />

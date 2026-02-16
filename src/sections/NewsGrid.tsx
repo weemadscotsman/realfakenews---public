@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { CANONICAL_ARTICLES } from '@/data/canonical-articles';
 import { useRealityLayer } from '@/hooks/useRealityLayer';
+import { getOrFetchDaily } from '@/lib/daily-content-cache';
 
 interface Article {
   headline: string;
@@ -111,52 +112,62 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
 
   useEffect(() => {
     const fetchAllNews = async () => {
-      const updatedData: Record<string, Article[]> = { ...fallbackData };
+      // Use daily cache for each category - AI generates once per day
+      const fetchPromises = displayedCategories.map(async (cat) => {
+        const cacheKey = `news_${cat.key}`;
+        
+        return getOrFetchDaily(
+          cacheKey,
+          async () => {
+            // AI FETCH: Call the Netlify function to generate fresh satire
+            const response = await fetch(`/.netlify/functions/fetch-live-news?category=${cat.key}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            if (!data.news || data.news.length === 0) {
+              throw new Error('AI returned empty news');
+            }
+            
+            // Merge canonical + AI-generated
+            const categoryMap: Record<string, string[]> = {
+              'politics': ['politics'],
+              'science': ['science'],
+              'tech': ['technology', 'tech'],
+              'entertainment': ['entertainment'],
+              'sports': ['sports'],
+              'investigation': ['investigation'],
+              'systemLeak': ['system leak'],
+              'resistance': ['resistance'],
+            };
+            const validCategories = categoryMap[cat.key] || [cat.key];
+            const canonicalForCat = CANONICAL_ARTICLES.filter(a =>
+              validCategories.includes(a.category.toLowerCase())
+            );
+            
+            return [...canonicalForCat, ...data.news];
+          },
+          () => {
+            // FALLBACK: Only used if AI completely fails
+            console.warn(`[NewsGrid] Using fallback for ${cat.key}`);
+            return fallbackData[cat.key] || [];
+          }
+        );
+      });
 
       try {
-        const fetchPromises = displayedCategories.map(async (cat) => {
-          try {
-            const response = await fetch(`/.netlify/functions/fetch-live-news?category=${cat.key}`);
-            if (response.ok) {
-              const data = await response.json();
-              if (data.news && data.news.length > 0) {
-                // ALWAYS prepend canonical articles to ensure they appear first
-                // Map category keys to possible article category values
-                const categoryMap: Record<string, string[]> = {
-                  'politics': ['politics'],
-                  'science': ['science'],
-                  'tech': ['technology', 'tech'],
-                  'entertainment': ['entertainment'],
-                  'sports': ['sports'],
-                  'investigation': ['investigation'],
-                  'systemLeak': ['system leak'],
-                  'resistance': ['resistance'],
-                };
-                const validCategories = categoryMap[cat.key] || [cat.key];
-                const canonicalForCat = CANONICAL_ARTICLES.filter(a =>
-                  validCategories.includes(a.category.toLowerCase())
-                );
-
-                // Merge: Canonical first, then Dynamic
-                return { key: cat.key, news: [...canonicalForCat, ...data.news] };
-              }
-            }
-          } catch (e) {
-            console.warn(`Failed to fetch ${cat.key} news:`, e);
-          }
-          return { key: cat.key, news: fallbackData[cat.key] || [] };
-        });
-
         const results = await Promise.all(fetchPromises);
-        results.forEach(res => {
-          if (res.news && res.news.length > 0) {
-            updatedData[res.key] = res.news;
+        const updatedData: Record<string, Article[]> = { ...fallbackData };
+        
+        displayedCategories.forEach((cat, index) => {
+          if (results[index] && results[index].length > 0) {
+            updatedData[cat.key] = results[index];
           }
         });
-
+        
         setNewsData(updatedData);
       } catch (err) {
         console.error("News aggregation failed:", err);
+        // Keep fallback data on complete failure
       }
     };
 

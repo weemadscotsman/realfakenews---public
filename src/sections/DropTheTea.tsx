@@ -5,7 +5,6 @@ import { generateRoast, type RoastStyle } from '@/lib/content-engine';
 import { ROAST_STYLE_METADATA } from '@/lib/roast-constants';
 import {
   createTeaDrop,
-  getTeaDrops,
   getTodayChallenge,
   getChallengeEntries,
   getActiveBattles,
@@ -22,6 +21,17 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { TeaDrop, DailyChallenge, RoastBattle } from '@/types';
+import { getOrFetchDaily } from '@/lib/daily-content-cache';
+
+// AI-generated sample headlines for "Recent Carnage"
+const SAMPLE_HEADLINES = [
+  "Man Discovers He's Been Mispronouncing 'Specific' for 30 Years",
+  "Study Finds Cats Judge You More Than You Judge Yourself",
+  "Local Dad Finally Figures Out Zoom, Immediately Presses Leave",
+  "Woman Buys Plant, Immediately Enters Codependent Relationship",
+  "New Study: Coffee Before Board Meetings Linked to Actually Paying Attention",
+  "Man's Self-Deprecating Humour No Longer Cute, Just Concerning",
+];
 
 const ROAST_STYLE_IDS = Object.keys(ROAST_STYLE_METADATA) as RoastStyle[];
 
@@ -51,30 +61,72 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
 
   // Function definitions
   const loadTeaDrops = async () => {
-    try {
-      const drops = await getTeaDrops(12);
-      setRecentDrops(drops);
-    } catch (error) {
-      console.error('Failed to load tea drops:', error);
-    }
+    // Use daily cache for AI-generated sample roasts
+    const cachedDrops = await getOrFetchDaily(
+      'tea_drops_feed',
+      async () => {
+        // Generate fresh AI roasts for the feed
+        const aiDrops: TeaDrop[] = [];
+        const shuffled = [...SAMPLE_HEADLINES].sort(() => 0.5 - Math.random()).slice(0, 3);
+        
+        for (let i = 0; i < shuffled.length; i++) {
+          const headline = shuffled[i];
+          const username = ['RoastKing420', 'TeaSpiller', 'SatireSage', 'IronyExpert', 'SnarkShark'][i % 5];
+          const style: RoastStyle = ['default', 'shakespeare', 'drill', 'corporate', 'genz'][i % 5] as RoastStyle;
+          
+          try {
+            const roast = await generateRoast(headline, username, style);
+            aiDrops.push({
+              id: `ai-${Date.now()}-${i}`,
+              user_id: `user-${i}`,
+              username,
+              headline,
+              roast: roast.roast,
+              roast_intensity: roast.intensity,
+              roast_style: style,
+              likes: Math.floor(Math.random() * 200) + 10,
+              comments_count: Math.floor(Math.random() * 50),
+              shares_count: Math.floor(Math.random() * 30),
+              created_at: new Date(Date.now() - i * 3600000).toISOString(),
+            });
+          } catch (e) {
+            console.warn('AI roast generation failed:', e);
+          }
+        }
+        
+        return aiDrops.length > 0 ? aiDrops : [];
+      },
+      () => [] // Empty fallback - will show "Be the first" message
+    );
+    
+    setRecentDrops(cachedDrops);
   };
 
   const loadChallenge = useCallback(async () => {
-    try {
-      const challenge = await getTodayChallenge();
-      setTodayChallenge(challenge);
-
-      if (challenge) {
+    // Daily challenge with AI generation
+    const challenge = await getOrFetchDaily(
+      'daily_challenge',
+      async () => {
+        // Get fresh challenge from Supabase/AI
+        const chal = await getTodayChallenge();
+        return chal;
+      },
+      () => null
+    );
+    
+    setTodayChallenge(challenge);
+    
+    if (challenge) {
+      // Get entries (these can be mock since they're user submissions)
+      try {
         const entries = await getChallengeEntries(challenge.id);
         setChallengeEntries(entries);
-
-        // Check if user has entered
         if (user?.id) {
           setHasEnteredChallenge(entries.some(e => e.user_id === user.id));
         }
+      } catch (e) {
+        console.warn('Failed to load challenge entries:', e);
       }
-    } catch (error) {
-      console.error('Failed to load challenge:', error);
     }
   }, [user?.id]);
 

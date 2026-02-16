@@ -5,7 +5,13 @@ export interface User {
   avatar_url?: string;
   is_subscribed: boolean;
   subscription_tier?: 'free' | 'premium' | 'vip';
+  subscription_status?: 'active' | 'past_due' | 'cancelled' | 'inactive';
   subscription_expires_at?: string;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+  subscribed_at?: string;
+  unsubscribed_at?: string;
+  last_payment_at?: string;
   referral_code: string;
   referred_by?: string;
   

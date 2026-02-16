@@ -3,10 +3,18 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import ErrorBoundary from './ErrorBoundary.tsx'
+import { AdminProvider } from './hooks/useAdmin'
 import { initSentry } from './lib/sentry'
 
 // Initialize error tracking
 initSentry()
+
+// Log admin mode instructions
+console.log('%c🔓 ADMIN MODE', 'color: red; font-size: 20px; font-weight: bold;');
+console.log('%cTo unlock all features:', 'color: #666;');
+console.log('  1. Konami code: ↑↑↓↓←→←→BA');
+console.log('  2. Or press F9');
+console.log('  3. Or add ?admin to URL');
 
 const rootElement = document.getElementById('root')
 
@@ -17,7 +25,9 @@ if (!rootElement) {
         createRoot(rootElement).render(
             <StrictMode>
                 <ErrorBoundary>
-                    <App />
+                    <AdminProvider>
+                        <App />
+                    </AdminProvider>
                 </ErrorBoundary>
             </StrictMode>,
         )

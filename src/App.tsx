@@ -37,6 +37,8 @@ import Unit404Page from '@/pages/Unit404Page';
 import Unit404AGCReport from '@/pages/Unit404AGCReport';
 import FinalAuditPage from '@/pages/FinalAuditPage';
 import { RealityTicker } from '@/components/RealityTicker';
+import SuccessPage from '@/pages/payment/SuccessPage';
+import CancelPage from '@/pages/payment/CancelPage';
 import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
 import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
 import InvestigationPage from '@/pages/InvestigationPage';
@@ -105,6 +107,8 @@ function App() {
               <Route path="/unit-404" element={<Unit404Page />} />
               <Route path="/agc/unit-404-report" element={<Unit404AGCReport />} />
               <Route path="/agc/final-audit" element={<FinalAuditPage />} />
+              <Route path="/payment/success" element={<SuccessPage />} />
+              <Route path="/payment/cancel" element={<CancelPage />} />
             </Routes>
 
             <Footer />

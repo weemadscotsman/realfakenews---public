@@ -22,7 +22,7 @@ const Masthead: React.FC = () => {
           <div className="flex gap-4">
             <span className="font-medium">{format(today, 'EEEE, MMMM do, yyyy')}</span>
             <span className="hidden sm:inline">|</span>
-            <span className="hidden sm:inline font-bold">$2.50 / Month</span>
+            <Link to="/membership" className="hidden sm:inline font-bold hover:text-red-600 transition-colors">$2.99 / Month</Link>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Twitter, Facebook, Instagram, Youtube, Mail, ShieldCheck } from 'lucide-react';
+import { Twitter, Facebook, Instagram, Youtube, Mail, ShieldCheck, Loader2, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 const SAFETY_LEVELS = [
   { level: "Mandatory", color: "text-green-500" },
@@ -14,6 +15,9 @@ const SAFETY_LEVELS = [
 
 const Footer: React.FC = () => {
   const [safetyIndex, setSafetyIndex] = useState(0);
+  const [email, setEmail] = useState('');
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,6 +27,47 @@ const Footer: React.FC = () => {
   }, []);
 
   const currentSafety = SAFETY_LEVELS[safetyIndex];
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setSubscribing(true);
+
+    try {
+      const response = await fetch('/.netlify/functions/subscribe-newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email,
+          preferences: {
+            daily_digest: true,
+            breaking_news: true,
+            promotions: false
+          }
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubscribed(true);
+        setEmail('');
+        toast.success(data.message || 'Welcome to the absurdity!');
+      } else {
+        toast.error(data.error || 'Failed to subscribe. The appliances are being difficult.');
+      }
+    } catch (error) {
+      console.error('Newsletter signup error:', error);
+      toast.error('Failed to subscribe. Please try again later.');
+    } finally {
+      setSubscribing(false);
+    }
+  };
   const footerLinks = {
     sections: [
       { label: 'Politics', href: '/politics' },
@@ -112,16 +157,34 @@ const Footer: React.FC = () => {
             <p className="text-gray-400 text-sm mb-4">
               Get fake news delivered to your inbox daily. Unsubscribe at your own risk.
             </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white placeholder-gray-500"
-              />
-              <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-medium transition-colors">
-                <Mail size={16} />
-              </button>
-            </div>
+            {subscribed ? (
+              <div className="flex items-center gap-2 text-green-400 text-sm">
+                <Check size={16} />
+                <span>You're subscribed! Welcome to the absurdity.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="flex gap-2">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  disabled={subscribing}
+                  className="flex-1 bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500 disabled:opacity-50"
+                />
+                <button 
+                  type="submit"
+                  disabled={subscribing || !email}
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed px-4 py-2 rounded text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  {subscribing ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Mail size={16} />
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
 

@@ -53,7 +53,8 @@ export const generateRoast = async (
 
   const fallback = `${username}, ${getUniqueFallbackRoast(intensity)}`;
   const variedPrompt = addVarietyModifier(prompt, Date.now() + username.length);
-  const roast = await generateText(variedPrompt, fallback);
+  // Use 'roast' specialist - DeepSeek R1 for brutal roasts!
+  const roast = await generateText(variedPrompt, fallback, 'roast');
 
   return {
     roast: roast || fallback,
@@ -77,7 +78,8 @@ export const generateDailyNews = async (trendingTopics: string[]): Promise<{ hea
   };
 
   const variedPrompt = addVarietyModifier(prompt, Date.now());
-  const data = await generateJSON(variedPrompt, fallback);
+  // Use 'headline' specialist for punchy news
+  const data = await generateJSON(variedPrompt, fallback, 'headline');
   const articles = data.articles || fallback.articles;
   // Deduplicate and add to cache
   const unique = diversifyContent(articles, 'headline');
@@ -91,7 +93,8 @@ export const generateCategoryNews = async (
   category: string
 ): Promise<{ headline: string; excerpt: string; readTime: number }[]> => {
   const prompt = Prompts.CATEGORY_GEN_PROMPT(category);
-  const data = await generateJSON(prompt, { articles: [] as { headline: string; excerpt: string; readTime: number }[] });
+  // Use 'headline' specialist for category news
+  const data = await generateJSON(prompt, { articles: [] as { headline: string; excerpt: string; readTime: number }[] }, 'headline');
   return data.articles || [];
 };
 
@@ -108,7 +111,8 @@ export const parodyRealNews = async (
   realHeadlines: string[]
 ): Promise<ParodiedHeadline[]> => {
   const prompt = Prompts.PARODY_PROMPT(realHeadlines);
-  const data = await generateJSON(prompt, { parodies: [] as ParodiedHeadline[] });
+  // Use 'headline' specialist for parody headlines
+  const data = await generateJSON(prompt, { parodies: [] as ParodiedHeadline[] }, 'headline');
   return data.parodies || [];
 };
 
@@ -132,7 +136,8 @@ export const generateFakeBets = async (
 
   const prompt = Prompts.BETTING_PROMPT(context);
   const variedPrompt = addVarietyModifier(prompt, Date.now());
-  const data = await generateJSON(variedPrompt, { bets: [] as FakeBet[] });
+  // Use 'bet' specialist for odds and probabilities
+  const data = await generateJSON(variedPrompt, { bets: [] as FakeBet[] }, 'bet');
   const bets = (data.bets || []).map((b: FakeBet, i: number) => ({ ...b, id: b.id || `bet-${i + 1}` }));
   // Deduplicate by question
   return diversifyContent(bets, 'question');
@@ -146,7 +151,8 @@ export const generateBattleRoast = async (
 ): Promise<{ roast: string; winner?: string }> => {
   const prompt = Prompts.BATTLE_ROAST_PROMPT(challengerHeadline, opponentHeadline);
   const fallback = `Challenger said "${challengerHeadline}" and Opponent said "${opponentHeadline}". Both need help, but I'm contractually obligated to pick one.`;
-  const roast = await generateText(prompt, fallback);
+  // Use 'roast' specialist for battle roasts
+  const roast = await generateText(prompt, fallback, 'roast');
 
   return { roast: roast || fallback };
 };
@@ -160,7 +166,8 @@ export const generateStoryArc = async (user: { username: string }, previousArcs:
   const fallbackHeadline = `BREAKING: ${user.username} Spotted Doing Something Vaguely Interesting`;
   const fallbackContent = `In a shocking turn of events, local internet user ${user.username} was reportedly observed engaging in activities described as "existing."\n\nAccording to completely reliable sources (their mom), ${user.username} has been "doing their best."\n\nMore on this developing story as we make it up.`;
 
-  const result = await generateText(prompt, `${fallbackHeadline}\n${fallbackContent}`);
+  // Use 'article' specialist for story arcs
+  const result = await generateText(prompt, `${fallbackHeadline}\n${fallbackContent}`, 'article');
   const lines = result.split('\n');
   const headline = lines[0].replace(/^#*\s*/, '').trim();
   const content = lines.slice(1).join('\n').trim();
@@ -189,7 +196,8 @@ export const generateApplianceComplaints = async (): Promise<ApplianceGrievance[
     ]
   };
 
-  const data = await generateJSON(prompt, fallback);
+  // Use 'personality' specialist for appliance character voices
+  const data = await generateJSON(prompt, fallback, 'personality');
   return (data.complaints || fallback.complaints).map((c: Omit<ApplianceGrievance, 'id'>) => ({
     ...c,
     id: generateId(),
@@ -217,7 +225,8 @@ export const generateConspiracyTheories = async (topics: string[]): Promise<Cons
     ]
   };
 
-  const data = await generateJSON(prompt, fallback);
+  // Use 'conspiracy' specialist for wild theories
+  const data = await generateJSON(prompt, fallback, 'conspiracy');
   return (data.theories || fallback.theories).map((t: Omit<ConspiracyTheory, 'id'>) => ({
     ...t,
     id: generateId(),

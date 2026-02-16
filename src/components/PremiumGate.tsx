@@ -14,7 +14,7 @@ export const PremiumGate: React.FC<PremiumGateProps> = ({
   featureName,
   fallback 
 }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const isSubscribed = user?.is_subscribed;
 
   // If subscribed, show the content

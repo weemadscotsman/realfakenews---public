@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { HallOfShame } from '@/components/HallOfShame';
+import { ReferralCard } from '@/components/ReferralCard';
+
 import {
     Crown, Zap, BookOpen, Clock, Star,
     Users, Flame, Skull, Check,
-    Loader2, PartyPopper, XCircle
+    Loader2, PartyPopper, XCircle, ExternalLink
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -21,9 +23,9 @@ const FEATURES = [
 ];
 
 const PRICING = {
-    monthly: { id: 'monthly', name: 'Monthly', price: '$9.99', period: '/mo', description: 'Cancel anytime (we will judge you).', popular: true },
-    yearly: { id: 'yearly', name: 'Yearly', price: '$99.99', period: '/yr', description: 'Save money. Commitment issues?', popular: false, savings: 'Save 17%' },
-    ironic: { id: 'ironic', name: 'Ironic', price: '£2.50', period: '/mo', description: 'You get literally nothing.', popular: false }
+    monthly: { id: 'monthly', name: 'Monthly', price: '$2.99', period: '/mo', description: 'Cancel anytime (we will judge you).', popular: true },
+    yearly: { id: 'yearly', name: 'Yearly', price: '$29.99', period: '/yr', description: 'Save $6/year. Commitment issues?', popular: false, savings: 'Save 16%' },
+    ironic: { id: 'ironic', name: 'Ironic', price: '£2.50', period: '/mo', description: 'You get literally nothing. No refunds.', popular: false }
 };
 
 const MembershipPage = () => {
@@ -71,6 +73,27 @@ const MembershipPage = () => {
             else throw new Error('No URL');
         } catch (error) {
             toast.error(error instanceof Error ? error.message : 'Failed');
+            setLoading(false);
+        }
+    };
+
+    const handleManageSubscription = async () => {
+        if (!user?.stripe_customer_id) {
+            toast.error('No active subscription found');
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await fetch('/.netlify/functions/create-portal-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customerId: user.stripe_customer_id }),
+            });
+            const data = await response.json();
+            if (data.url) window.location.href = data.url;
+            else throw new Error('No portal URL');
+        } catch (error) {
+            toast.error('Failed to open billing portal');
             setLoading(false);
         }
     };
@@ -136,12 +159,19 @@ const MembershipPage = () => {
                         <p className="text-zinc-500 text-sm mt-2">{PRICING[billingCycle].description}</p>
                     </div>
 
-                    <Button onClick={handleSubscribe} disabled={loading || isSubscribed} 
-                        className="w-full h-14 text-lg font-black uppercase italic bg-white text-black hover:bg-zinc-200 mb-8">
-                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
-                         isSubscribed ? "Subscribed" : 
-                         billingCycle === 'ironic' ? "Waste Money" : "Upgrade Now"}
-                    </Button>
+                    {isSubscribed ? (
+                        <Button onClick={handleManageSubscription} disabled={loading}
+                            variant="outline" className="w-full h-14 text-lg font-bold border-zinc-600 hover:bg-zinc-800 mb-8">
+                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+                            <><ExternalLink className="w-4 h-4 mr-2" /> Manage Subscription</>}
+                        </Button>
+                    ) : (
+                        <Button onClick={handleSubscribe} disabled={loading} 
+                            className="w-full h-14 text-lg font-black uppercase italic bg-white text-black hover:bg-zinc-200 mb-8">
+                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+                            billingCycle === 'ironic' ? "Waste Money" : "Upgrade Now"}
+                        </Button>
+                    )}
 
                     <div className="space-y-4">
                         {FEATURES.slice(0, 4).map((f, i) => (
@@ -167,9 +197,15 @@ const MembershipPage = () => {
                     ))}
                 </div>
 
+                {/* Real Hall of Shame */}
                 <HallOfShame />
 
-                <div className="mt-24 max-w-2xl mx-auto text-center">
+                {/* Referral Program */}
+                <div className="max-w-md mx-auto mb-24">
+                    <ReferralCard />
+                </div>
+
+                <div className="max-w-2xl mx-auto text-center">
                     <h3 className="text-2xl font-bold mb-6">Questions?</h3>
                     <div className="space-y-4 text-zinc-400 text-sm">
                         <p><strong className="text-white">Real subscription?</strong><br />Yes. Real money for fake news.</p>

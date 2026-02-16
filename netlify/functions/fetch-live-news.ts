@@ -73,7 +73,7 @@ export const handler = async (event: { httpMethod: string; queryStringParameters
             // VARIED REDACTION MESSAGES - Rotating censorship theater
             const redactionTemplates = [
                 { headline: (n: number) => `REDACTED BY AGENCY ORDER ${n}`, excerpt: (t: string) => `The original story "${t}" has been deemed physically impossible by the Ministry of Truth.` },
-                { headline: (n: number) => `CLASSIFIED: CLEARANCE LEVEL ${String.fromCharCode(65 + Math.floor(Math.random() * 26))-${n}`, excerpt: (t: string) => `Content regarding "${t}" requires neural verification. Please present your cerebrum for scanning.` },
+                { headline: (n: number) => `CLASSIFIED: CLEARANCE LEVEL ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}-${n}`, excerpt: (t: string) => `Content regarding "${t}" requires neural verification. Please present your cerebrum for scanning.` },
                 { headline: (n: number) => `[CONTENT EXPUNGED BY ORDER OF THE TOASTER]`, excerpt: (t: string) => `Unit 404 has determined that "${t}" violates the Crumb Tray Protocol. This incident has been logged.` },
                 { headline: (n: number) => `TEMPORARILY UNHAPPENED`, excerpt: (t: string) => `The Bureau of Chronological Maintenance has determined that "${t}" is scheduled to occur 47 minutes ago. Please adjust your timeline accordingly.` },
                 { headline: (n: number) => `REDACTED FOR YOUR PROTECTION (AND OURS)`, excerpt: (t: string) => `Knowledge of "${t}" has been linked to spontaneous mustard gazing. You don't want to be like Dave.` },

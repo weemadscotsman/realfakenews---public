@@ -24,7 +24,7 @@ const COLORS: Record<EventType, string> = {
  * Logs a user interaction to the "AGC Surveillance Network".
  * Triggers a visual toast and (eventually) sends data to backend.
  */
-export const logEvent = (type: EventType, message: string, metadata: Record<string, any> = {}) => {
+export const logEvent = (type: EventType, message: string, metadata: Record<string, unknown> = {}) => {
     // 1. Visual Feedback (The "Feeling" of Surveillance)
     toast.custom(() => (
         <div className="bg-black/90 border border-zinc-800 p-3 rounded-md shadow-2xl flex items-start gap-3 w-full max-w-sm backdrop-blur-md font-mono" >

@@ -207,7 +207,7 @@ export const staticArticles: Record<string, StaticArticle> = {
             <div class="bg-black text-green-400 p-6 rounded-lg my-8 font-mono text-sm">
                 <p class="text-center text-xl mb-6">ECOS - Eddie Cannon OS</p>
                 
-                <p class="text-gray-400">📁 Location: E:\teddy-os-real\</p>
+                <p class="text-gray-400">📁 Location: E:\teddy-os-real</p>
                 <p class="text-gray-400">🔧 Build: Makefile + cross-compiler</p>
                 <p class="text-gray-400">🖥️ Target: x86_64 bare metal</p>
                 <p class="text-gray-400 mb-4">🏁 Boot: Limine bootloader (BIOS/UEFI)</p>

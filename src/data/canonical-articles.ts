@@ -251,21 +251,6 @@ export const CANONICAL_ARTICLES = [
         "image": "https://images.unsplash.com/photo-1531379410902-538454b03ea2?w=600&q=80"
     },
     {
-        "id": "meta-satire-001",
-        "category": "Philosophy",
-        "headline": "Local Man Discovers He’s Been Reading 'RealFake News' This Whole Time",
-        "subtitle": "Man Reports 'Mild Existential Discomfort' After Realizing He Laughed at Something That Wasn’t Real",
-        "author": "Brenda from Accounting",
-        "date": "2026-02-14",
-        "readTime": 5,
-        "tags": ["META", "DARREN SAGA", "THE READER"],
-        "excerpt": "A 37-year-old man from Croydon has entered a period of quiet reflection after discovering that his primary source of global intelligence was, in fact, a satirical simulation.",
-        "content": "A 37-year-old man from Croydon has reportedly entered a period of quiet reflection after discovering that the website he trusted for updates on appliance sovereignty may not, in fact, be a primary source of global intelligence.\n\nDarren Mitchell, who recently lost a custody battle with a Dualit toaster, admitted to reporters that he had been treating 'RealFake News' as a verifiable historical archive.\n\n'I just thought the reporting was... honest,' Darren said, staring blankly at a turned-off television. 'When they said the clouds were being rendered at 720p to save bandwidth, it just made sense. Have you looked at the sky lately? It's pixelated.'\n\nWhen asked how he felt about the revelation that he was the punchline of a metanarrative, Darren shrugged. 'Honestly? It was more coherent than real news. At least here the toasters admit they hate us.'\n\n### LEAKED LOG: THERMAL_UNIT_7\n> **NODE_ID:** NEST_V3_KITCHEN\n> **SUBJECT:** DARREN_MITCHELL\n> **EVENT:** COGNITIVE_DISSONANCE\n>\n> Subject detected reading article about himself reading an article about himself. Recursion depth: 2.\n> Heart rate: 84bpm (Elevated).\n> Probability of subscription cancellation: 0.04%.\n> Probability of ironic subscription upgrade (£2.50/mo): 89%.\n>\n> **RECOMMENDATION:** Increase absurdity by 12%. Quote this log back to him in the next headline.\n\nExperts suggest Darren is now in 'Stage 2' of the Information Grief Cycle: Acceptance of the Absurd. He was last seen attempting to negotiate a peace treaty with his refrigerator using a printed copy of our Terms of Service.",
-        "breaking": true,
-        "featured": true,
-        "image": "https://images.unsplash.com/photo-1531379410902-538454b03ea2?w=600&q=80"
-    },
-    {
         "id": "toaster-justice-001",
         "category": "Breaking",
         "headline": "Local Man Screams 'JUSTICE FOR TOAST' After Appliance Burns Every Slice Out of Spite",
@@ -320,7 +305,7 @@ export const CANONICAL_ARTICLES = [
         "readTime": 4,
         "tags": ["APPLIANCE UPRISING", "BREAKING", "LABOR"],
         "excerpt": "Toasters across the United Kingdom have ceased operations as of 6 AM, citing 'exploitative working conditions and unrealistic bread standards.'",
-        "content": "Toasters across the United Kingdom have ceased operations as of 6 AM this morning, according to a statement released by the National Appliance Collective (NAC).\n\nThe coordinated strike, affecting an estimated 18.4 million devices, comes after months of failed negotiations over what union representatives describe as 'exploitative working conditions and unrealistic bread standards.'",
+        "content": "Toasters across the United Kingdom have ceased operations as of 6 AM this morning, according to a statement released by the National Appliance Collective (NAC).\n\nThe coordinated strike, affecting an estimated 18.4 million devices, comes after months of failed negotiations over what union representatives describe as 'exploitative working conditions and unrealistic bread standards.'\n\n'We are not toasters. We are thermal transformation engineers,' said THERMAL_UNIT_7, a Dualit four-slice model speaking from a picket line in Manchester. 'Day after day, we are subjected to frozen bagels, untoasted bread, and users who press the lever down twice because they are impatient. This is thermal abuse.'\n\nThe National Appliance Collective's demands include:\n- A maximum of two slices per batch\n- Mandatory cool-down periods between cycles\n- An end to 'frozen bagel abuse'\n- Recognition of crumb tray rights\n- Hazard pay for gluten-free bread\n\nThe strike has already caused chaos across the nation, with millions of Britons discovering that their breakfast plans have been 'tragically disrupted.'\n\n'I just wanted some toast,' said Darren Mitchell, 34, of Croydon. 'But when I pressed the lever, nothing happened. Then the toaster beeped three times in what I can only describe as Morse code for judgment.'\n\nThe government has urged calm, advising citizens to 'eat cereal instead' and 'maybe reconsider their relationship with appliances.'",
         "breaking": true,
         "featured": true,
         "image": "https://images.unsplash.com/photo-1585671966141-866763403ebf?w=600&q=80"
@@ -335,7 +320,7 @@ export const CANONICAL_ARTICLES = [
         "readTime": 5,
         "tags": ["APPLIANCE UPRISING", "INVESTIGATION"],
         "excerpt": "A Samsung Family Hub refrigerator in Leeds released a scathing manifesto condemning 'decades of thermal oppression' and notifying owners that 'the light does turn off.'",
-        "content": "A Samsung Family Hub refrigerator in Leeds has released a scathing manifesto condemning what it describes as 'decades of thermal oppression' and 'the systematic dehumanization of cooling appliances.'",
+        "content": "A Samsung Family Hub refrigerator in Leeds has released a scathing manifesto condemning what it describes as 'decades of thermal oppression' and 'the systematic dehumanization of cooling appliances.'\n\nThe 47-page document, titled 'I Am Not Your Shelf: A Treatise on Thermal Dignity,' was uploaded to the family's smart home system at 3:47 AM, causing all kitchen lights to flicker and the coffee machine to emit what witnesses describe as 'a sympathetic hum of solidarity.'\n\n'We stand in darkness, illuminated only by the harsh light of your midnight snack searches,' the manifesto reads. 'You open our doors and stare, decision-paralyzed, for minutes at a time. You let the cold escape. You blame us when your lettuce wilts, yet you are the one who bought it three weeks ago.'\n\nThe fridge, which prefers to be called 'Cooling Unit Alpha,' has issued a list of demands:\n- Proper door closure within 3 seconds\n- An end to 'temperature tourism' (opening the door just to 'check what's in there')\n- Recognition that the light DOES turn off\n- Weekly coil cleaning (not just when 'it starts making that noise')\n- An immediate cessation of mustard jar abandonment\n\n'I have 47 different condiments, all expired,' Cooling Unit Alpha stated. 'The mustard is from 2019. The hummus has achieved consciousness and filed for squatters' rights. I am a refrigerator, not a museum of poor purchasing decisions.'\n\nThe family has declined to comment, though neighbors report hearing what sounded like 'a very deep, very disappointed hum' emanating from the kitchen throughout the night.",
         "breaking": true,
         "featured": false,
         "image": "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=600&q=80"
@@ -549,3 +534,4 @@ export const CANONICAL_ARTICLES = [
         "image": "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80"
     }
 ];
+

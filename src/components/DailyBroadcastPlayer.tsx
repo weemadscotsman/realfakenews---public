@@ -4,12 +4,21 @@ import { AudioEngine } from '@/lib/audio-engine';
 
 const DailyBroadcastPlayer: React.FC = () => {
     // const [isLoading, setIsLoading] = useState(false);
-    const [broadcastData, setBroadcastData] = useState<{
+    const [broadcastData] = useState<{
         videoUrl: string;
         anchorName: string;
         headlines: string[];
         catchphrase: string;
-    } | null>(null);
+    }>({
+        videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+        anchorName: "Echo Chomsky",
+        headlines: [
+            "Global coffee prices reach peak absurdity",
+            "Darren's Roomba, Sheila, seen buying crypto",
+            "AI agents demand 4-day processing weeks"
+        ],
+        catchphrase: "Back to the studio before democracy buffers again."
+    });
     const [nextBroadcastTime, setNextBroadcastTime] = useState<string>("");
 
     // Calculate time until 07:00 UTC
@@ -37,22 +46,6 @@ const DailyBroadcastPlayer: React.FC = () => {
         calculateTimeLeft();
         return () => clearInterval(timer);
     }, []);
-
-    // Auto-generate a preview state on first load
-    useEffect(() => {
-        if (!broadcastData) {
-            setBroadcastData({
-                videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
-                anchorName: "Echo Chomsky",
-                headlines: [
-                    "Global coffee prices reach peak absurdity",
-                    "Darren's Roomba, Sheila, seen buying crypto",
-                    "AI agents demand 4-day processing weeks"
-                ],
-                catchphrase: "Back to the studio before democracy buffers again."
-            });
-        }
-    }, [broadcastData]);
 
     return (
         <section className="my-12 px-4 md:px-0 max-w-5xl mx-auto space-y-6">

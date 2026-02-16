@@ -26,7 +26,8 @@ const Navigation = ({ onLoginClick }: NavigationProps) => {
     { label: 'Conspiracy', href: '/conspiracy', isRoute: true },
     { label: 'Resistance', href: '/resistance', isRoute: true },
     { label: 'Bets', href: '/bets', isRoute: true },
-    { label: 'Investigation', href: '/dory', isRoute: true },
+    { label: 'Investigation', href: '/investigation', isRoute: true },
+    { label: 'System Leak', href: '/system-leak', isRoute: true },
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {

@@ -34,12 +34,14 @@ const CATEGORY_IMAGES: Record<string, string> = {
 };
 
 const fallbackData: Record<string, Article[]> = {
-  politics: CANONICAL_ARTICLES.filter(a => a.category === 'Politics' || (a.tags && a.tags.includes('POLITICS'))),
-  science: CANONICAL_ARTICLES.filter(a => a.category === 'Science' || (a.tags && a.tags.includes('SCIENCE'))),
-  tech: CANONICAL_ARTICLES.filter(a => a.category === 'Technology' || (a.tags && a.tags.includes('TECH'))),
+  politics: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'politics' || (a.tags && a.tags.includes('POLITICS'))),
+  science: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'science' || (a.tags && a.tags.includes('SCIENCE'))),
+  tech: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'technology' || (a.tags && a.tags.includes('TECH'))),
   entertainment: [],
   sports: [],
-  investigation: CANONICAL_ARTICLES.filter(a => a.category === 'Investigation' || (a.tags && a.tags.includes('INVESTIGATION'))),
+  investigation: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'investigation' || (a.tags && a.tags.includes('INVESTIGATION'))),
+  systemLeak: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'system leak' || (a.tags && a.tags.some((t: string) => t.includes('AGC') || t.includes('KERNEL') || t.includes('LEAK')))),
+  resistance: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'resistance' || (a.tags && a.tags.includes('RESISTANCE'))),
 };
 
 // Ensure fallback data isn't empty if we missed some categories
@@ -64,6 +66,9 @@ const CATEGORIES = [
   { name: 'Politics', key: 'politics' },
   { name: 'Science', key: 'science' },
   { name: 'Tech', key: 'tech' },
+  { name: 'System Leak', key: 'systemLeak' },
+  { name: 'Investigation', key: 'investigation' },
+  { name: 'Resistance', key: 'resistance' },
   { name: 'Entertainment', key: 'entertainment' },
   { name: 'Sports', key: 'sports' },
 ];
@@ -95,6 +100,15 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
     ? CATEGORIES.filter(c => c.key === limitCategory)
     : CATEGORIES;
 
+  // DEBUG: Log what data we have
+  useEffect(() => {
+    console.log('NewsGrid mounted/updated');
+    console.log('Categories:', displayedCategories.map(c => c.key));
+    console.log('Investigation articles in fallback:', fallbackData.investigation?.length);
+    console.log('System Leak articles in fallback:', fallbackData.systemLeak?.length);
+    console.log('Resistance articles in fallback:', fallbackData.resistance?.length);
+  }, [displayedCategories]);
+
   useEffect(() => {
     const fetchAllNews = async () => {
       const updatedData: Record<string, Article[]> = { ...fallbackData };
@@ -107,9 +121,20 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
               const data = await response.json();
               if (data.news && data.news.length > 0) {
                 // ALWAYS prepend canonical articles to ensure they appear first
+                // Map category keys to possible article category values
+                const categoryMap: Record<string, string[]> = {
+                  'politics': ['politics'],
+                  'science': ['science'],
+                  'tech': ['technology', 'tech'],
+                  'entertainment': ['entertainment'],
+                  'sports': ['sports'],
+                  'investigation': ['investigation'],
+                  'systemLeak': ['system leak'],
+                  'resistance': ['resistance'],
+                };
+                const validCategories = categoryMap[cat.key] || [cat.key];
                 const canonicalForCat = CANONICAL_ARTICLES.filter(a =>
-                  a.category.toLowerCase() === cat.key.toLowerCase() ||
-                  (cat.key === 'tech' && a.category === 'Technology')
+                  validCategories.includes(a.category.toLowerCase())
                 );
 
                 // Merge: Canonical first, then Dynamic
@@ -136,7 +161,7 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
     };
 
     fetchAllNews();
-  }, []);
+  }, [displayedCategories]);
 
   return (
     <section className={`py-16 sm:py-24 transition-colors duration-500 ${isRealityRevealed ? 'bg-black' : 'bg-white'}`} id={limitCategory || "news-grid"}>
@@ -149,10 +174,10 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
                 <div className={`w-2 h-2 rounded-full ${isRealityRevealed ? 'bg-green-500 animate-pulse' : 'bg-red-600'}`} />
               </h2>
               <Link
-                to={category.key === 'tech' ? '/tech' : `#${category.key}`}
+                to={`/${category.key === 'systemLeak' ? 'system-leak' : category.key === 'investigation' ? 'investigation' : category.key === 'resistance' ? 'resistance' : category.key}`}
                 className={`text-sm font-bold flex items-center gap-1 ${isRealityRevealed ? 'text-green-700 hover:text-green-500 font-mono' : 'text-red-600 hover:text-red-700'}`}
               >
-                {isRealityRevealed ? 'ACCESS_FULL_LOGS' : (category.key === 'tech' ? 'View Exposé' : 'View All')} <ArrowRight size={16} />
+                {isRealityRevealed ? 'ACCESS_FULL_LOGS' : 'View All'} <ArrowRight size={16} />
               </Link>
             </div>
 
@@ -163,6 +188,12 @@ const NewsGrid = ({ limitCategory }: NewsGridProps) => {
               viewport={{ once: true, margin: "-100px" }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
+              {(!newsData[category.key] || newsData[category.key].length === 0) && (
+                <div className={`col-span-full py-12 text-center border-2 border-dashed rounded-lg ${isRealityRevealed ? 'border-green-900 text-green-700' : 'border-gray-200 text-gray-400'}`}>
+                  <p className="font-mono text-sm">No articles found in {category.name}</p>
+                  <p className="text-xs mt-2">Debug: {category.key} has {newsData[category.key]?.length || 0} articles</p>
+                </div>
+              )}
               {newsData[category.key]?.map((article, index) => (
                 <motion.div
                   key={index}

@@ -11,7 +11,7 @@ interface Branch {
     id: string;
     title: string;
     consequence: string;
-    triggers: any;
+    triggers: Record<string, unknown>;
 }
 
 interface Story {
@@ -68,7 +68,7 @@ export const QuestDecision: React.FC<QuestDecisionProps> = ({ activeStories, onD
             } else {
                 toast.error("Vote failed: " + result.message);
             }
-        } catch (error) {
+        } catch {
             toast.error("Telemetry failure. The Council ignored your choice.");
         } finally {
             setVotingInProgress(prev => ({ ...prev, [branch.id]: false }));

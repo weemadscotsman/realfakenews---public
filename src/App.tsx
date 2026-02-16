@@ -39,6 +39,8 @@ import FinalAuditPage from '@/pages/FinalAuditPage';
 import { RealityTicker } from '@/components/RealityTicker';
 import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
 import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
+import InvestigationPage from '@/pages/InvestigationPage';
+import SystemLeakPage from '@/pages/SystemLeakPage';
 import { BatteryWarning } from 'lucide-react';
 
 function App() {
@@ -80,6 +82,8 @@ function App() {
               <Route path="/sports" element={<SportsPage />} />
               <Route path="/conspiracy" element={<ConspiracyPage />} />
               <Route path="/resistance" element={<ResistancePage />} />
+              <Route path="/investigation" element={<InvestigationPage />} />
+              <Route path="/system-leak" element={<SystemLeakPage />} />
               <Route path="/bets" element={<BetsPage />} />
               <Route path="/apocalypse" element={<DoomsdayPage />} />
               <Route path="/timeline" element={<Timeline />} />

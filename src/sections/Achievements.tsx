@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { Button } from '@/components/ui/button';
@@ -31,13 +31,7 @@ const Achievements = () => {
   const [achievements, setAchievements] = useState<AchievementDisplay[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user?.id) {
-      loadAchievements();
-    }
-  }, [user?.id]);
-
-  const loadAchievements = async () => {
+  const loadAchievements = useCallback(async () => {
     if (!user?.id) return;
 
     setLoading(true);
@@ -134,7 +128,13 @@ const Achievements = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.id) {
+      loadAchievements();
+    }
+  }, [user?.id, loadAchievements]);
 
   const claimReward = async (achievement: AchievementDisplay) => {
     if (!user?.id) return;
@@ -157,9 +157,9 @@ const Achievements = () => {
       toast.success(`Claimed ${achievement.reward} tokens!`, {
         description: achievement.name,
       });
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to claim reward', {
-        description: error.message,
+        description: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   };

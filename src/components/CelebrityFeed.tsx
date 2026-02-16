@@ -1,8 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Heart, Repeat, BadgeCheck, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CELEBS = [
+interface Celeb {
+    name: string;
+    handle: string;
+    avatar: string;
+}
+
+interface Reply {
+    celeb: Celeb;
+    content: string;
+}
+
+interface Post {
+    id: number;
+    celeb: Celeb;
+    content: string;
+    likes: number;
+    rts: number;
+    reply: Reply;
+}
+
+const CELEBS: Celeb[] = [
     { name: "Zendaya v4.2", handle: "@zen_bot", avatar: "bg-purple-500" },
     { name: "Elongated Muskrat", handle: "@x_lord", avatar: "bg-black" },
     { name: "The Rock (AI Clone)", handle: "@pebble_champ", avatar: "bg-stone-500" },
@@ -49,13 +69,13 @@ const REPLIES: Record<string, string[]> = {
 };
 
 export const CelebrityFeed: React.FC = () => {
-    const [posts, setPosts] = useState<any[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
 
     const addPost = () => {
         // HIVE MIND LOGIC: 50% chance of "The Jet Joke" loop
         const isJetLoop = Math.random() > 0.5;
 
-        let celeb, content, replyContext;
+        let celeb: Celeb, content: string, replyContext: string;
 
         if (isJetLoop) {
             // The Infinite Jet Loop
@@ -112,8 +132,8 @@ export const CelebrityFeed: React.FC = () => {
         });
     };
 
-    useEffect(() => {
-        addPost();
+    useLayoutEffect(() => {
+        setTimeout(() => addPost(), 0); // Defer to avoid synchronous setState
         // Faster loop for chaos
         const interval = setInterval(() => {
             addPost();

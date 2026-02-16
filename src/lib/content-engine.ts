@@ -1,7 +1,13 @@
 import { generateJSON, generateText } from '@/lib/gemini';
 import type { RoastStyle } from './roast-constants';
-import { STYLE_PROMPTS, FALLBACK_ROASTS } from './roast-constants';
+import { STYLE_PROMPTS } from './roast-constants';
 import * as Prompts from './ai-prompts';
+import { 
+  getUniqueFallbackRoast, 
+  diversifyContent, 
+  addVarietyModifier,
+  headlineCache 
+} from './content-variety';
 
 export type { RoastStyle };
 
@@ -45,8 +51,9 @@ export const generateRoast = async (
   DESTROY THEM. Make it personal, funny, and under 200 words. 
   If Unrest is > 90, be significantly more aggressive and revolutionary.`;
 
-  const fallback = `${username} ${FALLBACK_ROASTS[style][intensity] || FALLBACK_ROASTS.default[intensity]}`;
-  const roast = await generateText(prompt, fallback);
+  const fallback = `${username}, ${getUniqueFallbackRoast(intensity)}`;
+  const variedPrompt = addVarietyModifier(prompt, Date.now() + username.length);
+  const roast = await generateText(variedPrompt, fallback);
 
   return {
     roast: roast || fallback,
@@ -69,8 +76,13 @@ export const generateDailyNews = async (trendingTopics: string[]): Promise<{ hea
     ]
   };
 
-  const data = await generateJSON(prompt, fallback);
-  return data.articles || fallback.articles;
+  const variedPrompt = addVarietyModifier(prompt, Date.now());
+  const data = await generateJSON(variedPrompt, fallback);
+  const articles = data.articles || fallback.articles;
+  // Deduplicate and add to cache
+  const unique = diversifyContent(articles, 'headline');
+  unique.forEach(a => headlineCache.add(a.headline));
+  return unique;
 };
 
 // ==================== CATEGORY NEWS ENGINE ====================
@@ -119,8 +131,11 @@ export const generateFakeBets = async (
     : 'Generate satirical prediction markets about current absurd trends in politics, tech, celebrity culture, and internet drama.';
 
   const prompt = Prompts.BETTING_PROMPT(context);
-  const data = await generateJSON(prompt, { bets: [] as FakeBet[] });
-  return (data.bets || []).map((b: FakeBet, i: number) => ({ ...b, id: b.id || `bet-${i + 1}` }));
+  const variedPrompt = addVarietyModifier(prompt, Date.now());
+  const data = await generateJSON(variedPrompt, { bets: [] as FakeBet[] });
+  const bets = (data.bets || []).map((b: FakeBet, i: number) => ({ ...b, id: b.id || `bet-${i + 1}` }));
+  // Deduplicate by question
+  return diversifyContent(bets, 'question');
 };
 
 // ==================== ROAST BATTLE ENGINE ====================

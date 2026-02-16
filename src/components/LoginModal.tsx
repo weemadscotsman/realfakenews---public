@@ -51,6 +51,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
         }
       }
     } catch (err) {
+      console.error(err);
       toast.error('Something went wrong. Try again.');
     } finally {
       setLoading(false);

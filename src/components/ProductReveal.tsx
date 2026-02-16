@@ -11,7 +11,7 @@ const PRODUCTS = [
 ];
 
 export const ProductReveal: React.FC = () => {
-    const [product, setProduct] = useState<any>(null);
+    const [product, setProduct] = useState<typeof PRODUCTS[number] | null>(null);
     const [loading, setLoading] = useState(false);
 
     const generate = () => {

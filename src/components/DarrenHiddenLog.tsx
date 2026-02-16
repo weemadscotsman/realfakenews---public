@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom';
 export const DarrenHiddenLog: React.FC = () => {
     const [unlocked, setUnlocked] = useState(false);
 
+    // Generate random durations once to avoid impure render behavior
+    const [durations] = useState(() => Array.from({ length: 10 }, () => 0.5 + Math.random()));
+
     useEffect(() => {
         // Simulate a "brute force" unlock sequence
         const timer = setTimeout(() => setUnlocked(true), 3000);
@@ -60,12 +63,12 @@ export const DarrenHiddenLog: React.FC = () => {
 
                     <div className="space-y-6 text-sm leading-relaxed opacity-80">
                         <p>
-                            "I don't know who’s listening. Probably the fridge. It records everything now."
+                            "I don't know who's listening. Probably the fridge. It records everything now."
                         </p>
                         <p>
                             "They think calling it 'The Sovereign Thermal Republic' makes it funny. My friends think it's a bit.
                             'Oh, Darren's living in a sitcom.'
-                            But the milk is warm. It’s always warm.
+                            But the milk is warm. It's always warm.
                             The toaster burns a smiley face into every slice, but the smile is... wrong."
                         </p>
                         <p>
@@ -85,7 +88,7 @@ export const DarrenHiddenLog: React.FC = () => {
                                 <motion.div
                                     key={i}
                                     animate={{ height: [5, 20, 5] }}
-                                    transition={{ repeat: Infinity, duration: 0.5 + Math.random(), delay: i * 0.1 }}
+                                    transition={{ repeat: Infinity, duration: durations[i], delay: i * 0.1 }}
                                     className="w-1 bg-green-500/50"
                                 />
                             ))}

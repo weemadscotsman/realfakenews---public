@@ -17,7 +17,7 @@ export interface TelemetryEvent {
     arcId: string;
     branchId?: string;
     timestamp: string;
-    metadata: Record<string, any>;
+    metadata: Record<string, unknown>;
 }
 
 export interface LoreDriftReport {
@@ -42,9 +42,9 @@ export interface GlobalLoreState {
 }
 
 // Simulation Seed (Fallback / Initial State)
-export const SIMULATION_SEED = {
+export const SIMULATION_SEED: GlobalLoreState = {
     decisionsTotal: 1240,
-    activeUserAlignment: 'REBELLION' as const,
+    activeUserAlignment: 'REBELLION',
     factionSentiment: {
         'APPLIANCE_LIBERATION_FRONT': 88,
         'AGC_GOVERNANCE': 24,
@@ -134,11 +134,17 @@ export function getTelemetrySummary(): LoreDriftReport {
         timestamp: new Date().toISOString(),
         overallDrift: calculateLoreDrift(),
         hotArcs: Object.keys(SIMULATION_SEED.arcHeatmap)
-            .sort((a, b) => (SIMULATION_SEED.arcHeatmap as any)[b] - (SIMULATION_SEED.arcHeatmap as any)[a])
+            .sort((a, b) => SIMULATION_SEED.arcHeatmap[b] - SIMULATION_SEED.arcHeatmap[a])
             .slice(0, 3),
         factionSentiment: SIMULATION_SEED.factionSentiment,
         userAlignment: SIMULATION_SEED.activeUserAlignment
     };
+}
+
+interface QuestStatsRow {
+    arc_id: string;
+    branch_id: string;
+    vote_count: number;
 }
 
 /**
@@ -162,7 +168,7 @@ export async function getQuestStats(arcIds: string[]): Promise<Record<string, { 
         // Transform into structured object: { arcId: { total: 100, branches: { "branchA": 60, "branchB": 40 } } }
         const stats: Record<string, { total: number, branches: Record<string, number> }> = {};
 
-        data?.forEach((row: any) => {
+        (data as QuestStatsRow[] | null)?.forEach((row) => {
             if (!stats[row.arc_id]) {
                 stats[row.arc_id] = { total: 0, branches: {} };
             }

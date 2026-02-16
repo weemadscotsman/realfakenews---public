@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Radio } from 'lucide-react';
 
+const STATUS_MESSAGES = ["CALCULATING IRONY", "BUFFERING TRUTH", "JUSTICE FOR TOAST", "IGNORING FACTS", "PANICKING GENTLY", "REWRITING HISTORY", "OPTIMIZING CHAOS"];
+
 export const RealityTicker: React.FC = () => {
     const [stability, setStability] = useState(38.00);
     const [status, setStatus] = useState("ADAPTING");
-    const STATUS_MESSAGES = ["CALCULATING IRONY", "BUFFERING TRUTH", "JUSTICE FOR TOAST", "IGNORING FACTS", "PANICKING GENTLY", "REWRITING HISTORY", "OPTIMIZING CHAOS"];
+
+    // Generate random visualizer values once using lazy state initialization
+    const [visualizerBars] = useState(() =>
+        [...Array(8)].map(() => ({
+            height: `${Math.random() * 100}%`,
+            animationDuration: `${0.5 + Math.random()}s`
+        }))
+    );
 
     useEffect(() => {
         // Slow drift towards 42%
@@ -48,13 +57,13 @@ export const RealityTicker: React.FC = () => {
 
                 {/* Visualizer Lines */}
                 <div className="flex gap-[2px] h-2 items-end mt-1">
-                    {[...Array(8)].map((_, i) => (
+                    {visualizerBars.map((bar, i) => (
                         <div
                             key={i}
                             className="w-[2px] bg-white/20 animate-pulse"
                             style={{
-                                height: `${Math.random() * 100}%`,
-                                animationDuration: `${0.5 + Math.random()}s`
+                                height: bar.height,
+                                animationDuration: bar.animationDuration
                             }}
                         />
                     ))}

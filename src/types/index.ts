@@ -147,7 +147,7 @@ export interface Notification {
   type: string;
   title: string;
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
   read: boolean;
   created_at: string;
 }

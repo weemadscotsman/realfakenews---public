@@ -73,7 +73,7 @@ export const getSession = async () => {
     const { data, error } = await supabase.auth.getSession();
     if (error) return null;
     return data.session;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -132,7 +132,7 @@ export const getTeaDrops = async (limit = 20, offset = 0): Promise<TeaDrop[]> =>
   if (error) throw error;
 
   // Transform the data to match our interface
-  return (data || []).map((item: any) => ({
+  return (data || []).map((item: { profiles?: { username?: string; avatar_url?: string; level?: number } } & TeaDrop) => ({
     ...item,
     username: item.profiles?.username || 'Unknown',
     user_avatar: item.profiles?.avatar_url,
@@ -254,7 +254,7 @@ export const getChallengeEntries = async (challengeId: string): Promise<TeaDrop[
 
   if (error) throw error;
 
-  return (data || []).map((item: any) => ({
+  return (data || []).map((item: { profiles?: { username?: string; avatar_url?: string; level?: number } } & TeaDrop) => ({
     ...item,
     username: item.profiles?.username || 'Unknown',
     user_avatar: item.profiles?.avatar_url,
@@ -291,7 +291,7 @@ export const getActiveBattles = async (): Promise<RoastBattle[]> => {
 
   if (error) throw error;
 
-  return (data || []).map((item: any) => ({
+  return (data || []).map((item: { challenger?: { username?: string }; opponent?: { username?: string } } & RoastBattle) => ({
     ...item,
     challenger_username: item.challenger?.username || 'Unknown',
     opponent_username: item.opponent?.username || 'Unknown',
@@ -355,9 +355,10 @@ export const claimAchievementReward = async (achievementId: string, userId: stri
 
 // ==================== LEADERBOARD ====================
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getLeaderboard = async (_timeframe: 'daily' | 'weekly' | 'alltime' = 'weekly', limit = 20): Promise<User[]> => {
   if (!isConfigured) return [];
-  let query = supabase
+  const query = supabase
     .from('profiles')
     .select('id, username, avatar_url, level, title, xp, tea_drops_count, battle_wins, followers_count')
     .order('xp', { ascending: false })
@@ -399,7 +400,7 @@ export const markNotificationRead = async (notificationId: string) => {
   if (error) throw error;
 };
 
-export const createNotification = async (userId: string, type: string, title: string, message: string, data?: any) => {
+export const createNotification = async (userId: string, type: string, title: string, message: string, data?: Record<string, unknown>) => {
   const { error } = await supabase
     .from('notifications')
     .insert([{

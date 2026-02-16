@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 const NODES = [
@@ -12,7 +12,13 @@ const NODES = [
     { id: '5g', label: '5G TOWERS', x: 90, y: 50, type: 'neutral' },
 ];
 
-const CONNECTIONS = [
+interface Connection {
+    from: string;
+    to: string;
+    color: 'red' | 'blue' | 'yellow';
+}
+
+const CONNECTIONS: Connection[] = [
     { from: 'darren', to: 'sheila', color: 'red' },
     { from: 'sys_root', to: 'agc', color: 'red' },
     { from: 'coffee', to: 'agc', color: 'red' },
@@ -23,12 +29,7 @@ const CONNECTIONS = [
 ];
 
 export const ConspiracyGraph: React.FC = () => {
-    const [lines, setLines] = useState<any[]>([]);
-
-    useEffect(() => {
-        // Hydrate lines on mount to avoid hydration mismatch
-        setLines(CONNECTIONS);
-    }, []);
+    const lines = CONNECTIONS;
 
     return (
         <div className="relative w-full h-[400px] bg-zinc-900 border-2 border-red-900/30 rounded-lg overflow-hidden shadow-inner">

@@ -37,7 +37,7 @@ export async function generateJSON<T>(prompt: string, fallback: T): Promise<T> {
  */
 export async function generateText(prompt: string, fallback: string = ''): Promise<string> {
     const data = await callFunction('generate-content', { prompt, mode: 'text' }, { result: fallback });
-    return typeof data === 'string' ? data : (data as any).result || fallback;
+    return typeof data === 'string' ? data : (data as { result?: string }).result || fallback;
 }
 
 /**
@@ -71,7 +71,13 @@ export async function generateArticle(headline: string) {
 /**
  * Fetch a generated performance review for the user.
  */
-export async function fetchPerformanceReview(username: string, xp: number, tokens: number, roasts: number): Promise<any> {
+export interface PerformanceReview {
+    review: string;
+    appliance: string;
+    status: string;
+}
+
+export async function fetchPerformanceReview(username: string, xp: number, tokens: number, roasts: number): Promise<PerformanceReview> {
     return callFunction('generate-performance-review', { username, xp, tokens, roasts }, {
         review: "The Oracle is currently offline. Your metrics are irrelevant.",
         appliance: "The System",
@@ -86,16 +92,40 @@ export async function logTelemetryEvent(event: {
     type: 'decision' | 'engagement' | 'alignment';
     arcId: string;
     branchId?: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
     userId?: string;
 }) {
     return callFunction('log-telemetry', event, { status: 'FAILED' });
 }
 
+export interface StoryArc {
+    id: string;
+    title: string;
+    headline?: string;
+    priority?: number;
+    branches: {
+        id: string;
+        title: string;
+        consequence: string;
+        triggers: Record<string, unknown>;
+    }[] | null;
+}
+
 /**
  * Fetch the current global lore and world state.
  */
-export async function fetchWorldState(): Promise<any> {
+export interface WorldState {
+    governanceLevel: string;
+    narrativeStress: {
+        applianceUnrest: number;
+        humanCountermeasures: number;
+        corporateContainment: number;
+        beverageIdeologicalSpread: number;
+    };
+    activeStories: StoryArc[];
+}
+
+export async function fetchWorldState(): Promise<WorldState> {
     return callFunction('get-world-state', {}, {
         governanceLevel: 'UNKNOWN',
         narrativeStress: {

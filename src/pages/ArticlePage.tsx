@@ -7,6 +7,7 @@ import { staticArticles } from '@/config/static-articles';
 import { generateArticle as generateArticleGemini, fetchWorldState, logTelemetryEvent } from '@/lib/gemini';
 import { QuestDecision } from '@/components/QuestDecision';
 import { RansomNote } from '@/components/RansomNote';
+import type { WorldState, StoryArc } from '@/lib/gemini';
 
 interface ArticleState {
     headline: string;
@@ -24,7 +25,7 @@ const ArticlePage: React.FC = () => {
     const initialHeadline = decodeURIComponent(slug || '').replace(/-/g, ' ');
 
     const [article, setArticle] = useState<ArticleState | null>(null);
-    const [worldState, setWorldState] = useState<any>(null);
+    const [worldState, setWorldState] = useState<WorldState | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -48,9 +49,11 @@ const ArticlePage: React.FC = () => {
 
                 // 3. Log Telemetry Engagement
                 // Identify if this article headline matches an active story
-                const activeArc = ws.activeStories?.find((s: any) =>
-                    data.headline.toLowerCase().includes(s.title.toLowerCase()) ||
-                    s.title.toLowerCase().includes(data.headline.toLowerCase())
+                const activeArc = ws.activeStories?.find((s: StoryArc) =>
+                    s.headline && (
+                        data.headline.toLowerCase().includes(s.headline.toLowerCase()) ||
+                        s.headline.toLowerCase().includes(data.headline.toLowerCase())
+                    )
                 );
 
                 if (activeArc) {

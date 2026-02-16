@@ -2,21 +2,31 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Info, AlertTriangle, Link, RefreshCw, X } from 'lucide-react';
 
+interface Evidence {
+    id: number;
+    type: string;
+    title: string;
+    content: string;
+    x: number;
+    y: number;
+    rotation: number;
+}
+
+const doryisms = [
+    "Just keep analyzing! Just keep analyzing!",
+    "Wait, did I leave the digital toaster on?",
+    "This string leads to... another string. Interesting.",
+    "I've found a dangling pointer! No, wait, that's my tail.",
+    "Is this evidence or just a suspicious pixel?",
+    "I remember seeing this before... or did I?",
+    "Recursive analysis complete. Result: Recursive analysis needed.",
+    "The 3.9MB file is definitely not memories. It's... it's... wait, what was I saying?"
+];
+
 const DetectiveDoryPage = () => {
-    const [evidence, setEvidence] = useState<any[]>([]);
+    const [evidence, setEvidence] = useState<Evidence[]>([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [doryThought, setDoryThought] = useState("Wait, I found something... what was it?");
-
-    const doryisms = [
-        "Just keep analyzing! Just keep analyzing!",
-        "Wait, did I leave the digital toaster on?",
-        "This string leads to... another string. Interesting.",
-        "I've found a dangling pointer! No, wait, that's my tail.",
-        "Is this evidence or just a suspicious pixel?",
-        "I remember seeing this before... or did I?",
-        "Recursive analysis complete. Result: Recursive analysis needed.",
-        "The 3.9MB file is definitely not memories. It's... it's... wait, what was I saying?"
-    ];
 
     useEffect(() => {
         const interval = setInterval(() => {

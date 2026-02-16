@@ -5,7 +5,8 @@ import { formatResponse, formatError } from './lib/shared';
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const handler: Handler = async (event: HandlerEvent, _context: HandlerContext) => {
     // OPTIONS for CORS
     if (event.httpMethod === 'OPTIONS') {
         return {
@@ -75,8 +76,9 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
             branchId
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         console.error('Vote Quest Handler Error:', error);
-        return formatError(500, 'Internal Server Error', error.message);
+        return formatError(500, 'Internal Server Error', errorMessage);
     }
 };

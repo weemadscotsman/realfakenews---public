@@ -103,7 +103,14 @@ const SurveillanceDashboard: React.FC = () => {
     );
 };
 
-const DashboardCard = ({ title, icon, children, className = '' }: any) => (
+interface DashboardCardProps {
+    title: string;
+    icon: React.ReactNode;
+    children: React.ReactNode;
+    className?: string;
+}
+
+const DashboardCard = ({ title, icon, children, className = '' }: DashboardCardProps) => (
     <div className={`bg-black border border-green-900 p-6 rounded relative overflow-hidden ${className}`}>
         <div className="flex items-center gap-2 mb-6 border-b border-green-900/50 pb-2">
             {icon}
@@ -113,7 +120,14 @@ const DashboardCard = ({ title, icon, children, className = '' }: any) => (
     </div>
 );
 
-const Metric = ({ label, value, change, color = 'text-green-400' }: any) => (
+interface MetricProps {
+    label: string;
+    value: string | number;
+    change: string;
+    color?: string;
+}
+
+const Metric = ({ label, value, change, color = 'text-green-400' }: MetricProps) => (
     <div>
         <div className="text-[10px] text-green-800 uppercase mb-1">{label}</div>
         <div className={`text-2xl font-bold font-mono ${color}`}>{value}</div>
@@ -121,7 +135,13 @@ const Metric = ({ label, value, change, color = 'text-green-400' }: any) => (
     </div>
 );
 
-const ThreatBar = ({ label, value, color }: any) => (
+interface ThreatBarProps {
+    label: string;
+    value: number;
+    color: string;
+}
+
+const ThreatBar = ({ label, value, color }: ThreatBarProps) => (
     <div>
         <div className="flex justify-between text-[10px] uppercase mb-1">
             <span>{label}</span>

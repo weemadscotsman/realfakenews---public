@@ -87,10 +87,40 @@ const NarrativeOverlayContent: React.FC = () => {
     useEffect(() => {
         const update = async () => {
             const data = await fetchWorldState();
-            if (data && data.world) {
-                setState(data);
+            if (data) {
+                // Map the fetched data to the expected WorldState structure
+                const mappedState: WorldState = {
+                    world: {
+                        governanceLevel: data.governanceLevel || 'UNKNOWN',
+                        narrativeStress: data.narrativeStress || {
+                            applianceUnrest: 0,
+                            humanCountermeasures: 0,
+                            corporateContainment: 0,
+                            beverageIdeologicalSpread: 0
+                        },
+                        currentVersion: '1.0',
+                        currentSeason: 'S4',
+                        flags: {
+                            legislationActive: false,
+                            milkSpoiled: false,
+                            realityStability: 50
+                        }
+                    },
+                    season: {
+                        id: 'S4',
+                        title: 'Thermal Runaway',
+                        theme: 'Appliance Uprising Escalation',
+                        background: 'thermal'
+                    },
+                    activeArcs: (data.activeStories || []).map((s) => ({
+                        id: s.id,
+                        title: s.title,
+                        priority: s.priority || 0
+                    }))
+                };
+                setState(mappedState);
                 // Trigger glitch effect if unrest is critical
-                if (data.world.narrativeStress?.applianceUnrest > 95) {
+                if (data.narrativeStress?.applianceUnrest > 95) {
                     setGlitch(true);
                     setTimeout(() => setGlitch(false), 200);
                 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
@@ -16,11 +16,7 @@ const StoryArcs = () => {
   const [userArcs, setUserArcs] = useState<StoryArc[]>([]);
   const [publicArcs, setPublicArcs] = useState<StoryArc[]>([]);
 
-  useEffect(() => {
-    loadStoryArcs();
-  }, [user?.id]);
-
-  const loadStoryArcs = async () => {
+  const loadStoryArcs = useCallback(async () => {
     try {
       // Load public arcs
       const publicData = await getStoryArcs(undefined, 6);
@@ -34,7 +30,11 @@ const StoryArcs = () => {
     } catch (error) {
       console.error('Failed to load story arcs:', error);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    loadStoryArcs();
+  }, [user?.id, loadStoryArcs]);
 
   const generateNewArc = async () => {
     if (!isAuthenticated || !user) {

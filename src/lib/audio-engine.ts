@@ -44,7 +44,7 @@ export class AudioEngine {
         if (!this.initialized || this.voices.length === 0) this.initVoices();
 
         // 1. Precise Match (Locale + Name hints usually indicate gender in WebSpeech)
-        let exact = this.voices.find(v =>
+        const exact = this.voices.find(v =>
             v.lang.startsWith(config.locale) &&
             (config.gender === 'male' ? (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google US English')) : (v.name.includes('Female') || v.name.includes('Zira')))
         );

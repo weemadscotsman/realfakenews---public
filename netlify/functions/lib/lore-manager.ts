@@ -1,10 +1,39 @@
 import { DARREN_SAGA, WORLD_STATE, SEASONS, CHARACTER_AUTHORITY, BRANCHED_OUTCOMES } from './config';
 import { getRealtimeGlobalState, getTelemetrySummary, getQuestStats } from './telemetry-manager';
 
+interface SeasonInfo {
+    id: string;
+    title: string;
+    theme: string;
+    duration: string;
+}
+
+interface SagaArc {
+    id: string;
+    seasonId: string;
+    version: string;
+    title: string;
+    description: string;
+    status: 'active' | 'historical' | 'dormant';
+    priority?: number;
+}
+
+interface CharacterAuthority {
+    domains: string[];
+    authorityLevel: number;
+}
+
+interface BranchedOutcome {
+    [branchId: string]: {
+        description: string;
+        outcomes: string[];
+    };
+}
+
 /**
  * Returns the current active season metadata.
  */
-export function getSeasonalContext() {
+export function getSeasonalContext(): SeasonInfo {
     const seasonId = WORLD_STATE.currentSeason;
     return {
         id: seasonId,
@@ -16,7 +45,7 @@ export function getSeasonalContext() {
  * Returns the specific active arc(s) for the current season.
  * Respects priority and status filters.
  */
-export function getActiveArcs() {
+export function getActiveArcs(): SagaArc[] {
     const currentSeason = WORLD_STATE.currentSeason;
     return DARREN_SAGA
         .filter(s => s.status === 'active' && s.seasonId === currentSeason)
@@ -26,7 +55,7 @@ export function getActiveArcs() {
 /**
  * Returns the single "Lead" active arc (highest priority).
  */
-export function getLeadArc() {
+export function getLeadArc(): SagaArc | null {
     const arcs = getActiveArcs();
     return arcs.length > 0 ? arcs[0] : null;
 }
@@ -50,15 +79,15 @@ export async function getStressLevel() {
 /**
  * Returns authority information for a given persona.
  */
-export function getCharacterAuthority(personaName: string) {
-    return (CHARACTER_AUTHORITY as any)[personaName] || { domains: [], authorityLevel: 0 };
+export function getCharacterAuthority(personaName: string): CharacterAuthority {
+    return (CHARACTER_AUTHORITY as Record<string, CharacterAuthority>)[personaName] || { domains: [], authorityLevel: 0 };
 }
 
 /**
  * Returns the full canon timeline for the current season, 
  * including historical and active events.
  */
-export function getCanonTimeline() {
+export function getCanonTimeline(): SagaArc[] {
     const currentSeason = WORLD_STATE.currentSeason;
     return DARREN_SAGA
         .filter(s => (s.status === 'active' || s.status === 'historical' || s.status === 'dormant') && s.seasonId === currentSeason)
@@ -71,8 +100,8 @@ export function getCanonTimeline() {
 /**
  * Returns branched outcomes for a specific arc ID.
  */
-export function getArcBranches(arcId: string) {
-    return (BRANCHED_OUTCOMES as any)[arcId] || null;
+export function getArcBranches(arcId: string): BranchedOutcome | null {
+    return (BRANCHED_OUTCOMES as Record<string, BranchedOutcome>)[arcId] || null;
 }
 
 /**

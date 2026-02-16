@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -31,21 +31,10 @@ const Leaderboard = () => {
   const [prizePool, setPrizePool] = useState(5000);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadLeaderboard();
-
-    // Animate prize pool
-    const interval = setInterval(() => {
-      setPrizePool(prev => prev + Math.floor(Math.random() * 10));
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [timeframe]);
-
-  const loadLeaderboard = async () => {
+  const loadLeaderboard = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getLeaderboard(timeframe as any, 20);
+      const data = await getLeaderboard(timeframe as 'daily' | 'weekly' | 'alltime', 20);
 
       // Transform to leaderboard format
       const formatted = data.map((u, index) => ({
@@ -89,7 +78,18 @@ const Leaderboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [timeframe, user]);
+
+  useEffect(() => {
+    loadLeaderboard();
+
+    // Animate prize pool
+    const interval = setInterval(() => {
+      setPrizePool(prev => prev + Math.floor(Math.random() * 10));
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [timeframe, loadLeaderboard]);
 
   const getRankIcon = (rank: number) => {
     switch (rank) {

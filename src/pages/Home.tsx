@@ -9,7 +9,7 @@ import Achievements from '@/sections/Achievements';
 import StoryArcs from '@/sections/StoryArcs';
 import FakeBets from '@/sections/FakeBets';
 import { QuestDecision } from '@/components/QuestDecision';
-import { fetchWorldState } from '@/lib/gemini';
+import { fetchWorldState, type StoryArc } from '@/lib/gemini';
 import { useState, useEffect } from 'react';
 
 interface HomeProps {
@@ -20,7 +20,7 @@ import ApplianceGrievances from '@/sections/ApplianceGrievances';
 import ConspiracyDesk from '@/sections/ConspiracyDesk';
 
 const Home: React.FC<HomeProps> = ({ onLoginClick }) => {
-    const [activeStories, setActiveStories] = useState<any[]>([]);
+    const [activeStories, setActiveStories] = useState<StoryArc[]>([]);
 
     useEffect(() => {
         const loadState = async () => {

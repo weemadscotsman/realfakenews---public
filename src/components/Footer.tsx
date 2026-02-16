@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Twitter, Facebook, Instagram, Youtube, Mail, ShieldCheck } from 'lucide-react';
 
 const SAFETY_LEVELS = [
@@ -24,24 +25,24 @@ const Footer: React.FC = () => {
   const currentSafety = SAFETY_LEVELS[safetyIndex];
   const footerLinks = {
     sections: [
-      { label: 'Politics', href: '#politics' },
-      { label: 'Science', href: '#science' },
-      { label: 'Entertainment', href: '#entertainment' },
-      { label: 'Sports', href: '#sports' },
-      { label: 'Opinion', href: '#opinion' },
+      { label: 'Politics', href: '/politics' },
+      { label: 'Science', href: '/science' },
+      { label: 'Tech', href: '/tech' },
+      { label: 'Entertainment', href: '/entertainment' },
+      { label: 'Sports', href: '/sports' },
     ],
     company: [
-      { label: 'About Us', href: '#' },
-      { label: 'Careers', href: '#' },
-      { label: 'Code of Ethics', href: '#' },
-      { label: 'Fact Checking Policy', href: '#' },
-      { label: 'Corrections', href: '#' },
+      { label: 'About Us', href: '/about' },
+      { label: 'Careers', href: '/careers' },
+      { label: 'Code of Ethics', href: '/ethics' },
+      { label: 'Fact Checking Policy', href: '/fact-check' },
+      { label: 'Corrections', href: '/corrections' },
     ],
     legal: [
-      { label: 'Terms of Service', href: '#' },
-      { label: 'Privacy Policy', href: '#' },
-      { label: 'Cookie Policy', href: '#' },
-      { label: 'Disclaimer', href: '#' },
+      { label: 'Terms of Service', href: '/terms' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Cookie Policy', href: '/cookies' },
+      { label: 'Disclaimer', href: '/disclaimer' },
     ],
   };
 
@@ -62,16 +63,16 @@ const Footer: React.FC = () => {
               If you believe anything here, we have a bridge to sell you.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://twitter.com/realfakenews" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Follow us on Twitter">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://facebook.com/realfakenews" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Follow us on Facebook">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://instagram.com/realfakenews" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Follow us on Instagram">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://youtube.com/@realfakenews" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Subscribe on YouTube">
                 <Youtube size={20} />
               </a>
             </div>
@@ -83,9 +84,9 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {footerLinks.sections.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                  <Link to={link.href} className="text-gray-400 hover:text-white text-sm transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -97,9 +98,9 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-gray-400 hover:text-white text-sm transition-colors">
+                  <Link to={link.href} className="text-gray-400 hover:text-white text-sm transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -133,13 +134,13 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex gap-6">
               {footerLinks.legal.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   className="text-gray-500 hover:text-gray-300 text-xs transition-colors"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

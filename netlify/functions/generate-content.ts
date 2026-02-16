@@ -1,4 +1,4 @@
-import { headers, formatResponse, formatError, getGeminiModel } from './lib/shared';
+import { headers, formatResponse, formatError, getAIClient, getAIInfo } from './lib/shared';
 import { getSeasonalContext, getStressLevel, getUnifiedLoreContext } from './lib/lore-manager';
 
 export const handler = async (event: { httpMethod: string; body: string | null }) => {
@@ -17,9 +17,10 @@ export const handler = async (event: { httpMethod: string; body: string | null }
             return formatError(400, 'prompt is required');
         }
 
-        const model = getGeminiModel(process.env.GOOGLE_API_KEY);
-        if (!model) {
-            return formatError(503, 'AI service not configured');
+        const aiClient = getAIClient();
+        if (!aiClient) {
+            console.log('AI Info:', getAIInfo());
+            return formatError(503, 'AI service not configured - check OPENROUTER_API_KEY');
         }
 
         const isJson = mode === 'json';
@@ -36,7 +37,7 @@ ${prompt}
 
 ${isJson ? 'Respond ONLY with valid JSON. No markdown, no code blocks, just raw JSON.' : ''}`;
 
-        const result = await model.generateContent({
+        const result = await aiClient.generateContent({
             contents: [{ role: 'user', parts: [{ text: loreGroundedPrompt }] }],
             generationConfig: {
                 temperature: 0.9,

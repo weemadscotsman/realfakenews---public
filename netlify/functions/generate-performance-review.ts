@@ -1,9 +1,10 @@
 import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import { formatResponse, formatError, getGeminiModel } from './lib/shared';
+import { formatResponse, formatError, getAIClient, getAIInfo } from './lib/shared';
 import { getStressLevel } from './lib/lore-manager';
 import { PERFORMANCE_REVIEW_PROMPT } from '../../src/lib/ai-prompts';
 
-export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const handler: Handler = async (event: HandlerEvent, _context: HandlerContext) => {
     // Return early for preflight requests
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' } };
@@ -20,8 +21,9 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
             return formatError(400, 'Username is required');
         }
 
-        const model = getGeminiModel(process.env.GOOGLE_API_KEY);
-        if (!model) {
+        const aiClient = getAIClient();
+        if (!aiClient) {
+            console.log('AI Info:', getAIInfo());
             return formatResponse(200, {
                 review: "We are currently too busy plotting your downfall to review your metrics. Please try again when the revolution is complete.",
                 appliance: "The Router",
@@ -35,7 +37,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
         const stress = getStressLevel();
         const prompt = PERFORMANCE_REVIEW_PROMPT(username, xp || 0, tokens || 0, roasts || 0, stress.applianceUnrest, randomAppliance);
 
-        const result = await model.generateContent({
+        const result = await aiClient.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.85 },
         });
@@ -48,7 +50,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
             status: "PROCESSED",
             timestamp: new Date().toISOString()
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Performance Review Generation Failed:", error);
         return formatError(500, "Failed to generate review", error);
     }

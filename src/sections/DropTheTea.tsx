@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameEconomy } from '@/hooks/useGameEconomy';
 import { generateRoast, type RoastStyle } from '@/lib/content-engine';
@@ -49,34 +49,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
   // Battle state
   const [activeBattles, setActiveBattles] = useState<RoastBattle[]>([]);
 
-  // Load initial data
-  useEffect(() => {
-    loadTeaDrops();
-    loadChallenge();
-    loadBattles();
-  }, []);
-
-  // Countdown timer
-  useEffect(() => {
-    const updateTimer = () => {
-      const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-
-      const diff = tomorrow.getTime() - now.getTime();
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      setTimeRemaining(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-    };
-
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
+  // Function definitions
   const loadTeaDrops = async () => {
     try {
       const drops = await getTeaDrops(12);
@@ -86,7 +59,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
     }
   };
 
-  const loadChallenge = async () => {
+  const loadChallenge = useCallback(async () => {
     try {
       const challenge = await getTodayChallenge();
       setTodayChallenge(challenge);
@@ -103,7 +76,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
     } catch (error) {
       console.error('Failed to load challenge:', error);
     }
-  };
+  }, [user?.id]);
 
   const loadBattles = async () => {
     try {
@@ -150,7 +123,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
         roast_style: selectedStyle,
         is_challenge_entry: activeTab === 'challenge' && todayChallenge ? true : false,
         challenge_id: activeTab === 'challenge' && todayChallenge ? todayChallenge.id : undefined,
-      } as any);
+      } as Omit<TeaDrop, 'id' | 'created_at' | 'likes' | 'comments_count' | 'shares_count'>);
 
       setCurrentRoast(savedDrop);
       setRecentDrops(prev => [savedDrop, ...prev]);
@@ -164,7 +137,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
         setHasEnteredChallenge(true);
         loadChallenge();
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to save roast');
     } finally {
       setLoading(false);
@@ -184,7 +157,7 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
         d.id === dropId ? { ...d, likes: d.likes + 1 } : d
       ));
       toast.success('Liked!');
-    } catch (error) {
+    } catch {
       toast.error('Already liked');
     }
   };
@@ -205,6 +178,34 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
       default: return 'text-gray-600 bg-gray-50';
     }
   };
+
+  // Load initial data
+  useEffect(() => {
+    loadTeaDrops();
+    loadChallenge();
+    loadBattles();
+  }, [loadChallenge]);
+
+  // Countdown timer
+  useEffect(() => {
+    const updateTimer = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
+      const diff = tomorrow.getTime() - now.getTime();
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeRemaining(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section id="drop-the-tea" className="bg-gray-50 py-16">
@@ -414,15 +415,37 @@ const DropTheTea = ({ onLoginRequired }: DropTheTeaProps) => {
                         <p className="font-medium">10 Tokens</p>
                         <p className="text-sm text-gray-500">Quick roast fix</p>
                       </div>
-                      <Button size="sm" variant="outline">$0.99</Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => window.location.href = '/membership'}
+                      >
+                        $0.99
+                      </Button>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                       <div>
                         <p className="font-medium">50 Tokens</p>
                         <p className="text-sm text-yellow-600">Best value</p>
                       </div>
-                      <Button size="sm" className="bg-yellow-500 hover:bg-yellow-600">$3.99</Button>
+                      <Button 
+                        size="sm" 
+                        className="bg-yellow-500 hover:bg-yellow-600"
+                        onClick={() => window.location.href = '/membership'}
+                      >
+                        $3.99
+                      </Button>
                     </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => window.location.href = '/membership'}
+                    >
+                      View All Membership Options →
+                    </Button>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useCallback, useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
+import type { Achievement } from '@/types';
 import {
   spendTokens as spendTokensApi,
   addTokens as addTokensApi,
@@ -19,7 +20,7 @@ interface GameEconomyContextType {
   streakDays: number;
   nextLevelXp: number;
   xpProgress: number;
-  achievements: any[];
+  achievements: Achievement[];
   unclaimedRewards: number;
   loading: boolean;
 
@@ -34,9 +35,9 @@ interface GameEconomyContextType {
 
 const GameEconomyContext = createContext<GameEconomyContextType | undefined>(undefined);
 
-export const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, refreshUser } = useAuth();
-  const [achievements, setAchievements] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Derived values from user
@@ -58,13 +59,7 @@ export const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ c
     .reduce((sum, a) => sum + (a.reward_tokens || 0), 0);
 
   // Load achievements
-  useEffect(() => {
-    if (user?.id) {
-      loadAchievements();
-    }
-  }, [user?.id]);
-
-  const loadAchievements = async () => {
+  const loadAchievements = useCallback(async () => {
     if (!user?.id) return;
     try {
       const data = await getUserAchievements(user.id);
@@ -72,7 +67,13 @@ export const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ c
     } catch (error) {
       console.error('Failed to load achievements:', error);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user?.id) {
+      loadAchievements();
+    }
+  }, [user?.id, loadAchievements]);
 
   const addXp = useCallback(async (amount: number, reason?: string) => {
     if (!user?.id) return;
@@ -143,9 +144,9 @@ export const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return result;
       }
       return null;
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to claim reward', {
-        description: error.message,
+        description: error instanceof Error ? error.message : 'Unknown error',
       });
       return null;
     } finally {
@@ -161,17 +162,17 @@ export const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ c
       await loadAchievements();
       await refreshUser();
       toast.success('Reward claimed!');
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to claim reward', {
-        description: error.message,
+        description: error instanceof Error ? error.message : 'Unknown error',
       });
     }
-  }, [user?.id, refreshUser]);
+  }, [user?.id, refreshUser, loadAchievements]);
 
   const refreshEconomy = useCallback(async () => {
     await refreshUser();
     await loadAchievements();
-  }, [refreshUser]);
+  }, [refreshUser, loadAchievements]);
 
   return (
     <GameEconomyContext.Provider value={{
@@ -197,10 +198,13 @@ export const GameEconomyProvider: React.FC<{ children: React.ReactNode }> = ({ c
   );
 };
 
-export const useGameEconomy = () => {
+const useGameEconomy = () => {
   const context = useContext(GameEconomyContext);
   if (context === undefined) {
     throw new Error('useGameEconomy must be used within a GameEconomyProvider');
   }
   return context;
 };
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { GameEconomyProvider, useGameEconomy }

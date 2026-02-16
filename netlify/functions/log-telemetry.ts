@@ -2,7 +2,8 @@ import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
 import { formatResponse, formatError } from './lib/shared';
 import { logNarrativeEvent } from './lib/telemetry-manager';
 
-export const handler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const handler: Handler = async (event: HandlerEvent, _context: HandlerContext) => {
     // Return early for preflight requests
     if (event.httpMethod === 'OPTIONS') {
         return {
@@ -40,7 +41,7 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
             timestamp: loggedEvent.timestamp
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Telemetry Logging Error:', error);
         return formatError(500, 'Failed to log telemetry', error);
     }

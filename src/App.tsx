@@ -24,6 +24,15 @@ import ResistancePage from '@/pages/ResistancePage';
 import BetsPage from '@/pages/BetsPage';
 import { ArchivesPage } from '@/pages/ArchivesPage';
 import { DarrenHiddenLog } from '@/components/DarrenHiddenLog';
+import AboutPage from '@/pages/AboutPage';
+import CareersPage from '@/pages/CareersPage';
+import EthicsPage from '@/pages/EthicsPage';
+import FactCheckPage from '@/pages/FactCheckPage';
+import CorrectionsPage from '@/pages/CorrectionsPage';
+import TermsPage from '@/pages/TermsPage';
+import PrivacyPage from '@/pages/PrivacyPage';
+import CookiesPage from '@/pages/CookiesPage';
+import DisclaimerPage from '@/pages/DisclaimerPage';
 import { RealityTicker } from '@/components/RealityTicker';
 import SurveillanceDashboard from '@/pages/SurveillanceDashboard';
 import DetectiveDoryPage from '@/pages/DetectiveDoryPage';
@@ -77,6 +86,15 @@ function App() {
               <Route path="/logs/darren-03" element={<DarrenHiddenLog />} />
               <Route path="/admin/surveillance" element={<SurveillanceDashboard />} />
               <Route path="/dory" element={<DetectiveDoryPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/ethics" element={<EthicsPage />} />
+              <Route path="/fact-check" element={<FactCheckPage />} />
+              <Route path="/corrections" element={<CorrectionsPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/cookies" element={<CookiesPage />} />
+              <Route path="/disclaimer" element={<DisclaimerPage />} />
             </Routes>
 
             <Footer />

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 // Session ID can be used to verify payment with backend
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Crown, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';

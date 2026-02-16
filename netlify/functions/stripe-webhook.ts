@@ -1,5 +1,6 @@
 import { headers, formatResponse, formatError } from './lib/shared';
 import * as Sentry from '@sentry/node';
+import Stripe from 'stripe';
 
 // Initialize Sentry if DSN is available
 if (process.env.SENTRY_DSN) {
@@ -10,21 +11,26 @@ if (process.env.SENTRY_DSN) {
     });
 }
 
+interface HandlerEvent {
+  httpMethod: string;
+  body: string;
+  headers: Record<string, string>;
+}
+
 // Stripe is optional
-let stripe: any;
+let stripe: Stripe | null = null;
 let endpointSecret: string;
 
 try {
     if (process.env.STRIPE_SECRET_KEY) {
-        const Stripe = require('stripe');
-        stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+        stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
         endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
     }
 } catch {
     console.log('[Stripe] Not installed or configured');
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: HandlerEvent) => {
     // CORS preflight
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 200, headers };
@@ -51,9 +57,10 @@ export const handler = async (event: any) => {
             // For development without webhook secret
             stripeEvent = JSON.parse(event.body);
         }
-    } catch (error: any) {
-        console.error('Webhook signature verification failed:', error.message);
-        return formatError(400, `Webhook Error: ${error.message}`);
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Webhook signature verification failed:', message);
+        return formatError(400, `Webhook Error: ${message}`);
     }
 
     // Handle the event

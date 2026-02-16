@@ -292,10 +292,11 @@ OUTPUT JSON ONLY:
 {"news": [{"headline": "Satirical Title", "excerpt": "Funny summary", "category": "${cacheKey}", "readTime": 3, "originalHeadline": "...", "originalImage": "URL_OR_NULL"}]}
 `;
 
+        console.log('[FetchLiveNews] Deploying The Headline Hunter specialist...');
         const result = await aiClient.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.95, responseMimeType: 'application/json' },
-        });
+        }, 'headline');
 
         const data = JSON.parse(result.response.text());
 

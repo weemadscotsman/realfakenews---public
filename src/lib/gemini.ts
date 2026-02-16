@@ -94,26 +94,49 @@ async function callFunction<T>(name: string, body: object, fallback: T): Promise
 }
 
 /**
+ * Task types for AI specialist routing
+ */
+export type TaskType = 
+  | 'roast' 
+  | 'headline' 
+  | 'article' 
+  | 'conspiracy' 
+  | 'sports' 
+  | 'tech' 
+  | 'bet' 
+  | 'breaking' 
+  | 'personality' 
+  | 'default';
+
+/**
  * Generate structured JSON content via server-side AI proxy
  */
-export async function generateJSON<T>(prompt: string, fallback: T): Promise<T> {
+export async function generateJSON<T>(
+  prompt: string, 
+  fallback: T, 
+  taskType: TaskType = 'default'
+): Promise<T> {
   if (isBypassMode()) {
     console.log('[ADMIN] Bypassing AI JSON generation');
     return fallback;
   }
-  const result = await callFunction('generate-content', { prompt, mode: 'json' }, fallback);
+  const result = await callFunction('generate-content', { prompt, mode: 'json', type: taskType }, fallback);
   return result as T;
 }
 
 /**
  * Generate plain text content via server-side AI proxy
  */
-export async function generateText(prompt: string, fallback: string = ''): Promise<string> {
+export async function generateText(
+  prompt: string, 
+  fallback: string = '', 
+  taskType: TaskType = 'default'
+): Promise<string> {
   if (isBypassMode()) {
     console.log('[ADMIN] Bypassing AI text generation');
     return fallback;
   }
-  const data = await callFunction('generate-content', { prompt, mode: 'text' }, { result: fallback });
+  const data = await callFunction('generate-content', { prompt, mode: 'text', type: taskType }, { result: fallback });
   return typeof data === 'string' ? data : (data as { result?: string }).result || fallback;
 }
 
@@ -171,7 +194,8 @@ export async function generateRoast(headline: string, username: string, style: s
   const fallback = MOCK_ROAST(headline, username);
   
   try {
-    const result = await generateText(prompt, fallback.roast);
+    // Use 'roast' specialist - DeepSeek R1 for brutal honesty!
+    const result = await generateText(prompt, fallback.roast, 'roast');
     return {
       roast: result,
       intensity: 'nuclear',

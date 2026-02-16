@@ -1,5 +1,6 @@
 import { headers, formatResponse, formatError } from './lib/shared';
 import * as Sentry from '@sentry/node';
+import Stripe from 'stripe';
 
 // Initialize Sentry if DSN is available
 if (process.env.SENTRY_DSN) {
@@ -10,12 +11,17 @@ if (process.env.SENTRY_DSN) {
     });
 }
 
+interface HandlerEvent {
+  httpMethod: string;
+  body: string;
+  headers: Record<string, string>;
+}
+
 // Stripe is optional - if not configured, we'll mock the flow
-let stripe: any;
+let stripe: Stripe | null = null;
 try {
     if (process.env.STRIPE_SECRET_KEY) {
-        const Stripe = require('stripe');
-        stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+        stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     }
 } catch {
     console.log('[Stripe] Not installed or configured');
@@ -39,7 +45,7 @@ const PRICE_IDS: Record<string, { price: number; name: string; description: stri
     }
 };
 
-export const handler = async (event: any) => {
+export const handler = async (event: HandlerEvent) => {
     // CORS preflight
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 200, headers };

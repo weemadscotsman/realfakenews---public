@@ -1,5 +1,6 @@
 import { headers, formatResponse, formatError, getAIClient, getAIInfo } from './lib/shared';
 import { getSeasonalContext, getStressLevel, getUnifiedLoreContext } from './lib/lore-manager';
+import { getTaskTypeForFunction, TaskType } from './lib/ai-specialists';
 
 export const handler = async (event: { httpMethod: string; body: string | null }) => {
     if (event.httpMethod === 'OPTIONS') {
@@ -11,7 +12,7 @@ export const handler = async (event: { httpMethod: string; body: string | null }
     }
 
     try {
-        const { prompt, mode } = JSON.parse(event.body || '{}');
+        const { prompt, mode, type } = JSON.parse(event.body || '{}');
 
         if (!prompt) {
             return formatError(400, 'prompt is required');
@@ -24,6 +25,7 @@ export const handler = async (event: { httpMethod: string; body: string | null }
         }
 
         const isJson = mode === 'json';
+        const taskType: TaskType = type || 'default';
         const season = getSeasonalContext();
         const stress = getStressLevel();
 
@@ -37,16 +39,18 @@ ${prompt}
 
 ${isJson ? 'Respond ONLY with valid JSON. No markdown, no code blocks, just raw JSON.' : ''}`;
 
+        console.log(`[GenerateContent] Routing to specialist: ${taskType}`);
+        
         const result = await aiClient.generateContent({
             contents: [{ role: 'user', parts: [{ text: loreGroundedPrompt }] }],
             generationConfig: {
                 temperature: 0.9,
                 ...(isJson ? { responseMimeType: 'application/json' } : {}),
             },
-        });
+        }, taskType);
 
         const text = result.response.text();
-        return formatResponse(200, { result: text });
+        return formatResponse(200, { result: text, specialist: taskType });
 
     } catch (error) {
         console.error('Generate Content Error:', error);

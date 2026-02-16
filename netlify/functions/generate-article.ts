@@ -225,13 +225,14 @@ Structure:
 Return ONLY valid JSON:
 { "headline": "...", "content": "Full article as HTML string with <p>, <blockquote>, <strong>, <em> tags", "category": "...", "author": "${author.name}", "readTime": number }`;
 
+            console.log('[GenerateArticle] Deploying The Storyteller specialist...');
             const result = await aiClient.generateContent({
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 generationConfig: {
                     temperature: 0.9,
                     responseMimeType: 'application/json',
                 },
-            });
+            }, 'article');
 
             const articleData = JSON.parse(result.response.text());
             return {

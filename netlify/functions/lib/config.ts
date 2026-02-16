@@ -106,20 +106,45 @@ export const RSS_FEEDS: Record<string, string[]> = {
     politics: [
         'https://feeds.bbci.co.uk/news/politics/rss.xml',
         'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',
+        'https://feeds.washingtonpost.com/rss/politics',
+        'https://www.theguardian.com/politics/rss',
+        'https://feeds.skynews.com/feeds/rss/politics.xml',
     ],
     science: [
         'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml',
         'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
+        'https://www.sciencedaily.com/rss/all.xml',
+        'https://feeds.arstechnica.com/arstechnica/science',
     ],
     tech: [
         'https://feeds.bbci.co.uk/news/technology/rss.xml',
         'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
+        'https://techcrunch.com/feed/',
+        'https://www.theverge.com/rss/index.xml',
+        'https://feeds.arstechnica.com/arstechnica/technology-lab',
+        'https://www.wired.com/feed/rss',
     ],
     entertainment: [
         'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml',
+        'https://variety.com/feed/',
+        'https://deadline.com/feed/',
     ],
     sports: [
         'https://feeds.bbci.co.uk/sport/rss.xml',
+        'https://www.espn.com/espn/rss/news',
+        'https://deadspin.com/rss',
+    ],
+    business: [
+        'https://feeds.bbci.co.uk/news/business/rss.xml',
+        'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml',
+        'https://www.cnbc.com/id/100003114/device/rss/rss.html',
+        'https://feeds.marketwatch.com/marketwatch/topstories/',
+    ],
+    memes: [
+        'https://www.reddit.com/r/worldnews/.rss',
+        'https://www.reddit.com/r/nottheonion/.rss',
+        'https://www.reddit.com/r/news/.rss',
     ],
 };
 

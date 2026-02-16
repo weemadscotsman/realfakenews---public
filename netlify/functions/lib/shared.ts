@@ -10,10 +10,19 @@ export {
     getAIInfo,
     getFreeModelsList,
     MODEL_NAMES,
-    FREE_MODELS,
-    MODELS,
+    ALL_FREE_MODELS,
     type AIProvider,
+    type TaskType,
+    getTaskTypeForFunction,
+    generateWithSpecialist,
 } from './ai-client';
+
+// Re-export specialist models
+export {
+    SPECIALIST_MODELS,
+    MODEL_PERSONALITIES,
+    getSpecialistModel,
+} from './ai-specialists';
 
 export const headers = {
     'Access-Control-Allow-Origin': process.env.CORS_ORIGIN || '*',

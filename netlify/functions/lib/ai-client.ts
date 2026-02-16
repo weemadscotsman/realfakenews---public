@@ -1,5 +1,11 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import OpenAI from 'openai';
+import { 
+    TaskType, 
+    getSpecialistModel, 
+    getTaskTypeForFunction,
+    MODEL_PERSONALITIES 
+} from './ai-specialists';
 
 export type AIProvider = 'google' | 'openrouter';
 
@@ -10,32 +16,26 @@ interface AIClient {
             temperature?: number;
             responseMimeType?: string;
         };
-    }) => Promise<{ response: { text: () => string } }>;
+    }, taskType?: TaskType) => Promise<{ response: { text: () => string } }>;
 }
 
 // ============================================
-// FREE MODELS ONLY - No token costs!
+// ALL FREE MODELS - The Dream Team
 // ============================================
-// These models rotate automatically when rate limits are hit
-export const FREE_MODELS = [
-    // Primary - Gemini 2.0 Flash (fast, good quality)
-    'google/gemini-2.0-flash-exp:free',
-    
-    // Fallbacks - all free tier models
-    'z-ai/glm-4.5-air:free',
-    'stepfun/step-3.5-flash:free',
-    'deepseek/deepseek-r1-0528:free',
-    'openai/gpt-oss-120b:free',
-    'nvidia/nemotron-nano-12b-v2-vl:free',
-    'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
-    
-    // Additional free backups
-    'meta-llama/llama-3.2-3b-instruct:free',
-    'qwen/qwen-2.5-7b-instruct:free',
-    'google/gemini-2.0-flash-thinking-exp-01-21:free',
+export const ALL_FREE_MODELS = [
+    'google/gemini-2.0-flash-exp:free',                           // Speed/reliability
+    'z-ai/glm-4.5-air:free',                                      // Storytelling
+    'stepfun/step-3.5-flash:free',                                // Energy/drama
+    'deepseek/deepseek-r1-0528:free',                             // Reasoning/roasts
+    'openai/gpt-oss-120b:free',                                   // Creativity
+    'nvidia/nemotron-nano-12b-v2-vl:free',                        // Tech/numbers
+    'cognitivecomputations/dolphin-mistral-24b-venice-edition:free', // Chaos/uncensored
+    'meta-llama/llama-3.2-3b-instruct:free',                      // Character voices
+    'qwen/qwen-2.5-7b-instruct:free',                             // Fast backup
+    'google/gemini-2.0-flash-thinking-exp-01-21:free',            // Analysis
 ] as const;
 
-// Model display names for logging
+// Model display names
 export const MODEL_NAMES: Record<string, string> = {
     'google/gemini-2.0-flash-exp:free': 'Gemini 2.0 Flash',
     'z-ai/glm-4.5-air:free': 'GLM 4.5 Air',
@@ -49,63 +49,44 @@ export const MODEL_NAMES: Record<string, string> = {
     'google/gemini-2.0-flash-thinking-exp-01-21:free': 'Gemini Flash Thinking',
 };
 
-// Track which models are rate limited and when they reset
+// Track rate limited models and their reset times
 const rateLimitedModels = new Map<string, number>();
-const RATE_LIMIT_COOLDOWN = 5 * 60 * 1000; // 5 minutes cooldown
-
-// Track current model index for rotation
-let currentModelIndex = 0;
-
-/**
- * Get the next available model (skips rate-limited ones)
- */
-function getNextAvailableModel(): string {
-    const now = Date.now();
-    
-    // Clean up expired rate limits
-    for (const [model, resetTime] of rateLimitedModels.entries()) {
-        if (now > resetTime) {
-            rateLimitedModels.delete(model);
-            console.log(`[AI] Model ${MODEL_NAMES[model] || model} cooled down, available again`);
-        }
-    }
-    
-    // Find next available model
-    for (let i = 0; i < FREE_MODELS.length; i++) {
-        const idx = (currentModelIndex + i) % FREE_MODELS.length;
-        const model = FREE_MODELS[idx];
-        
-        if (!rateLimitedModels.has(model)) {
-            currentModelIndex = (idx + 1) % FREE_MODELS.length; // Round-robin
-            return model;
-        }
-    }
-    
-    // All models rate limited - force use primary anyway
-    console.warn('[AI] All models rate limited! Forcing primary...');
-    return FREE_MODELS[0];
-}
+const RATE_LIMIT_COOLDOWN = 3 * 60 * 1000; // 3 minutes cooldown
 
 /**
  * Mark a model as rate limited
  */
 function markRateLimited(model: string): void {
     rateLimitedModels.set(model, Date.now() + RATE_LIMIT_COOLDOWN);
-    console.log(`[AI] Model ${MODEL_NAMES[model] || model} rate limited for 5 minutes`);
+    const name = MODEL_NAMES[model] || MODEL_PERSONALITIES[model] || model;
+    console.log(`[AI] 🔴 ${name} rate limited (3min cooldown)`);
 }
 
 /**
- * Get the appropriate AI client based on available API keys
- * Priority: OpenRouter (free tier) > Google AI
+ * Check if a model is currently rate limited
+ */
+function isRateLimited(model: string): boolean {
+    const resetTime = rateLimitedModels.get(model);
+    if (!resetTime) return false;
+    
+    if (Date.now() > resetTime) {
+        rateLimitedModels.delete(model);
+        const name = MODEL_NAMES[model] || MODEL_PERSONALITIES[model] || model;
+        console.log(`[AI] 🟢 ${name} available again`);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Get the appropriate AI client
  */
 export function getAIClient(): AIClient | null {
-    // Try OpenRouter first (free tier available)
     const openRouterKey = process.env.OPENROUTER_API_KEY;
     if (openRouterKey && openRouterKey !== 'placeholder-key' && openRouterKey.startsWith('sk-or')) {
         return createOpenRouterClient(openRouterKey);
     }
     
-    // Fall back to Google AI
     const googleKey = process.env.GOOGLE_API_KEY;
     if (googleKey && googleKey !== 'placeholder-key' && googleKey.startsWith('AI')) {
         return createGoogleClient(googleKey);
@@ -116,7 +97,7 @@ export function getAIClient(): AIClient | null {
 }
 
 /**
- * Create OpenRouter client with automatic model rotation
+ * Create OpenRouter client with SPECIALIST MODEL routing
  */
 function createOpenRouterClient(apiKey: string): AIClient {
     const openai = new OpenAI({
@@ -129,7 +110,25 @@ function createOpenRouterClient(apiKey: string): AIClient {
     });
     
     return {
-        async generateContent({ contents, generationConfig }) {
+        async generateContent({ contents, generationConfig }, taskType: TaskType = 'default') {
+            // Get specialist models for this task
+            const specialist = getSpecialistModel(taskType);
+            const modelsToTry = [specialist.primary, specialist.backup];
+            
+            // Filter out rate-limited models
+            const availableModels = modelsToTry.filter(m => !isRateLimited(m));
+            
+            // If both specialists are rate limited, try any available model
+            if (availableModels.length === 0) {
+                console.log(`[AI] Both ${specialist.specialistName} models rate limited, finding backup...`);
+                for (const model of ALL_FREE_MODELS) {
+                    if (!isRateLimited(model)) {
+                        availableModels.push(model);
+                        break;
+                    }
+                }
+            }
+            
             // Convert Gemini format to OpenAI format
             const messages = contents.map(content => ({
                 role: content.role === 'user' ? 'user' : 'assistant' as const,
@@ -146,15 +145,15 @@ function createOpenRouterClient(apiKey: string): AIClient {
                 ? [{ role: 'system' as const, content: systemMessage }, ...messages]
                 : messages;
             
-            // Try models until one works
+            // Try each available model
             let lastError: Error | null = null;
-            const maxAttempts = Math.min(3, FREE_MODELS.length); // Try up to 3 models
             
-            for (let attempt = 0; attempt < maxAttempts; attempt++) {
-                const modelName = getNextAvailableModel();
+            for (let i = 0; i < availableModels.length; i++) {
+                const modelName = availableModels[i];
                 const displayName = MODEL_NAMES[modelName] || modelName;
+                const personality = MODEL_PERSONALITIES[modelName] || 'Unknown';
                 
-                console.log(`[AI] Attempt ${attempt + 1}/${maxAttempts} using ${displayName}...`);
+                console.log(`[AI] 🤖 ${specialist.specialistName} deploying ${displayName} (${personality})...`);
                 
                 try {
                     const completion = await openai.chat.completions.create({
@@ -170,7 +169,7 @@ function createOpenRouterClient(apiKey: string): AIClient {
                         throw new Error('Empty response from model');
                     }
                     
-                    console.log(`[AI] Success with ${displayName}!`);
+                    console.log(`[AI] ✅ ${displayName} delivered!`);
                     
                     return {
                         response: {
@@ -180,29 +179,30 @@ function createOpenRouterClient(apiKey: string): AIClient {
                     
                 } catch (error: any) {
                     lastError = error;
-                    console.warn(`[AI] ${displayName} failed:`, error.message);
+                    console.warn(`[AI] ⚠️ ${displayName} failed:`, error.message);
                     
                     // Check if it's a rate limit error
                     if (error.status === 429 || 
                         error.message?.includes('rate limit') ||
                         error.message?.includes('Rate limit') ||
-                        error.message?.includes('exceeded')) {
+                        error.message?.includes('exceeded') ||
+                        error.message?.includes('Too Many Requests')) {
                         markRateLimited(modelName);
                         continue; // Try next model
                     }
                     
-                    // For other errors, also try next model unless it's auth
+                    // Auth error - stop immediately
                     if (error.status === 401 || error.message?.includes('Invalid API key')) {
-                        throw error; // Auth error - stop immediately
+                        throw error;
                     }
                     
-                    // Continue to next model for other errors
+                    // For other errors, try next model
                     continue;
                 }
             }
             
             // All attempts failed
-            throw lastError || new Error('All free models exhausted or rate limited');
+            throw lastError || new Error('All AI specialists exhausted');
         },
     };
 }
@@ -217,6 +217,7 @@ function createGoogleClient(apiKey: string): AIClient {
     
     return {
         async generateContent({ contents, generationConfig }) {
+            console.log(`[AI] Using Google ${modelName} (fallback mode)`);
             const result = await model.generateContent({
                 contents,
                 generationConfig: {
@@ -230,8 +231,38 @@ function createGoogleClient(apiKey: string): AIClient {
 }
 
 /**
- * Legacy compatibility - returns the model for Google AI
- * @deprecated Use getAIClient() instead
+ * Generate content with specialist routing
+ * Use this in your Netlify functions!
+ */
+export async function generateWithSpecialist(
+    client: AIClient,
+    taskType: TaskType,
+    prompt: string,
+    options: { 
+        temperature?: number; 
+        jsonMode?: boolean;
+        systemPrompt?: string;
+    } = {}
+): Promise<string> {
+    const contents = [
+        ...(options.systemPrompt ? [{ role: 'user' as const, parts: [{ text: options.systemPrompt }] }] : []),
+        { role: 'user', parts: [{ text: prompt }] }
+    ];
+    
+    const result = await client.generateContent({
+        contents,
+        generationConfig: {
+            temperature: options.temperature ?? 0.9,
+            responseMimeType: options.jsonMode ? 'application/json' : undefined,
+        }
+    }, taskType);
+    
+    return result.response.text();
+}
+
+/**
+ * Legacy compatibility
+ * @deprecated Use getAIClient() with taskType parameter
  */
 export function getGeminiModel(apiKey: string | undefined): GenerativeModel | null {
     if (!apiKey || apiKey === 'placeholder-key') {
@@ -270,7 +301,7 @@ export function getActiveProvider(): AIProvider | null {
  */
 export function getAIInfo(): { 
     provider: AIProvider | null; 
-    model: string; 
+    specialists: string[];
     free: boolean;
     availableModels: number;
     rateLimitedModels: number;
@@ -284,12 +315,24 @@ export function getAIInfo(): {
         if (now < resetTime) rateLimitedCount++;
     }
     
+    const specialists = [
+        'The Roaster (roast battles)',
+        'The Headline Hunter (clickbait)',
+        'The Storyteller (articles)',
+        'The Conspiracy Theorist (wild theories)',
+        'The Sports Hype Man (sports drama)',
+        'The Tech Bro (tech satire)',
+        'The Odds Maker (fake betting)',
+        'The Breaking News Anchor (urgent alerts)',
+        'The Method Actor (character voices)',
+    ];
+    
     if (provider === 'openrouter') {
         return {
             provider: 'openrouter',
-            model: 'multi-model-rotation',
+            specialists,
             free: true,
-            availableModels: FREE_MODELS.length - rateLimitedCount,
+            availableModels: ALL_FREE_MODELS.length - rateLimitedCount,
             rateLimitedModels: rateLimitedCount,
         };
     }
@@ -297,7 +340,7 @@ export function getAIInfo(): {
     if (provider === 'google') {
         return {
             provider: 'google',
-            model: process.env.GOOGLE_MODEL || 'gemini-2.0-flash',
+            specialists: ['General Purpose'],
             free: false,
             availableModels: 1,
             rateLimitedModels: 0,
@@ -306,16 +349,12 @@ export function getAIInfo(): {
     
     return { 
         provider: null, 
-        model: 'none', 
+        specialists: [],
         free: false,
         availableModels: 0,
         rateLimitedModels: 0,
     };
 }
 
-/**
- * Get list of all free models for debugging
- */
-export function getFreeModelsList(): string[] {
-    return [...FREE_MODELS];
-}
+// Re-export specialist types for convenience
+export { TaskType, getTaskTypeForFunction };

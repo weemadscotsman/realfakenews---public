@@ -1,5 +1,3 @@
-import { useAdmin } from '@/hooks/useAdmin';
-
 /**
  * Mock data generators for admin mode
  */
@@ -424,7 +422,7 @@ export const generateStoryArc = async (user: { username: string }) => {
  */
 export const parodyRealNews = async (realHeadlines: string[]) => {
   if (isBypassMode()) {
-    return realHeadlines.map((h, i) => ({
+    return realHeadlines.map((h) => ({
       original: h,
       parody: `SATIRE: ${h} (But Make It Funny)`,
       excerpt: 'This is a mock parody generated in admin mode.',

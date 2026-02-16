@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, Printer, Flag, MessageSquare, User, Award } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { staticArticles } from '@/config/static-articles';
@@ -121,13 +122,28 @@ const ArticlePage: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" title="Share Article">
+                        <button 
+                            onClick={() => {
+                                navigator.clipboard.writeText(window.location.href);
+                                toast.success('Article link copied to clipboard!');
+                            }}
+                            className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" 
+                            title="Share Article"
+                        >
                             <Share2 size={18} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" title="Print Article">
+                        <button 
+                            onClick={() => window.print()}
+                            className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" 
+                            title="Print Article"
+                        >
                             <Printer size={18} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" title="Report Article">
+                        <button 
+                            onClick={() => toast.error('Article reported! Our AI moderators are rolling their eyes at you.')}
+                            className="p-2 text-gray-400 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors" 
+                            title="Report Article"
+                        >
                             <Flag size={18} />
                         </button>
                     </div>
@@ -177,7 +193,11 @@ const ArticlePage: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <Button variant="outline" className="w-full mt-4">
+                    <Button 
+                        variant="outline" 
+                        className="w-full mt-4"
+                        onClick={() => toast.info('More outrage loading... (just kidding, these are all fake comments)')}
+                    >
                         Load More Outrage
                     </Button>
                 </div>

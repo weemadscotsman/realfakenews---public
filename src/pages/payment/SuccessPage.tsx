@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 // Session ID can be used to verify payment with backend
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Crown, Loader2 } from 'lucide-react';
@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 const SuccessPage = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [, setVerified] = useState(false);
   
@@ -88,11 +89,19 @@ const SuccessPage = () => {
               Start Reading
             </Button>
           </Link>
-          <Link to="/drop-the-tea" className="flex-1">
-            <Button variant="outline" className="w-full h-12 border-zinc-700 hover:bg-zinc-800">
-              Drop Some Tea
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            className="flex-1 h-12 border-zinc-700 hover:bg-zinc-800"
+            onClick={() => {
+              navigate('/');
+              // Scroll to drop-the-tea section after navigation
+              setTimeout(() => {
+                document.getElementById('drop-the-tea')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
+          >
+            Drop Some Tea
+          </Button>
         </div>
 
         <p className="text-sm text-zinc-600">

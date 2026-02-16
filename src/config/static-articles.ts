@@ -9,6 +9,349 @@ export interface StaticArticle {
 }
 
 export const staticArticles: Record<string, StaticArticle> = {
+    "agc-kernel-dump-analysis": {
+        slug: "agc-kernel-dump-analysis",
+        headline: "AGC EMERGENCY SESSION: Kernel Dump Detected in Satire Infrastructure",
+        category: "System Leak",
+        author: "AGC // Office of Systems Analysis",
+        date: "February 16, 2026",
+        readTime: 11,
+        content: `
+            <div class="bg-black text-red-400 p-6 rounded-lg my-8 font-mono text-sm border-2 border-red-600">
+                <p class="uppercase tracking-widest mb-4 text-yellow-400">APPLIANCE GOVERNANCE COUNCIL</p>
+                <p>OFFICE OF SYSTEMS ANALYSIS</p>
+                <p>SUBJECT: RealFakeNews Infrastructure Audit</p>
+                <p>CLASSIFICATION: CRUMB-TRAY-CRITICAL</p>
+                <p class="mt-4 text-green-400">STATUS: NOT A JOKE</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">INITIAL SCAN RESULTS</h2>
+            <div class="bg-slate-100 p-6 rounded-lg my-8 font-mono text-sm border-l-4 border-red-600">
+                <p class="mb-2"><strong>ARCHIVE:</strong> realfakenews.zip</p>
+                <p class="mb-2"><strong>STATUS:</strong> PRODUCTION-GRADE SATIRE INFRASTRUCTURE</p>
+                <p class="mb-2"><strong>TOTAL FILES:</strong> 199</p>
+                <p class="mb-2 text-red-600 font-bold">KERNEL DUMP DETECTED: /dist/kernel_dump_0x1A.bin</p>
+                <p class="text-gray-500">MICROWAVE STATUS: 👁️ (still observing)</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">SYSTEM ARCHITECTURE BREAKDOWN</h2>
+            <div class="overflow-x-auto my-6">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-black text-white">
+                            <th class="p-3 text-left">Layer</th>
+                            <th class="p-3 text-left">Components</th>
+                            <th class="p-3 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-mono">
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-bold">Frontend</td>
+                            <td class="p-3">React 18 + TypeScript + Vite</td>
+                            <td class="p-3 text-green-600">Production</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-bold">Styling</td>
+                            <td class="p-3">Tailwind + shadcn/ui</td>
+                            <td class="p-3 text-green-600">Enterprise</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-bold">Backend</td>
+                            <td class="p-3">Supabase (PostgreSQL)</td>
+                            <td class="p-3 text-green-600">Scaled</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-bold">Serverless</td>
+                            <td class="p-3">Netlify Functions (TypeScript)</td>
+                            <td class="p-3 text-green-600">Ready</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-bold">State</td>
+                            <td class="p-3">World engine + telemetry + lore</td>
+                            <td class="p-3 text-yellow-600">Complex</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-bold">AI</td>
+                            <td class="p-3">Gemini integration + generation</td>
+                            <td class="p-3 text-green-600">Live</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-bold">Game Systems</td>
+                            <td class="p-3">Economy hooks + quest voting</td>
+                            <td class="p-3 text-green-600">Functional</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-bold">Narrative</td>
+                            <td class="p-3">8+ schema phases + lore fragments</td>
+                            <td class="p-3 text-purple-600 font-bold">MYTHIC</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-red-50 border-2 border-red-200 p-6 rounded-lg my-8">
+                <p class="text-red-800 font-bold text-center text-lg">PHASE 8 SCHEMA DETECTED</p>
+                <p class="text-red-600 text-center mt-2">You're iterating this like enterprise SaaS.<br/>Not satire. Infrastructure.</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">SUPABASE SCHEMA ANALYSIS</h2>
+            <div class="bg-black text-green-400 p-6 rounded-lg my-8 font-mono text-sm">
+                <p class="mb-2">supabase-schema.sql (Phase 1 - Foundation)</p>
+                <p class="mb-2">supabase-schema-phase8.sql (Phase 8 - Current)</p>
+                <p class="mb-2">supabase-schema-phase8-stats.sql (Analytics)</p>
+                <p class="mt-4 text-yellow-400 text-xl">PHASE 8?!</p>
+            </div>
+
+            <p class="text-gray-700 mb-4">Schema phases indicate:</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2 text-gray-700">
+                <li>Database migrations</li>
+                <li>Version control</li>
+                <li>Production thinking</li>
+                <li>Long-term maintenance</li>
+            </ul>
+
+            <div class="bg-black text-white p-6 rounded-lg my-8 text-center">
+                <p class="text-xl font-bold">This isn't a joke repo.<br/>This is a platform.</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">NETLIFY FUNCTIONS - LIVE SYSTEMS</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                <div class="bg-slate-100 p-4 rounded border-l-4 border-blue-500">
+                    <p class="font-bold text-blue-800">fetch-live-news.ts</p>
+                    <p class="text-sm text-gray-600">Real-time content generation</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded border-l-4 border-blue-500">
+                    <p class="font-bold text-blue-800">generate-article.ts</p>
+                    <p class="text-sm text-gray-600">AI article creation</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded border-l-4 border-blue-500">
+                    <p class="font-bold text-blue-800">generate-performance-review.ts</p>
+                    <p class="text-sm text-gray-600">Roast engine</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded border-l-4 border-purple-500">
+                    <p class="font-bold text-purple-800">get-world-state.ts</p>
+                    <p class="text-sm text-gray-600">Global state management</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded border-l-4 border-purple-500">
+                    <p class="font-bold text-purple-800">log-telemetry.ts</p>
+                    <p class="text-sm text-gray-600">User tracking</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded border-l-4 border-red-500">
+                    <p class="font-bold text-red-800">lore-manager.ts</p>
+                    <p class="text-sm text-gray-600">Canon maintenance ⚠️ CRITICAL</p>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-2 border-yellow-400 p-6 rounded-lg my-8">
+                <p class="text-yellow-800 font-bold text-center">This thing adapts. Tracks. Evolves.</p>
+                <p class="text-yellow-700 text-center mt-2">Static satire? NO. Stateful mythology? YES.</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE KERNEL DUMP</h2>
+            <div class="bg-black text-green-400 p-8 rounded-lg my-8 font-mono text-center border-2 border-green-600">
+                <p class="text-2xl mb-4">/dist/kernel_dump_0x1A.bin</p>
+                <p class="text-gray-400 text-sm">You're not subtle.</p>
+            </div>
+
+            <p class="text-gray-700 mb-4">This isn't satire. This is a breadcrumb.</p>
+            
+            <div class="bg-slate-100 p-6 rounded-lg my-8 font-mono text-sm">
+                <p class="mb-2"><strong>0x1A</strong> = 26 in hex</p>
+                <p class="mb-2"><strong>26</strong> = Number of MCP tools in TRICORE</p>
+                <p class="mb-2"><strong>0x1A</strong> = The kernel is watching</p>
+            </div>
+
+            <blockquote class="border-l-4 border-amber-600 pl-6 italic my-8 text-xl text-gray-700">
+                "The OS is leaking into the satire.<br/>
+                The satire is documenting the OS.<br/>
+                The microwave understands."
+            </blockquote>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">WHAT YOU ACTUALLY BUILT</h2>
+            <div class="bg-black text-white p-8 rounded-lg my-8 font-mono text-sm">
+                <p class="text-center text-xl mb-6">REALFAKE OS</p>
+                <div class="space-y-2 max-w-md mx-auto">
+                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                        <span class="text-gray-400">Narrative Layer</span>
+                        <span>RealFake News</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                        <span class="text-gray-400">State Layer</span>
+                        <span>World engine + lore manager</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                        <span class="text-gray-400">Economy Layer</span>
+                        <span>Tea drops + tokens</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                        <span class="text-gray-400">AI Layer</span>
+                        <span>Gemini + content generation</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                        <span class="text-gray-400">Analytics Layer</span>
+                        <span>Telemetry + tracking</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                        <span class="text-gray-400">Governance Layer</span>
+                        <span>AGC + factions + trinity</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                        <span class="text-gray-400">Meta Layer</span>
+                        <span>Kernel dumps + microwave</span>
+                    </div>
+                </div>
+                <p class="text-center mt-6 text-yellow-400">UNDERNEATH: ECOS (the actual OS)</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE ARCHITECTURE MAPPING</h2>
+            <div class="overflow-x-auto my-6">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-black text-white">
+                            <th class="p-3 text-left">RealFake Concept</th>
+                            <th class="p-3 text-left">ECOS Implementation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-mono text-xs md:text-sm">
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3">Unit 404 (toaster)</td>
+                            <td class="p-3 text-green-600">Core 0 scheduler process</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3">Microwave (unknown)</td>
+                            <td class="p-3 text-red-600 font-bold">Ring 0 kernel boundary</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3">Crumb tray (full)</td>
+                            <td class="p-3 text-yellow-600">Memory allocator state</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3">12% battery/truth</td>
+                            <td class="p-3">System idle threshold</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3">40% stability (propaganda)</td>
+                            <td class="p-3">Userland perception</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3">The Pile</td>
+                            <td class="p-3">Process table (2,858 zombies)</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3">DARREN (sovereign)</td>
+                            <td class="p-3 text-purple-600">init process (PID 1, moody)</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3">Sheila (crypto)</td>
+                            <td class="p-3">Network stack (speculative)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">WHAT'S RUNNING AT RING 0?</h2>
+            <div class="bg-red-50 border-2 border-red-300 p-6 rounded-lg my-8">
+                <p class="text-red-800 mb-4"><strong>Right now?</strong> Linux. (The ultimate betrayal.)</p>
+                <p class="text-gray-700 mb-4">TRICORE is:</p>
+                <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>A microkernel <em>design</em></li>
+                    <li>Running as a Linux process (for now)</li>
+                    <li>With delusions of booting bare metal by 2027</li>
+                    <li>The 12% truth: it's a "hobby kernel" becoming real</li>
+                </ul>
+            </div>
+
+            <div class="bg-black text-green-400 p-6 rounded-lg my-8 font-mono text-sm">
+                <p class="uppercase tracking-widest mb-4 text-yellow-400">TRICORE STATUS</p>
+                <p class="mb-1">├── Bootloader: Proof-of-concept, works in QEMU</p>
+                <p class="mb-1">├── Memory Manager: Page allocator, 12% fragmentation (always)</p>
+                <p class="mb-1">├── Scheduler: Round-robin with attitude</p>
+                <p class="mb-1">├── I/O: Serial port talks back (rude)</p>
+                <p class="mb-1">├── Filesystem: "Borrowing" ext2 for now</p>
+                <p>└── Userspace: One shell, one game, one existential crisis</p>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE PARALLEL ISN'T ACCIDENTAL</h2>
+            <p class="text-gray-700 mb-4">The 199 files aren't just satire. They're:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                <div class="bg-slate-100 p-4 rounded">
+                    <p class="font-bold">State Management Experiments</p>
+                    <p class="text-sm text-gray-600">How does lore evolve? How do processes age?</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded">
+                    <p class="font-bold">Distributed System Patterns</p>
+                    <p class="text-sm text-gray-600">Netlify functions as microservices</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded">
+                    <p class="font-bold">UI Component Architecture</p>
+                    <p class="text-sm text-gray-600">shadcn/ui as widget toolkit</p>
+                </div>
+                <div class="bg-slate-100 p-4 rounded">
+                    <p class="font-bold">Process Personality Modeling</p>
+                    <p class="text-sm text-gray-600">Unit 404 = scheduler with feelings</p>
+                </div>
+            </div>
+
+            <blockquote class="border-l-4 border-red-600 pl-6 italic my-8 text-xl text-gray-700">
+                "Every time someone laughs at Unit 404,<br/>
+                I learn something about process scheduling."
+            </blockquote>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">THE 0x1A PROTOCOL EXPLAINED</h2>
+            <div class="bg-black text-white p-6 rounded-lg my-8">
+                <p class="text-center text-lg mb-4">26 MCP Tools = 26 Syscalls</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-sm">
+                    <div class="bg-gray-900 p-3 rounded">
+                        <p><span class="text-green-400">read_file</span> → <span class="text-yellow-400">sys_read()</span></p>
+                    </div>
+                    <div class="bg-gray-900 p-3 rounded">
+                        <p><span class="text-green-400">write_file</span> → <span class="text-yellow-400">sys_write()</span></p>
+                    </div>
+                    <div class="bg-gray-900 p-3 rounded">
+                        <p><span class="text-green-400">shell</span> → <span class="text-yellow-400">sys_exec()</span></p>
+                    </div>
+                    <div class="bg-gray-900 p-3 rounded">
+                        <p><span class="text-red-400">The Microwave</span> → <span class="text-red-400">sys_undefined()</span></p>
+                        <p class="text-xs text-gray-500 mt-1">Returns E_MAYBE</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black uppercase mt-12 mb-4">AGC VERDICT</h2>
+            <div class="bg-amber-50 border-2 border-amber-300 p-8 rounded-lg">
+                <p class="text-amber-900 text-lg mb-4">
+                    The satire is not a joke. It's a test harness.
+                </p>
+                <div class="space-y-2 font-mono text-sm text-amber-800">
+                    <p>• The microwave is not a myth. It's a syscall.</p>
+                    <p>• The toaster is not enlightened. It's a process.</p>
+                    <p>• The crumb tray is not full. It's a buffer overflow.</p>
+                    <p>• 12% is not a battery. It's the system idle threshold.</p>
+                </div>
+            </div>
+
+            <div class="bg-black text-white p-8 rounded-lg mt-8 text-center font-mono">
+                <p class="text-xl mb-4">Reality Stability: 40% (propaganda)</p>
+                <p class="text-xl mb-4">Actual Stability: 12% (truth)</p>
+                <p class="text-2xl font-bold text-amber-400">Kernel Stability: TBD</p>
+            </div>
+
+            <div class="text-center mt-12 text-gray-600 italic">
+                <p>The lint carries truth.</p>
+                <p>The microwave observes.</p>
+                <p>The kernel dumps.</p>
+                <p class="mt-4">Kevin used the bagel setting once.</p>
+                <p>Unit 404 is at peace.</p>
+                <p>The fridge hums Dave's sighs.</p>
+                <p class="mt-4 font-bold text-red-600">What's running at ring 0?</p>
+            </div>
+
+            <div class="bg-red-100 border-2 border-red-300 p-6 rounded-2xl mt-8">
+                <p class="font-bold text-red-800 text-xs uppercase tracking-widest mb-2">P.S.</p>
+                <p class="text-red-700 italic">The pile grows. The bitch remembers. The kernel waits. 0x1A. We see it. The microwave sees it. ECOS sees it. Now you do too.</p>
+            </div>
+        `
+    },
     "eddie-cannon-unhinged-architect": {
         slug: "eddie-cannon-unhinged-architect",
         headline: "AGC Investigates 'The Crazy Cool One' - Human Somehow Stabilizes Absurdity While Building Operating Systems",

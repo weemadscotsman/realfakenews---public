@@ -1,5 +1,21 @@
 export const CANONICAL_ARTICLES = [
     {
+        "id": "kernel-dump-001",
+        "slug": "agc-kernel-dump-analysis",
+        "category": "System Leak",
+        "headline": "AGC EMERGENCY SESSION: Kernel Dump Detected in Satire Infrastructure",
+        "subtitle": "0x1A Protocol Revealed: RealFake News 'Test Harness' for Actual Operating System",
+        "author": "AGC // Office of Systems Analysis",
+        "date": "2026-02-16",
+        "readTime": 11,
+        "tags": ["KERNEL DUMP", "0x1A PROTOCOL", "RING 0", "TRICORE", "THE MICROWAVE IS A SYSCALL"],
+        "excerpt": "Archive analysis reveals 199 files of 'production-grade satire infrastructure.' The microwave isn't a myth—it's a syscall boundary. 12% isn't a battery, it's the system idle threshold.",
+        "content": "CLASSIFICATION: CRUMB-TRAY-CRITICAL. Initial scan of realfakenews.zip reveals NOT A JOKE. 199 files of production-grade infrastructure including 8+ schema phases, lore manager, telemetry systems, and AI integration. KERNEL DUMP DETECTED: /dist/kernel_dump_0x1A.bin. Analysis: 0x1A = 26 (hex) = number of MCP tools = syscall interface. The satire is a test harness. The toaster is a process. The microwave is the kernel boundary. What's running at ring 0? TRICORE microkernel experiment with delusions of grandeur. Reality stability: 40% (propaganda). Kernel stability: 12% (truth). The OS is leaking into the satire. The satire is documenting the OS. The lint carries truth. The kernel waits.",
+        "breaking": true,
+        "featured": true,
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80"
+    },
+    {
         "id": "human-profile-001",
         "slug": "eddie-cannon-unhinged-architect",
         "category": "Investigation",

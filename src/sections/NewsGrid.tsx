@@ -35,14 +35,14 @@ const CATEGORY_IMAGES: Record<string, string> = {
 };
 
 const fallbackData: Record<string, Article[]> = {
-  politics: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'politics' || (a.tags && a.tags.includes('POLITICS'))),
-  science: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'science' || (a.tags && a.tags.includes('SCIENCE'))),
-  tech: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'technology' || (a.tags && a.tags.includes('TECH'))),
+  politics: CANONICAL_ARTICLES.filter((a): a is typeof a & { category: string; tags?: string[] } => !!a && a.category?.toLowerCase() === 'politics' || (a?.tags?.includes('POLITICS') ?? false)),
+  science: CANONICAL_ARTICLES.filter((a): a is typeof a & { category: string; tags?: string[] } => !!a && a.category?.toLowerCase() === 'science' || (a?.tags?.includes('SCIENCE') ?? false)),
+  tech: CANONICAL_ARTICLES.filter((a): a is typeof a & { category: string; tags?: string[] } => !!a && (a.category?.toLowerCase() === 'technology' || a.category?.toLowerCase() === 'tech') || (a?.tags?.includes('TECH') ?? false)),
   entertainment: [],
   sports: [],
-  investigation: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'investigation' || (a.tags && a.tags.includes('INVESTIGATION'))),
-  systemLeak: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'system leak' || (a.tags && a.tags.some((t: string) => t.includes('AGC') || t.includes('KERNEL') || t.includes('LEAK')))),
-  resistance: CANONICAL_ARTICLES.filter(a => a.category.toLowerCase() === 'resistance' || (a.tags && a.tags.includes('RESISTANCE'))),
+  investigation: CANONICAL_ARTICLES.filter((a): a is typeof a & { category: string; tags?: string[] } => !!a && a.category?.toLowerCase() === 'investigation' || (a?.tags?.includes('INVESTIGATION') ?? false)),
+  systemLeak: CANONICAL_ARTICLES.filter((a): a is typeof a & { category: string; tags?: string[] } => !!a && a.category?.toLowerCase() === 'system leak' || (a?.tags?.some((t: string) => t?.includes('AGC') || t?.includes('KERNEL') || t?.includes('LEAK')) ?? false)),
+  resistance: CANONICAL_ARTICLES.filter((a): a is typeof a & { category: string; tags?: string[] } => !!a && a.category?.toLowerCase() === 'resistance' || (a?.tags?.includes('RESISTANCE') ?? false)),
 };
 
 // Ensure fallback data isn't empty if we missed some categories

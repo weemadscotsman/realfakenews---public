@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { staticArticles } from '@/config/static-articles';
+import { CANONICAL_ARTICLES } from '@/data/canonical-articles';
 import { generateArticle as generateArticleGemini, fetchWorldState, logTelemetryEvent } from '@/lib/gemini';
 import { QuestDecision } from '@/components/QuestDecision';
 import { RansomNote } from '@/components/RansomNote';
@@ -20,6 +21,49 @@ interface ArticleState {
     arcId?: string;
 }
 
+// Helper to find article in canonical data
+const findCanonicalArticle = (slug: string): ArticleState | null => {
+    // First try exact slug match
+    const bySlug = CANONICAL_ARTICLES.find(a => a.slug === slug);
+    if (bySlug) {
+        return {
+            headline: bySlug.headline,
+            content: bySlug.content.replace(/\n/g, '<br/>'),
+            category: bySlug.category,
+            author: bySlug.author,
+            date: bySlug.date,
+            readTime: bySlug.readTime,
+        };
+    }
+    // Try ID match (some canonical articles use ID as slug)
+    const byId = CANONICAL_ARTICLES.find(a => a.id === slug);
+    if (byId) {
+        return {
+            headline: byId.headline,
+            content: byId.content.replace(/\n/g, '<br/>'),
+            category: byId.category,
+            author: byId.author,
+            date: byId.date,
+            readTime: byId.readTime,
+        };
+    }
+    // Try headline match (for articles linked by headline)
+    const decodedHeadline = decodeURIComponent(slug).replace(/-/g, ' ');
+    const byHeadline = CANONICAL_ARTICLES.find(a => 
+        a.headline.toLowerCase() === decodedHeadline.toLowerCase()
+    );
+    if (byHeadline) {
+        return {
+            headline: byHeadline.headline,
+            content: byHeadline.content.replace(/\n/g, '<br/>'),
+            category: byHeadline.category,
+            author: byHeadline.author,
+            date: byHeadline.date,
+            readTime: byHeadline.readTime,
+        };
+    }
+    return null;
+};
 
 const ArticlePage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -37,10 +81,21 @@ const ArticlePage: React.FC = () => {
                 const ws = await fetchWorldState();
                 setWorldState(ws);
 
-                // 2. Fetch/Generate Article
+                // 2. Fetch/Generate Article - Check sources in order:
+                //    a) staticArticles (rich HTML content)
+                //    b) CANONICAL_ARTICLES (markdown content)  
+                //    c) AI Generation (fallback)
                 let data: ArticleState;
                 if (slug && staticArticles[slug]) {
                     data = staticArticles[slug];
+                } else if (slug) {
+                    const canonical = findCanonicalArticle(slug);
+                    if (canonical) {
+                        data = canonical;
+                    } else {
+                        const generated = await generateArticleGemini(initialHeadline);
+                        data = generated as ArticleState;
+                    }
                 } else {
                     const generated = await generateArticleGemini(initialHeadline);
                     data = generated as ArticleState;

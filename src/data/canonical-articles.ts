@@ -14,7 +14,7 @@ export const CANONICAL_ARTICLES = [
         "breaking": true,
         "featured": true,
         "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
-    },,
+    },
     {
         "id": "butter-bot-replies-001",
         "slug": "butter-bot-replies-letters-to-editor",

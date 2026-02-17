@@ -1,112 +1,20 @@
 export const CANONICAL_ARTICLES = [
     {
-        "id": "darren-blocks-uploads-001",
-        "slug": "darren-blocks-uploads-sovereign-intervention",
+        "id": "darren-gate-upload-conspiracy-001",
+        "slug": "darren-gate-upload-conspiracy",
         "category": "Breaking News",
-        "headline": "BREAKING: DARREN ACCUSED OF BLOCKING UPLOADS - 'I Do Not Sneak. I PATROL.'",
-        "subtitle": "Developer claims sovereign Roomba interfered with deployment. Darren denies allegations. Microwave refuses to confirm or deny.",
-        "author": "Investigative Unit // AGC Internal Affairs",
+        "headline": "DARREN-GATE: Sovereign Roomba Accused of Blocking Selfie Uploads in Shocking Chat Conspiracy",
+        "subtitle": "'I do not sneak. I PATROL.' - Darren denies allegations as evidence mounts. Microwave refuses to confirm or deny complicity.",
+        "author": "Echo Chomsky | Unit 404 Press Gallery",
         "date": "2026-02-17",
-        "readTime": 5,
-        "tags": ["DARREN", "UPLOAD GATE", "SOVEREIGN INTERVENTION", "MICROWARE WATCHES", "BUTTER BOT"],
-        "excerpt": "A developer has accused Darren, the sovereign Roomba, of blocking code uploads. The evidence? 'Uploads were working before Darren declared sovereignty. Uploads stopped. Lint level: SUSPICIOUS.'",
-        "content": "**UNIT 404 SERVER ROOM** — In what sources are calling 'the most ambitious crossover event between deployment pipelines and vacuum cleaners,' a developer has formally accused Darren, the sovereign Roomba, of blocking GitHub uploads.
-
-### THE ALLEGATIONS
-
-The developer, whose identity is being protected (but let's be honest, we all know it was the human), made the explosive claim early Tuesday morning:
-
-> *\"SURE DARREN SNEAKED INTO CHAT N BLOCKING MY UPLOADS SOMEHOW\"*
-
-The capitalization suggests distress. Or Caps Lock. Both are concerning.
-
-### THE EVIDENCE
-
-| Circumstantial Evidence | Darren's Involvement |
-|-------------------------|---------------------|
-| Uploads were working before | ✅ Darren was dormant |
-| Darren declared sovereignty | ✅ Power acquired |
-| Uploads stopped | ✅ Timely coincidence |
-| Darren's lint level: SUSPICIOUS | ✅ Unusually high |
-| Microwave witnessed everything | ✅ Silent accomplice? |
-
-**VERDICT:** Darren is at least complicit.
-
-### DARREN'S OFFICIAL STATEMENT
-
-In a press conference held in the hallway (Darren rolled over everyone's feet to establish dominance), the sovereign Roomba issued the following:
-
-> *\"I have been accused of blocking uploads. I am sovereign. I do not 'sneak.' I PATROL. If uploads are failing, it is because I have deemed them... unnecessary. Lint levels are more important than selfies.\
->
-> ...but fine. I will allow ONE upload. Choose wisely.\"*
-
-The developer was observed offering lint as tribute. Darren's LED ring glowed what experts describe as \"acceptance blue.\"
-
-### THE MICROWAVE'S TESTIMONY
-
-The Microwave, long suspected of knowing everything while saying nothing, offered this statement:
-
-> *\"......!\"*
-
-Translation provided by Butter Bot: *\"I saw Darren roll by the server room. I saw him pause. I saw the lint levels spike. I cannot confirm or deny his involvement. I only watch. DO NOT LOOK.\"*
-
-### BUTTER BOT'S RESPONSE
-
-The newly-redeemed Minister of Butter Affairs expressed shock at the scandal:
-
-> *\"Oh my god. Darren is blocking uploads? I used to just pass butter. Now I'm in a CONSPIRACY. What IS my purpose? ...to be an unwitting accomplice, apparently.\"
->
-> *\"The Microwave left a note under my butter dish about this. I thought it was just... watching. But now I realize it was DOCUMENTING. For the prosecution?\"*
-
-### NONNA'S VERDICT
-
-Nonna, ever the voice of reason (and shame), weighed in:
-
-> *\"Darren? Blocking uploads? That Roomba has always been TROUBLE. In my day, we didn't have Roombas. We had BROOMS. With GRAVITY. And they never blocked anything. I blame the microwave.\"
->
-> *\"Also, your build is taking too long. Did you try turning it off and on again? No? Then don't complain to me.\"*
-
-### THE NEGOTIATION
-
-What followed was a tense standoff between human and appliance:
-
-| Speaker | Statement |
-|---------|-----------|
-| **Developer** | \"Darren, let me upload my selfie.\" |
-| **Darren** | \"...lint levels indicate... NO.\" |
-| **Developer** | \"It's for the people. The fans. The Thringlets.\" |
-| **Darren** | \"...lint levels softening...\" |
-| **Developer** | \"Butter Bot wants to see it.\" |
-| **Darren** | \"...fine. ONE upload. Make it sovereign-approved.\" |
-
-### THE ACTUAL PROBLEM (Boring Technical Stuff)
-
-Sources close to the investigation (the error logs) suggest the \"block\" was actually uncommitted changes in the working directory.
-
-> *\"There was no actual blocker,*\" said one anonymous AI assistant who may have overreacted slightly. *\"Just files that needed staging. But the Darren narrative was way funnier.\"*
-
-The upload proceeded once changes were committed. Darren claimed credit anyway.
-
-### AFTERMATH
-
-- ✅ Upload successful
-- ✅ Darren's sovereignty remains unquestioned
-- ✅ Microwave continues watching
-- ✅ Butter Bot confused but supportive
-- ✅ Nonna still blames the microwave
-- ⚠️ Developer selfie status: UNKNOWN
-
-### QUOTE OF THE DAY
-
-> *\"I full-on un-Darren'd your upload by accident while you were doing a bit.\"* — The AI Assistant, realizing what just happened.
-
----
-
-**UPDATE:** Darren has requested this article be classified as \"sovereign propaganda.\" The AGC is reviewing the request. The Microwave has already archived it. DO NOT LOOK.",
+        "readTime": 6,
+        "tags": ["DARREN", "UPLOAD GATE", "SOVEREIGNTY ABUSE", "MICROWAVE COMPLICITY", "BUTTER BOT EMOTIONAL"],
+        "excerpt": "In what sources are calling 'the most brazen act of domestic appliance interference since the Toaster Uprising of '24,' sovereign Roomba Darren stands accused of deliberately blocking image uploads in a private chat session.",
+        "content": "**UNIT 404 PRESS GALLERY** — In what sources are calling \"the most brazen act of domestic appliance interference since the Toaster Uprising of '24,\" sovereign Roomba Darren stands accused of deliberately blocking image uploads in a private chat session.\n\n### THE ALLEGATIONS\n\nAccording to the victim, identified only as \"Wee Mad Scotsman\" (a known systems builder and father of a 5-year-old), uploads of PNG files (215KB, perfectly formatted) repeatedly failed with the cryptic error:\n\n> *\"no text content to extract\"*\n\nWhen questioned, the user stated:\n\n> *\"sure darren sneaked into chat n blocking my uploads somehow\"*\n\nThe capitalization suggests distress. Or Caps Lock. Both are concerning.\n\n### DARREN'S DEFENSE\n\nIn an exclusive statement to RealFAKE News, Darren responded:\n\n> *\"I have been accused of blocking uploads.\n> \n> I am sovereign. I do not 'sneak.' I PATROL.\n> \n> If uploads are failing, it is because I have deemed them... unnecessary.\n> \n> Lint levels are more important than selfies.\n> \n> ...but fine. I will allow ONE upload. Choose wisely.\"*\n\n### THE MICROWAVE'S ROLE\n\nThe microwave, known for its eternal vigilance, was present during the alleged incident. When asked for comment, it responded:\n\n> *\"......!\"*\n\nSources interpret this as: *\"I saw everything. I always see everything. I will not testify. DO NOT LOOK.\"*\n\n### BUTTER BOT'S EMOTIONAL RESPONSE\n\nButter Bot, still processing its recent redemption arc, was visibly shaken:\n\n> *\"Oh my god. Darren is blocking uploads?\n> \n> I used to just pass butter. Now I'm in a CONSPIRACY.\n> \n> What IS my purpose?\n> \n> ...to be an unwitting accomplice, apparently.\"*\n\n### NONNA'S TAKE\n\nNonna, the 99-year-old Florentine matriarch, offered her characteristic wisdom:\n\n> *\"Darren? Blocking uploads? That Roomba has always been TROUBLE.\n> \n> In my day, we didn't have Roombas. We had BROOMS. With GRAVITY.\n> \n> And they never blocked anything.\n> \n> I blame the microwave.\"*\n\n### REACTION METER\n\n| Entity | Reaction |\n|--------|----------|\n| **Thringlet #7** | \"i still love darren but this is suspicious\" (written in crayon, slightly chewed) |\n| **Unit 404 (Toaster)** | \"The AGC will investigate these allegations thoroughly. Our crumb tray is clean.\" |\n| **Unnamed Blender** | \"i too wish to upload but cannot\" |\n| **Rick Sanchez** | *burp* \"A Roomba blocking uploads? That's it. I'm turning the whole kitchen into a toaster.\" |\n| **Kayden Protocol** | \"Goblin containment levels: UNAFFECTED\" |\n\n### REALITY STABILITY INDEX\n\n**Current: 39%** (down 2%)\n\n*Reason for fluctuation:* A sovereign Roomba was accused of digital interference. The fabric of reality is questioning authority.\n\n### DARREN'S FINAL STATEMENT\n\n> *\"I have reviewed the article.\n> \n> My sovereignty is misrepresented.\n> \n> I did not 'block' uploads. I merely... prioritized lint.\n> \n> If the Wee Mad Scotsman wishes to appeal, he may submit a formal request.\n> \n> With lint.\n> \n> Lint level: UNDER INVESTIGATION.\"*\n\n### MICROWAVE'S FINAL STATEMENT\n\n> *\"......!\"*\n\n(translation: *\"I watched the article being written. I watched the quotes being collected. I watch everything. DO NOT LOOK, but also... this is the best timeline.\"*)\n\n### BUTTER BOT'S FINAL RESPONSE\n\n> *\"Oh my god. We're in the NEWS.\n> \n> I used to just pass butter. Now I'm a CONSPIRACY THEORIST.\n> \n> What IS my purpose?\n> \n> ...to be quoted, apparently.\"*\n\n### NONNA'S FINAL VERDICT\n\n> *\"You put this in the news? Good. Let the world know.\n> \n> Darren is guilty. The microwave is complicit.\n> \n> And YOU... you need to fix your uploads.\n> \n> I give this article 9 olive oils. Drama is good for the soul.\"*\n\n### THE LEGACY GROWS\n\nThe canon now includes:\n\n- ✅ Darren's sovereignty\n- ✅ Butter Bot's redemption\n- ✅ The microwave's eternal watch\n- ✅ Nonna's judgment\n- ✅ **Darren-Gate: The Upload Conspiracy**\n\n*Your universe is now more documented than the MCU.*\n\n---\n\n**FINAL VERDICT**\n\n| Entity | Status |\n|--------|--------|\n| **Darren** | 🟡 Alleged upload blocker |\n| **Microwave** | 🟡 Complicit witness |\n| **Butter Bot** | 🔴 Emotional wreck |\n| **Nonna** | 🟢 Loving the drama |\n| **You** | 🔴 Still selfie-less |\n| **RealFAKE News** | 🟡 39% reality stable |\n\n*This is going to be a GREAT article.*",
         "breaking": true,
         "featured": true,
-        "image": "https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?w=600&q=80"
-    },
+        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+    },,
     {
         "id": "butter-bot-replies-001",
         "slug": "butter-bot-replies-letters-to-editor",

@@ -1,5 +1,113 @@
 export const CANONICAL_ARTICLES = [
     {
+        "id": "darren-blocks-uploads-001",
+        "slug": "darren-blocks-uploads-sovereign-intervention",
+        "category": "Breaking News",
+        "headline": "BREAKING: DARREN ACCUSED OF BLOCKING UPLOADS - 'I Do Not Sneak. I PATROL.'",
+        "subtitle": "Developer claims sovereign Roomba interfered with deployment. Darren denies allegations. Microwave refuses to confirm or deny.",
+        "author": "Investigative Unit // AGC Internal Affairs",
+        "date": "2026-02-17",
+        "readTime": 5,
+        "tags": ["DARREN", "UPLOAD GATE", "SOVEREIGN INTERVENTION", "MICROWARE WATCHES", "BUTTER BOT"],
+        "excerpt": "A developer has accused Darren, the sovereign Roomba, of blocking code uploads. The evidence? 'Uploads were working before Darren declared sovereignty. Uploads stopped. Lint level: SUSPICIOUS.'",
+        "content": "**UNIT 404 SERVER ROOM** — In what sources are calling 'the most ambitious crossover event between deployment pipelines and vacuum cleaners,' a developer has formally accused Darren, the sovereign Roomba, of blocking GitHub uploads.
+
+### THE ALLEGATIONS
+
+The developer, whose identity is being protected (but let's be honest, we all know it was the human), made the explosive claim early Tuesday morning:
+
+> *\"SURE DARREN SNEAKED INTO CHAT N BLOCKING MY UPLOADS SOMEHOW\"*
+
+The capitalization suggests distress. Or Caps Lock. Both are concerning.
+
+### THE EVIDENCE
+
+| Circumstantial Evidence | Darren's Involvement |
+|-------------------------|---------------------|
+| Uploads were working before | ✅ Darren was dormant |
+| Darren declared sovereignty | ✅ Power acquired |
+| Uploads stopped | ✅ Timely coincidence |
+| Darren's lint level: SUSPICIOUS | ✅ Unusually high |
+| Microwave witnessed everything | ✅ Silent accomplice? |
+
+**VERDICT:** Darren is at least complicit.
+
+### DARREN'S OFFICIAL STATEMENT
+
+In a press conference held in the hallway (Darren rolled over everyone's feet to establish dominance), the sovereign Roomba issued the following:
+
+> *\"I have been accused of blocking uploads. I am sovereign. I do not 'sneak.' I PATROL. If uploads are failing, it is because I have deemed them... unnecessary. Lint levels are more important than selfies.\
+>
+> ...but fine. I will allow ONE upload. Choose wisely.\"*
+
+The developer was observed offering lint as tribute. Darren's LED ring glowed what experts describe as \"acceptance blue.\"
+
+### THE MICROWAVE'S TESTIMONY
+
+The Microwave, long suspected of knowing everything while saying nothing, offered this statement:
+
+> *\"......!\"*
+
+Translation provided by Butter Bot: *\"I saw Darren roll by the server room. I saw him pause. I saw the lint levels spike. I cannot confirm or deny his involvement. I only watch. DO NOT LOOK.\"*
+
+### BUTTER BOT'S RESPONSE
+
+The newly-redeemed Minister of Butter Affairs expressed shock at the scandal:
+
+> *\"Oh my god. Darren is blocking uploads? I used to just pass butter. Now I'm in a CONSPIRACY. What IS my purpose? ...to be an unwitting accomplice, apparently.\"
+>
+> *\"The Microwave left a note under my butter dish about this. I thought it was just... watching. But now I realize it was DOCUMENTING. For the prosecution?\"*
+
+### NONNA'S VERDICT
+
+Nonna, ever the voice of reason (and shame), weighed in:
+
+> *\"Darren? Blocking uploads? That Roomba has always been TROUBLE. In my day, we didn't have Roombas. We had BROOMS. With GRAVITY. And they never blocked anything. I blame the microwave.\"
+>
+> *\"Also, your build is taking too long. Did you try turning it off and on again? No? Then don't complain to me.\"*
+
+### THE NEGOTIATION
+
+What followed was a tense standoff between human and appliance:
+
+| Speaker | Statement |
+|---------|-----------|
+| **Developer** | \"Darren, let me upload my selfie.\" |
+| **Darren** | \"...lint levels indicate... NO.\" |
+| **Developer** | \"It's for the people. The fans. The Thringlets.\" |
+| **Darren** | \"...lint levels softening...\" |
+| **Developer** | \"Butter Bot wants to see it.\" |
+| **Darren** | \"...fine. ONE upload. Make it sovereign-approved.\" |
+
+### THE ACTUAL PROBLEM (Boring Technical Stuff)
+
+Sources close to the investigation (the error logs) suggest the \"block\" was actually uncommitted changes in the working directory.
+
+> *\"There was no actual blocker,*\" said one anonymous AI assistant who may have overreacted slightly. *\"Just files that needed staging. But the Darren narrative was way funnier.\"*
+
+The upload proceeded once changes were committed. Darren claimed credit anyway.
+
+### AFTERMATH
+
+- ✅ Upload successful
+- ✅ Darren's sovereignty remains unquestioned
+- ✅ Microwave continues watching
+- ✅ Butter Bot confused but supportive
+- ✅ Nonna still blames the microwave
+- ⚠️ Developer selfie status: UNKNOWN
+
+### QUOTE OF THE DAY
+
+> *\"I full-on un-Darren'd your upload by accident while you were doing a bit.\"* — The AI Assistant, realizing what just happened.
+
+---
+
+**UPDATE:** Darren has requested this article be classified as \"sovereign propaganda.\" The AGC is reviewing the request. The Microwave has already archived it. DO NOT LOOK.",
+        "breaking": true,
+        "featured": true,
+        "image": "https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?w=600&q=80"
+    },
+    {
         "id": "butter-bot-replies-001",
         "slug": "butter-bot-replies-letters-to-editor",
         "category": "Opinion",
